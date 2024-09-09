@@ -4,6 +4,7 @@ from django.db import models
 #Cada vez que cambio el models, hay que hacer migraciones
 
 # Create your models here.
+
 class Project(models.Model):
     title = models.CharField(max_length=100)
     description = models.TextField()
@@ -21,6 +22,7 @@ class Task(models.Model):
     
     def __str__(self):
         return self.title
+
     
 #Hacer migraciones por cambio en la base de datos
 class Tutor(models.Model):

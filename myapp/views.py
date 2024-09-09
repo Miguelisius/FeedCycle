@@ -1,6 +1,9 @@
 from django.http import HttpResponse, JsonResponse
-from .models import Project, Task
-from django.shortcuts import get_object_or_404, render
+from .models import Project, Task, Tutor, Alumno
+from django.shortcuts import get_object_or_404, render, redirect
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth import authenticate, login
+from django.contrib import messages
 
 # Create your views here.
 
@@ -10,6 +13,19 @@ def hello(request, username):
 
 def about(request):
     return HttpResponse("<h1>About page</h1>")
+
+@login_required
+def home(request):
+    return HttpResponse("HOLA")
+
+def register(request):
+    if request.method == 'POST':
+        email = request.POST.get('email')
+        password = request.POST.get('password')
+        tutor = Tutor(email=email, password=password)
+        tutor.save()
+        return redirect('login')
+    return render(request, 'registration/register.html')
 
 def index(request):
     return render(request,'index.html')

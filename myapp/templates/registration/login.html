@@ -1,0 +1,35 @@
+<html>
+    <head>
+        <title>Login</title>
+    </head>
+    <body>
+        <div class="container-form">
+            <h3 class="txt_gris_medio">Login</h3>
+            <hr>
+            <div class="login-container">
+                {% if form.errors %}
+                    <div class="alert alert-danger"><p>Usuario o contraseña incorrectos</p>
+                    </div>
+                {% endif %}
+
+                <form id="form-login" method="post" action="">
+                    {% csrf_token %}
+                    <div class="w450" id="username">
+                        {{ form.username }}
+                    </div>
+                    <div class="w450" id="password">
+                        {{ form.password }}
+                    </div>
+                    <button id="btn-registrar" class="button_large">Login</button>
+                    <div class="clearfix"></div>
+                </form>
+                <a href="#" class="txt_verde txt_center mt15 mb20" style="display: block">Aviso de privacidad</a>
+            </div>
+            <div class="txt_center mt15">
+                <a href="{% url 'register' %}">
+                    <button class="button_large" type="button">Registrar</button>
+                </a>
+            </div>
+        </div>
+    </body>
+</html>
