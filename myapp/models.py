@@ -12,7 +12,7 @@ class Task(models.Model):
     title = models.CharField(max_length=100)
     description = models.TextField()
     completed = models.BooleanField(default=False)
-    
+    alumnos = models.ManyToManyField(Alumno, blank=True)
     
     def __str__(self):
         return self.title
@@ -23,8 +23,10 @@ class Project(models.Model):
     description = models.TextField()
     technology = models.CharField(max_length=20)
     url = models.URLField()
-    alumno = models.ForeignKey(Alumno, on_delete=models.CASCADE, null=True, blank=True)
-    task = models.ForeignKey(Task, on_delete=models.CASCADE, null=True, blank=True)
+    #alumno = models.ForeignKey(Alumno, on_delete=models.CASCADE, null=True, blank=True)
+    alumno = models.ManyToManyField(Alumno, blank=True)
+    #task = models.ForeignKey(Task, on_delete=models.CASCADE, null=True, blank=True)
+    task = models.ManyToManyField(Task, blank=True)
     
     def __str__(self):
         return self.title
@@ -32,7 +34,7 @@ class Project(models.Model):
 class Tutor(models.Model):
     email = models.EmailField()
     password = models.CharField(max_length=20)
-    project = models.ForeignKey(Project, on_delete=models.CASCADE)
+    project = models.ManyToManyField(Project, blank=True)
     
     def __str__(self):
         return self.email
