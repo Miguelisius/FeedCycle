@@ -16,12 +16,23 @@ def about(request):
 
 @login_required
 def home(request):
-    return HttpResponse("HOLA")
+    username = request.user.username
+    return HttpResponse("<h1>HOLA %s. Bienvenido a la página principal</h1>" %username)
 
 def register(request):
     if request.method == 'POST':
         email = request.POST.get('email')
         password = request.POST.get('password')
+        confirm_password = request.POST.get('confirm_password')
+        
+        if password != confirm_password:
+            messages.error(request, 'Las contraseñas no coinciden')
+            return redirect('registration/register.html')
+        
+        if Tutor.objects.filter(email=email).exists():
+            messages.error(request, 'El email ya está registrado')
+            return redirect('registration/register.html')
+        
         tutor = Tutor(email=email, password=password)
         tutor.save()
         return redirect('login')
