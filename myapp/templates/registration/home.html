@@ -8,7 +8,7 @@
 <body>
     <h1>Bienvenido, {{ request.user.username }}</h1>
 
-    <h2>Agregar nuevo proyecto</h2>
+    <h2>Agregar nueva asignatura</h2>
 
     <form method="POST">
         {% csrf_token %}
@@ -35,7 +35,7 @@
         </ul>
     {% endif %}
 
-    <h2>Proyectos actuales</h2>
+    <h2>Asignaturas Guardadas</h2>
     <ul>
         {% for project in projects %}
             <li>{{ project.title }} - {{ project.technology }} - <a href="{{ project.url }}" target="_blank">{{ project.url }}</a></li>
