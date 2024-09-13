@@ -16,9 +16,25 @@ def about(request):
 
 @login_required
 def home(request):
-    username = request.user.username
-    return HttpResponse("<h1>HOLA %s. Bienvenido a la página principal</h1>" %username)
-
+    #username = request.user.username
+    #return HttpResponse("<h1>HOLA %s. Bienvenido a la página principal</h1>" %username)
+    tutor_mail, created = Tutor.objects.get_or_create(email=request.user.email)
+    
+    if request.method == 'POST':
+        project_name = Project.objects.get('project_name')
+        description = Project.objects.get('description')
+        technology = request.POST.get('technology')
+        url = request.POST.get('url')
+        new_project = Project(title = project_name,description=description, technology=technology, url=url)
+        new_project.save()
+        
+        tutor_mail.project.add(new_project)
+        tutor_mail.save()
+        messages.success(request, 'Proyecto creado exitosamente')
+        
+    projects = Project.objects.all()
+    return render(request, 'registration/home.html', {'projects': projects})
+        
 def register(request):
     if request.method == 'POST':
         email = request.POST.get('email')

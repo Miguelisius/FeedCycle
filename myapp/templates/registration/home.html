@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Home</title>
+</head>
+<body>
+    <h1>Bienvenido, {{ request.user.username }}</h1>
+
+    <h2>Agregar nuevo proyecto</h2>
+
+    <form method="POST">
+        {% csrf_token %}
+        <label for="project_name">Nombre del Proyecto:</label>
+        <input type="text" name="project_name" id="project_name" required><br><br>
+
+        <label for="description">Descripción:</label>
+        <textarea name="description" id="description" required></textarea><br><br>
+
+        <label for="technology">Tecnología:</label>
+        <input type="text" name="technology" id="technology" required><br><br>
+
+        <label for="url">URL:</label>
+        <input type="url" name="url" id="url" required><br><br>
+
+        <button type="submit">Agregar Proyecto</button>
+    </form>
+
+    {% if messages %}
+        <ul>
+            {% for message in messages %}
+                <li>{{ message }}</li>
+            {% endfor %}
+        </ul>
+    {% endif %}
+
+    <h2>Proyectos actuales</h2>
+    <ul>
+        {% for project in projects %}
+            <li>{{ project.title }} - {{ project.technology }} - <a href="{{ project.url }}" target="_blank">{{ project.url }}</a></li>
+        {% empty %}
+            <li>No tienes proyectos aún.</li>
+        {% endfor %}
+    </ul>
+</body>
+</html>
