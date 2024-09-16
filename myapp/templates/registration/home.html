@@ -18,11 +18,7 @@
         <label for="description">Descripción:</label>
         <textarea name="description" id="description" required></textarea><br><br>
 
-        <label for="technology">Tecnología:</label>
-        <input type="text" name="technology" id="technology" required><br><br>
 
-        <label for="url">URL:</label>
-        <input type="url" name="url" id="url" required><br><br>
 
         <button type="submit">Agregar Proyecto</button>
     </form>
@@ -38,7 +34,7 @@
     <h2>Asignaturas Guardadas</h2>
     <ul>
         {% for project in projects %}
-            <li>{{ project.title }} - {{ project.technology }} - <a href="{{ project.url }}" target="_blank">{{ project.url }}</a></li>
+            <li>{{ project.title }} </li>
         {% empty %}
             <li>No tienes proyectos aún.</li>
         {% endfor %}
