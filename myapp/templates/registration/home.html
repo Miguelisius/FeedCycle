@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Home</title>
+</head>
+<body>
+    <h1>Bienvenido, {{ request.user.username }}</h1>
+
+    <h2>Agregar nueva asignatura</h2>
+
+    <form method="POST">
+        {% csrf_token %}
+        <label for="project_name">Nombre del Proyecto:</label>
+        <input type="text" name="project_name" id="project_name" required><br><br>
+
+        <label for="description">Descripción:</label>
+        <textarea name="description" id="description" required></textarea><br><br>
+
+
+
+        <button type="submit">Agregar Proyecto</button>
+    </form>
+
+    {% if messages %}
+        <ul>
+            {% for message in messages %}
+                <li>{{ message }}</li>
+            {% endfor %}
+        </ul>
+    {% endif %}
+
+    <h2>Asignaturas Guardadas</h2>
+    <ul>
+        {% for project in projects %}
+            <li>{{ project.title }} </li>
+        {% empty %}
+            <li>No tienes proyectos aún.</li>
+        {% endfor %}
+    </ul>
+</body>
+</html>

@@ -21,8 +21,6 @@ class Task(models.Model):
 class Project(models.Model):
     title = models.CharField(max_length=100)
     description = models.TextField()
-    technology = models.CharField(max_length=20)
-    url = models.URLField()
     #alumno = models.ForeignKey(Alumno, on_delete=models.CASCADE, null=True, blank=True)
     alumno = models.ManyToManyField(Alumno, blank=True)
     #task = models.ForeignKey(Task, on_delete=models.CASCADE, null=True, blank=True)
