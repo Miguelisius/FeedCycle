@@ -9,4 +9,5 @@ urlpatterns = [
     path('hello/<str:username>', views.hello),
     path('task/<int>:id', views.tasks),
     path('project/', views.projects),
+    path('project_detail/<int:project_id>', views.project_detail, name='project_detail'),
 ]

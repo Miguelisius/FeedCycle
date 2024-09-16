@@ -34,7 +34,7 @@
     <h2>Asignaturas Guardadas</h2>
     <ul>
         {% for project in projects %}
-            <li>{{ project.title }} </li>
+            <li><a href="{% url 'project_detail' project.id %}">{{ project.title }}</a></li>
         {% empty %}
             <li>No tienes proyectos aún.</li>
         {% endfor %}
