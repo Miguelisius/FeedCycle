@@ -1,0 +1,9 @@
+# Ignorar la base de datos SQLite
+db.sqlite3
+
+# Ignorar migraciones y otros archivos temporales de Django
+*.pyc
+__pycache__/
+
+# Ignorar el entorno virtual de Python
+venv/
