@@ -1,0 +1,106 @@
+@startuml
+class Profesor {
+id_profesor:int 
+email:String
+password: String
+id_grupo:int
+}
+
+class Grupo {
+id_grupo:int
+id_profesor:int
+id_asignatura:int
+id_alumnos:int
+id_tarea:int
+}
+
+class Asignatura{
+id_asignatura:int
+nombre:String
+descripcion: String
+id_grupo:int
+id_tarea:int
+
+}
+
+class Alumnos{
+id_alumno:int
+id_grupo:int
+id_calificacion:int
+n_pareja:int
+nombre_alumno:String
+}
+
+class Tarea{
+id_tarea:int
+titulo:String
+descripcion:String
+id_grupo:int
+id_rubrica:int
+id_asignatura:int
+}
+
+class Rubrica{
+id_rubrica:int
+id_tarea:int
+
+}
+
+
+
+Class Criterios{
+id_criterio: int
+id_rubrica: int
+id_descriptores:int
+descripcion_criterio:String
+}
+
+Class Nivel_de_desempeno{
+id_nivel_desempeno:int
+id_rubrica:int
+id_nota:int
+nivel:int
+}
+
+Class Descriptores{
+id_descriptores: int
+id_criterio:int
+id_notas: int
+id_calificacion:int
+descripcion: String
+
+}
+
+Class Notas{
+id_notas:int
+id_nivel_desemepno:int
+id_descriptor:int
+nota:int
+}
+
+Class Calificacion{
+id_calificacion:int
+id_descriptor: int
+calificacion:int
+feedback: String
+}
+
+Profesor "1" <--> "1..n" Grupo
+Asignatura "1" <--> "1..n   " Grupo
+Grupo "1" <--> "1..n" Tarea
+Alumnos "1" <--> "1..n" Grupo
+Asignatura "1 " <--> "1..n  " Tarea
+
+Tarea "1" <--> "1" Rubrica
+
+
+
+Rubrica "1" <-->"1" Nivel_de_desempeno
+Nivel_de_desempeno "1" <-->"1..n" Notas
+Rubrica "1" <--> "1..n" Criterios
+Criterios "1" <--> "1..n" Descriptores
+Descriptores "1..n" <--> "1" Notas
+Descriptores "1" <--> "1..n" Calificacion 
+Calificacion "1..n" <--> "1..n" Alumnos
+
+@enduml

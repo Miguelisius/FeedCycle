@@ -1,39 +1,105 @@
 from django.db import models
 #Cada vez que cambio el models, hay que hacer migraciones
+
+class Tutor(models.Model):
+    id_tutor = models.AutoField(primary_key=True)
+    email = models.EmailField()
+    password = models.CharField(max_length=20)
+    #project = models.ManyToManyField(Project, blank=True)
+    
+    
+    def __str__(self):
+        return f"Profesor {self.id_profesor}"
+
+class Grupo(models.Model):
+    id_grupo = models.AutoField(primary_key=True)
+    profesor = models.ForeignKey(Tutor, on_delete=models.CASCADE)
+    numero_grupo = models.IntegerField()
+    
+    def __str__(self):
+        return f"Grupo {self.numero_grupo}"
+class Project(models.Model): #Asignatura
+    id_project = models.AutoField(primary_key=True)
+    title = models.CharField(max_length=100)
+    description = models.TextField()
+    grupo = models.ForeignKey(Grupo, on_delete=models.CASCADE)
+    #alumno = models.ForeignKey(Alumno, on_delete=models.CASCADE, null=True, blank=True)
+    #alumno = models.ManyToManyField(Alumno, blank=True)
+    #task = models.ForeignKey(Task, on_delete=models.CASCADE, null=True, blank=True)
+    #task = models.ManyToManyField(Task, blank=True)
+    
+    def __str__(self):
+        return self.title
+
 class Alumno(models.Model):
+    id_alumno = models.AutoField(primary_key=True)
     nombre = models.CharField(max_length=100)
-    pareja = models.CharField(max_length=100)
-    grupo = models.CharField(max_length=100)
+    pareja = models.IntegerField(null=True, blank=True)
+    grupo = models.ForeignKey(Grupo, on_delete=models.CASCADE, default=1)
     
     def __str__(self):
         str(self.nombre) + " " + str(self.grupo)
         
-class Task(models.Model):
+class Task(models.Model): #Tarea
+    id_task = models.AutoField(primary_key=True)
     title = models.CharField(max_length=100)
     description = models.TextField()
-    completed = models.BooleanField(default=False)
-    alumnos = models.ManyToManyField(Alumno, blank=True)
+    #completed = models.BooleanField(default=False)
+    #alumnos = models.ManyToManyField(Alumno, blank=True)
+    grupo = models.ForeignKey(Grupo, on_delete=models.CASCADE)
+    asignatura = models.ForeignKey(Project, on_delete=models.CASCADE)
     
     def __str__(self):
         return self.title
     
-    
-class Project(models.Model):
-    title = models.CharField(max_length=100)
-    description = models.TextField()
-    #alumno = models.ForeignKey(Alumno, on_delete=models.CASCADE, null=True, blank=True)
-    alumno = models.ManyToManyField(Alumno, blank=True)
-    #task = models.ForeignKey(Task, on_delete=models.CASCADE, null=True, blank=True)
-    task = models.ManyToManyField(Task, blank=True)
-    
+class Rubrica(models.Model):
+    id_rubrica = models.AutoField(primary_key=True)
+    tarea = models.OneToOneField(Task, on_delete=models.CASCADE)
+
     def __str__(self):
-        return self.title
+        return f"Rúbrica de {self.tarea.titulo}"
     
-class Tutor(models.Model):
-    email = models.EmailField()
-    password = models.CharField(max_length=20)
-    project = models.ManyToManyField(Project, blank=True)
-    
+
+class Criterios(models.Model):
+    id_criterio = models.AutoField(primary_key=True)
+    rubrica = models.ForeignKey(Rubrica, on_delete=models.CASCADE)
+    descripcion_criterio = models.TextField()
+
     def __str__(self):
-        return self.email
+        return f"Criterio {self.id_criterio} - {self.descripcion_criterio[:30]}"
     
+class NivelDeDesempeno(models.Model):
+    id_nivel_desempeno = models.AutoField(primary_key=True)
+    rubrica = models.ForeignKey(Rubrica, on_delete=models.CASCADE)
+    nivel = models.IntegerField()
+
+    def __str__(self):
+        return f"Nivel {self.nivel}"
+    
+class Descriptores(models.Model):
+    id_descriptores = models.AutoField(primary_key=True)
+    criterio = models.ForeignKey(Criterios, on_delete=models.CASCADE)
+    descripcion = models.TextField()
+
+    def __str__(self):
+        return self.descripcion[:30]
+    
+class Notas(models.Model):
+    id_notas = models.AutoField(primary_key=True)
+    nivel_desempeno = models.ForeignKey(NivelDeDesempeno, on_delete=models.CASCADE)
+    descriptor = models.ForeignKey(Descriptores, on_delete=models.CASCADE)
+    nota = models.IntegerField()
+
+    def __str__(self):
+        return f"Nota: {self.nota}"
+
+
+class Calificacion(models.Model):
+    id_calificacion = models.AutoField(primary_key=True)
+    descriptor = models.ForeignKey(Descriptores, on_delete=models.CASCADE)
+    calificacion = models.IntegerField()
+    feedback = models.TextField()
+    alumno = models.ForeignKey(Alumno, on_delete=models.CASCADE)
+
+    def __str__(self):
+        return f"Calificación: {self.calificacion} para {self.alumno.nombre}"
