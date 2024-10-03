@@ -55,7 +55,7 @@ def register(request):
     return render(request, 'registration/register.html')
 
 def project_detail(request, project_id):
-    project = get_object_or_404(Project, id=project_id)
+    project = get_object_or_404(Project, id_project=project_id)
     return render(request, 'registration/project_detail.html', {'project': project})
 
 def index(request):
