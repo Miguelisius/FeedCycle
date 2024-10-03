@@ -1,4 +1,5 @@
 from django.db import models
+from django.contrib.auth.models import User
 #Cada vez que cambio el models, hay que hacer migraciones
 
 class Tutor(models.Model):
@@ -6,7 +7,7 @@ class Tutor(models.Model):
     email = models.EmailField()
     password = models.CharField(max_length=20)
     project = models.ManyToManyField('Project', blank=True)
-    
+    user = models.OneToOneField(User, on_delete=models.CASCADE,null=True)
     
     def __str__(self):
         return f"Profesor {self.id_profesor}"
@@ -15,6 +16,7 @@ class Grupo(models.Model):
     id_grupo = models.AutoField(primary_key=True)
     profesor = models.ForeignKey(Tutor, on_delete=models.CASCADE)
     numero_grupo = models.IntegerField()
+    
     
     def __str__(self):
         return f"Grupo {self.numero_grupo}"

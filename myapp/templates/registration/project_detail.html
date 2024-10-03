@@ -8,6 +8,20 @@
 <body>
     <h1>{{ project.title }}</h1>
     <p>{{ project.description }}</p>
+    <h2>Agregue el Grupo de la Asignatura: </h2>
+    <form method="POST">
+        {% csrf_token %}
+            <label for="numero_grupo">Número de Grupo:</label>
+            <input type="number" name="numero_grupo" id="numero_grupo" required><br><br> 
+            <button type="submit">Agregar Grupo</button>  
+    </form>
+    <ul>
+        {% for grupo in grupos %}
+        <li>Grupo {{ grupo.numero_grupo }}</li>
+        {% empty %}
+            <li>No hay grupos creados para esta asignatura.</li>
+        {% endfor %}
+    </ul>
     <a href="{% url 'home' %}">Volver al listado</a>
 </body>
 </html>

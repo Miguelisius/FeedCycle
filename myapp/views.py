@@ -1,9 +1,10 @@
 from django.http import HttpResponse, JsonResponse
-from .models import Project, Task, Tutor, Alumno
+from .models import Project, Task, Tutor, Alumno, Grupo
 from django.shortcuts import get_object_or_404, render, redirect
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import authenticate, login
 from django.contrib import messages
+from django.contrib.auth.models import User
 
 # Create your views here.
 
@@ -48,15 +49,25 @@ def register(request):
         if Tutor.objects.filter(email=email).exists():
             messages.error(request, 'El email ya está registrado')
             return redirect('registration/register.html')
-        
-        tutor = Tutor(email=email, password=password)
+        user = User.objects.create_user(username=email, password=password)
+        tutor = Tutor(user=user,email=email, password=password)
         tutor.save()
         return redirect('login')
     return render(request, 'registration/register.html')
 
 def project_detail(request, project_id):
     project = get_object_or_404(Project, id_project=project_id)
-    return render(request, 'registration/project_detail.html', {'project': project})
+    if request.method == 'POST':
+        numero_grupo = request.POST.get('numero_grupo')
+        
+        new_group = Grupo(numero_grupo=numero_grupo, profesor=request.user.tutor)
+        new_group.save()
+        
+        project.grupo = new_group
+        project.save()
+        messages.success(request, 'Grupo creada exitosamente')
+    grupos = Grupo.objects.filter(profesor=request.user.tutor)
+    return render(request, 'registration/project_detail.html', {'project': project, 'grupos': grupos})
 
 def index(request):
     return render(request,'index.html')
