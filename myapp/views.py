@@ -19,7 +19,11 @@ def about(request):
 def home(request):
     #username = request.user.username
     #return HttpResponse("<h1>HOLA %s. Bienvenido a la página principal</h1>" %username)
-    tutor_mail, created = Tutor.objects.get_or_create(email=request.user.email)
+    try:
+        tutor_mail = Tutor.objects.get(user=request.user)
+    except Tutor.DoesNotExist:
+        messages.error(request, "No se encontró un tutor asociado a este usuario.")
+        return redirect('register')
     
     if request.method == 'POST':
         #creacipn de la asignatura (cosas que editar url y technology )
@@ -66,8 +70,9 @@ def project_detail(request, project_id):
         project.grupo = new_group
         project.save()
         messages.success(request, 'Grupo creada exitosamente')
-    grupos = Grupo.objects.filter(profesor=request.user.tutor)
-    return render(request, 'registration/project_detail.html', {'project': project, 'grupos': grupos})
+    #grupos = Grupo.objects.filter(profesor=request.user.tutor)
+    grupo_asignado = project.grupo
+    return render(request, 'registration/project_detail.html', {'project': project, 'grupos': grupo_asignado})
 
 def index(request):
     return render(request,'index.html')

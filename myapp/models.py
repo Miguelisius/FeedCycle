@@ -6,7 +6,7 @@ class Tutor(models.Model):
     id_tutor = models.AutoField(primary_key=True)
     email = models.EmailField()
     password = models.CharField(max_length=20)
-    project = models.ManyToManyField('Project', blank=True)
+    #project = models.ManyToManyField('Project', blank=True)
     user = models.OneToOneField(User, on_delete=models.CASCADE,null=True)
     
     def __str__(self):
@@ -24,11 +24,9 @@ class Project(models.Model): #Asignatura
     id_project = models.AutoField(primary_key=True)
     title = models.CharField(max_length=100)
     description = models.TextField()
-    grupo = models.ForeignKey(Grupo, on_delete=models.CASCADE, null=True, blank=True)
-    #alumno = models.ForeignKey(Alumno, on_delete=models.CASCADE, null=True, blank=True)
-    #alumno = models.ManyToManyField(Alumno, blank=True)
-    #task = models.ForeignKey(Task, on_delete=models.CASCADE, null=True, blank=True)
-    #task = models.ManyToManyField(Task, blank=True)
+    profesor = models.ForeignKey(Tutor, on_delete=models.CASCADE)
+    grupo = models.ForeignKey(Grupo, on_delete=models.CASCADE)
+    
     
     def __str__(self):
         return self.title
