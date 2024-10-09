@@ -10,7 +10,7 @@ class Tutor(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE,null=True)
     
     def __str__(self):
-        return f"Profesor {self.id_profesor}"
+        return f"Profesor {self.id_tutor}"
 
 class Grupo(models.Model):
     id_grupo = models.AutoField(primary_key=True)
