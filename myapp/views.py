@@ -29,16 +29,27 @@ def home(request):
         #creacipn de la asignatura (cosas que editar url y technology )
         project_name = request.POST.get('project_name')
         description = request.POST.get('description')
+        grupo_id = request.POST.get('grupo_id') #new
         
-        new_project = Project(title = project_name,description=description)
+        try:
+            grupo = Grupo.objects.get(id_grupo=grupo_id, profesor=tutor_mail)
+        except Grupo.DoesNotExist:
+            messages.error(request, "No se encontró un grupo asociado a este tutor.")
+            return redirect('home')
+        
+        new_project = Project(title=project_name, description=description, profesor=tutor_mail, grupo=grupo)
         new_project.save()
         
         tutor_mail.project.add(new_project)
         tutor_mail.save()
         messages.success(request, 'Proyecto creado exitosamente')
         
-    projects = Project.objects.all()
-    return render(request, 'registration/home.html', {'projects': projects})
+    #projects = tutor_mail.objects.all()
+    projects = tutor_mail.project_set.all()
+    
+    # Obtén todos los grupos del tutor para el formulario
+    grupos = Grupo.objects.filter(profesor=tutor_mail)
+    return render(request, 'registration/home.html', {'projects': projects, 'grupos': grupos})
         
 def register(request):
     if request.method == 'POST':
