@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!--<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -50,4 +50,73 @@
         {% endfor %}
     </ul>
 </body>
+</html>-->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Home</title>
+</head>
+<body>
+    <h1>Bienvenido, {{ request.user.username }}</h1>
+
+    <h2>Agregar nueva asignatura (Proyecto)</h2>
+
+    <form method="POST">
+        {% csrf_token %}
+        <label for="project_name">Nombre del Proyecto:</label>
+        <input type="text" name="project_name" id="project_name" required><br><br>
+
+        <label for="description">Descripción:</label>
+        <textarea name="description" id="description" required></textarea><br><br>
+
+        <button type="submit" name="create_project">Agregar Proyecto</button>
+    </form>
+
+    <h2>Agregar Grupo a un Proyecto</h2>
+
+    <form method="POST">
+        {% csrf_token %}
+        <label for="project_id">Selecciona un Proyecto:</label>
+        <select name="project_id" id="project_id" required>
+            {% for project in projects %}
+                <option value="{{ project.id_project }}">{{ project.title }}</option>
+            {% endfor %}
+        </select><br><br>
+
+        <label for="numero_grupo">Número del Grupo:</label>
+        <input type="number" name="numero_grupo" id="numero_grupo" required><br><br>
+
+        <button type="submit" name="create_group">Agregar Grupo</button>
+    </form>
+
+
+    {% if messages %}
+        <ul>
+            {% for message in messages %}
+                <li>{{ message }}</li>
+            {% endfor %}
+        </ul>
+    {% endif %}
+
+    <h2>Asignaturas Guardadas</h2>
+    <ul>
+        {% for project in projects %}
+        <li>
+            <strong>Proyecto: </strong>{{ project.title }}<br>
+            <ul>
+                {% for grupo in project.grupo_set.all %}
+                <li>Grupo {{ grupo.numero_grupo }}</li>
+                {% empty %}
+                <li>No hay grupos asociados a este proyecto.</li>
+                {% endfor %}
+            </ul>
+        </li>
+        {% empty %}
+            <li>No tienes proyectos aún.</li>
+        {% endfor %}
+    </ul>
+</body>
 </html>
+

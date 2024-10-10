@@ -12,25 +12,26 @@ class Tutor(models.Model):
     def __str__(self):
         return f"Profesor {self.id_tutor}"
 
-class Grupo(models.Model):
-    id_grupo = models.AutoField(primary_key=True)
-    profesor = models.ForeignKey(Tutor, on_delete=models.CASCADE)
-    numero_grupo = models.IntegerField()
-    
-    
-    def __str__(self):
-        return f"Grupo {self.numero_grupo}"
+
 class Project(models.Model): #Asignatura
     id_project = models.AutoField(primary_key=True)
     title = models.CharField(max_length=100)
     description = models.TextField()
     profesor = models.ForeignKey(Tutor, on_delete=models.CASCADE)
-    grupo = models.ForeignKey(Grupo, on_delete=models.CASCADE)
+    #grupo = models.ForeignKey(Grupo, on_delete=models.SET_NULL, null=True, blank=True)
     
     
     def __str__(self):
         return self.title
 
+class Grupo(models.Model):
+    id_grupo = models.AutoField(primary_key=True)
+    profesor = models.ForeignKey(Tutor, on_delete=models.CASCADE)
+    numero_grupo = models.IntegerField()
+    project = models.ForeignKey(Project, on_delete=models.CASCADE)
+    
+    def __str__(self):
+        return f"Grupo {self.numero_grupo}"
 class Alumno(models.Model):
     id_alumno = models.AutoField(primary_key=True)
     nombre = models.CharField(max_length=100)

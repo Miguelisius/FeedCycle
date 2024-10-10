@@ -17,8 +17,6 @@ def about(request):
 
 @login_required
 def home(request):
-    #username = request.user.username
-    #return HttpResponse("<h1>HOLA %s. Bienvenido a la página principal</h1>" %username)
     try:
         tutor_mail = Tutor.objects.get(user=request.user)
     except Tutor.DoesNotExist:
@@ -26,31 +24,33 @@ def home(request):
         return redirect('register')
     
     if request.method == 'POST':
-        #creacipn de la asignatura (cosas que editar url y technology )
-        project_name = request.POST.get('project_name')
-        description = request.POST.get('description')
-        grupo_id = request.POST.get('grupo_id') #new
-        
-        try:
-            grupo = Grupo.objects.get(id_grupo=grupo_id, profesor=tutor_mail)
-        except Grupo.DoesNotExist:
-            messages.error(request, "No se encontró un grupo asociado a este tutor.")
-            return redirect('home')
-        
-        new_project = Project(title=project_name, description=description, profesor=tutor_mail, grupo=grupo)
-        new_project.save()
-        
-        tutor_mail.project.add(new_project)
-        tutor_mail.save()
-        messages.success(request, 'Proyecto creado exitosamente')
-        
-    #projects = tutor_mail.objects.all()
-    projects = tutor_mail.project_set.all()
+        if 'create_project' in request.POST:
+            project_name = request.POST.get('project_name')
+            description = request.POST.get('description')
+
+            new_project = Project(title=project_name, description=description, profesor=tutor_mail)
+            new_project.save()
+            messages.success(request, 'Proyecto creado exitosamente')
+
+        elif 'create_group' in request.POST:
+            project_id = request.POST.get('project_id')
+            numero_grupo = request.POST.get('numero_grupo')
+
+            if not project_id or not numero_grupo:
+                messages.error(request, 'Debe seleccionar un proyecto y proporcionar un número de grupo.')
+                return redirect('home')
+            project = get_object_or_404(Project, id_project=project_id, profesor=tutor_mail)
+            new_group = Grupo(numero_grupo=numero_grupo, profesor=tutor_mail, project=project)
+            new_group.save()
+
+            messages.success(request, f'Grupo {numero_grupo} creado y asignado al proyecto {project.title}')
     
-    # Obtén todos los grupos del tutor para el formulario
+    projects = Project.objects.filter(profesor=tutor_mail)
     grupos = Grupo.objects.filter(profesor=tutor_mail)
     return render(request, 'registration/home.html', {'projects': projects, 'grupos': grupos})
-        
+
+
+
 def register(request):
     if request.method == 'POST':
         email = request.POST.get('email')
