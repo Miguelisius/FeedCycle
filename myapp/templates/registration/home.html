@@ -54,7 +54,9 @@
             <strong>Asignatura: </strong>{{ project.title }}<br>
             <ul>
                 {% for grupo in project.grupo_set.all %}
-                <li>Grupo {{ grupo.numero_grupo }}</li>
+                <li>
+                    <a href = "{% url 'project_detail' grupo.id_grupo %}">Grupo {{ grupo.numero_grupo }}</a>
+                </li>
                 {% empty %}
                 <li>No hay grupos asociados a esta asignatura.</li>
                 {% endfor %}
@@ -63,6 +65,7 @@
         {% empty %}
             <li>No tienes asignaturas creadas aún.</li>
         {% endfor %}
+        
     </ul>
 </body>
 </html>
