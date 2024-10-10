@@ -51,7 +51,7 @@
     <ul>
         {% for project in projects %}
         <li>
-            <strong>Proyecto: </strong>{{ project.title }}<br>
+            <strong>Asignatura: </strong>{{ project.title }}<br>
             <ul>
                 {% for grupo in project.grupo_set.all %}
                 <li>Grupo {{ grupo.numero_grupo }}</li>
