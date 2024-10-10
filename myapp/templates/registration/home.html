@@ -12,20 +12,20 @@
 
     <form method="POST">
         {% csrf_token %}
-        <label for="project_name">Nombre del Proyecto:</label>
+        <label for="project_name">Nombre de la Asignatura:</label>
         <input type="text" name="project_name" id="project_name" required><br><br>
 
         <label for="description">Descripción:</label>
         <textarea name="description" id="description" required></textarea><br><br>
 
-        <button type="submit" name="create_project">Agregar Proyecto</button>
+        <button type="submit" name="create_project">Agregar Asignatura</button>
     </form>
 
     <h2>Agregar Grupo a una Asignatura</h2>
 
     <form method="POST">
         {% csrf_token %}
-        <label for="project_id">Selecciona un Proyecto:</label>
+        <label for="project_id">Selecciona una Asignatura:</label>
         <select name="project_id" id="project_id" required>
             {% for project in projects %}
                 <option value="{{ project.id_project }}">{{ project.title }}</option>
@@ -56,12 +56,12 @@
                 {% for grupo in project.grupo_set.all %}
                 <li>Grupo {{ grupo.numero_grupo }}</li>
                 {% empty %}
-                <li>No hay grupos asociados a este proyecto.</li>
+                <li>No hay grupos asociados a esta asignatura.</li>
                 {% endfor %}
             </ul>
         </li>
         {% empty %}
-            <li>No tienes proyectos aún.</li>
+            <li>No tienes asignaturas creadas aún.</li>
         {% endfor %}
     </ul>
 </body>

@@ -30,20 +30,20 @@ def home(request):
 
             new_project = Project(title=project_name, description=description, profesor=tutor_mail)
             new_project.save()
-            messages.success(request, 'Proyecto creado exitosamente')
+            messages.success(request, 'Asignatura creada exitosamente')
 
         elif 'create_group' in request.POST:
             project_id = request.POST.get('project_id')
             numero_grupo = request.POST.get('numero_grupo')
 
             if not project_id or not numero_grupo:
-                messages.error(request, 'Debe seleccionar un proyecto y proporcionar un número de grupo.')
+                messages.error(request, 'Debe seleccionar una asignatura y proporcionar un número de grupo.')
                 return redirect('home')
             project = get_object_or_404(Project, id_project=project_id, profesor=tutor_mail)
             new_group = Grupo(numero_grupo=numero_grupo, profesor=tutor_mail, project=project)
             new_group.save()
 
-            messages.success(request, f'Grupo {numero_grupo} creado y asignado al proyecto {project.title}')
+            messages.success(request, f'Grupo {numero_grupo} creado y asignado a la asignatura {project.title}')
     
     projects = Project.objects.filter(profesor=tutor_mail)
     grupos = Grupo.objects.filter(profesor=tutor_mail)
