@@ -11,5 +11,19 @@
         <h1>{{ project.title }} - Grupo {{ grupo.numero_grupo }}</h1>
         <p>{{ project.description }}</p>
     </div>
+    <div>
+        <h2>Agregue los integrantes mediante un archivo .csv: </h2>
+        <label for="archivo>">Adjunte archivo .csv</label><div></div>
+        <input type="file" name="archivo" id="archivo" accept=".csv" required><br><br>   
+        
+        <h3>Agrega a los estudiantes manualmente</h3>
+        <form method="POST">
+            {% csrf_token %}
+            <label for="nombre">Nombre y apellido:</label>
+            <input type="text" name="nombre" id="nombre" required><br><br>
+            
+            <label for="pareja">Pareja:</label>
+            <input type="number" name="pareja" id="pareja" required><br><br>
+        </form>
 </body>
 </html>

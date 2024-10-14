@@ -71,21 +71,7 @@ def register(request):
     return render(request, 'registration/register.html')
 
 def project_detail(request, project_id):
-    """
-    project = get_object_or_404(Project, id_project=project_id)
-    if request.method == 'POST':
-        numero_grupo = request.POST.get('numero_grupo')
-        
-        new_group = Grupo(numero_grupo=numero_grupo, profesor=request.user.tutor)
-        new_group.save()
-        
-        project.grupo = new_group
-        project.save()
-        messages.success(request, 'Grupo creada exitosamente')
-    #grupos = Grupo.objects.filter(profesor=request.user.tutor)
-    grupo_asignado = project.grupo
-    return render(request, 'registration/project_detail.html', {'project': project, 'grupos': grupo_asignado})
-    """
+    
     project = get_object_or_404(Project, id_project=project_id)
     grupo_asignado = Grupo.objects.filter(project=project).first()
     return render(request, 'registration/project_detail.html', {'project': project,'grupo': grupo_asignado})
