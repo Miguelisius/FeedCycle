@@ -5,6 +5,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth import authenticate, login
 from django.contrib import messages
 from django.contrib.auth.models import User
+import csv
 
 # Create your views here.
 
@@ -70,11 +71,40 @@ def register(request):
         return redirect('login')
     return render(request, 'registration/register.html')
 
+@login_required
 def project_detail(request, project_id):
-    
+    import csv
+from django.http import HttpResponse
+
+@login_required
+def project_detail(request, project_id):
     project = get_object_or_404(Project, id_project=project_id)
     grupo_asignado = Grupo.objects.filter(project=project).first()
-    return render(request, 'registration/project_detail.html', {'project': project,'grupo': grupo_asignado})
+    
+    if request.method == 'POST':
+        if 'archivo' in request.FILES:
+            archivo_csv = request.FILES['archivo'].read().decode('utf-8').splitlines()
+            reader = csv.reader(archivo_csv)
+            for row in reader:
+                nombre_alumno, pareja = row[0], row[1]  # Asumiendo que el CSV tiene dos columnas
+                Alumno.objects.create(nombre=nombre_alumno, pareja=pareja, grupo=grupo_asignado)
+            messages.success(request, 'Alumnos agregados desde el archivo CSV exitosamente.')
+        
+        if 'create_alumno' in request.POST:
+            nombre_alumno = request.POST.get('nombre')
+            pareja = request.POST.get('pareja')
+            if nombre_alumno and pareja:
+                Alumno.objects.create(nombre=nombre_alumno, pareja=pareja, grupo=grupo_asignado)
+                messages.success(request, f'Alumno: {nombre_alumno} agregado exitosamente a la pareja: {pareja}.')
+    
+    alumnos = Alumno.objects.filter(grupo=grupo_asignado)
+    
+    return render(request, 'registration/project_detail.html', {
+        'project': project,
+        'grupo': grupo_asignado,
+        'alumnos': alumnos,
+    })
+
 
 def index(request):
     return render(request,'index.html')

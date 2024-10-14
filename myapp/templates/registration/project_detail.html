@@ -3,7 +3,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{{ project.title }} - Grupo {{ grupo.numero_grupo }}</title>
-    
 </head>
 
 <body>
@@ -11,11 +10,16 @@
         <h1>{{ project.title }} - Grupo {{ grupo.numero_grupo }}</h1>
         <p>{{ project.description }}</p>
     </div>
+
     <div>
-        <h2>Agregue los integrantes mediante un archivo .csv: </h2>
-        <label for="archivo>">Adjunte archivo .csv</label><div></div>
-        <input type="file" name="archivo" id="archivo" accept=".csv" required><br><br>   
-        
+        <h2>Agregue los integrantes mediante un archivo .csv:</h2>
+        <form method="POST" enctype="multipart/form-data">
+            {% csrf_token %}
+            <label for="archivo">Adjunte archivo .csv</label><br>
+            <input type="file" name="archivo" id="archivo" accept=".csv" required><br><br>
+            <button type="submit" name="upload_csv">Cargar Alumnos desde CSV</button>
+        </form>
+
         <h3>Agrega a los estudiantes manualmente</h3>
         <form method="POST">
             {% csrf_token %}
@@ -24,6 +28,34 @@
             
             <label for="pareja">Pareja:</label>
             <input type="number" name="pareja" id="pareja" required><br><br>
+
+            <button type="submit" name="create_alumno">Agregar Alumno</button>
         </form>
+
+        {% if messages %}
+        <ul>
+            {% for message in messages %}
+                <li>{{ message }}</li>
+            {% endfor %}
+        </ul>
+        {% endif %}
+        <h3>Lista de alumnos en el grupo {{ grupo.numero_grupo }}</h3>
+        <table border="1">
+            <thead>
+                <tr>
+                    <th>Nombre</th>
+                    <th>Pareja</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for alumno in alumnos %}
+                <tr>
+                    <td>{{ alumno.nombre }}</td>
+                    <td>{{ alumno.pareja }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
 </body>
 </html>
