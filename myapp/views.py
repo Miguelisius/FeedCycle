@@ -84,10 +84,18 @@ def project_detail(request, project_id):
     if request.method == 'POST':
         if 'archivo' in request.FILES:
             archivo_csv = request.FILES['archivo'].read().decode('utf-8').splitlines()
-            reader = csv.reader(archivo_csv)
+            reader = csv.reader(archivo_csv, delimiter=',')
+            next(reader)
             for row in reader:
-                nombre_alumno, pareja = row[0], row[1]  # Asumiendo que el CSV tiene dos columnas
-                Alumno.objects.create(nombre=nombre_alumno, pareja=pareja, grupo=grupo_asignado)
+                row = [cell.strip() for cell in row]
+                if len(row)>=4:
+                    nombre_alumno, apellido,correo= row[0], row[1], row[2]
+                    pareja = None
+                    if len(row) == 4:
+                        pareja_str = row[3].strip().replace(';', '')
+                        if pareja_str:
+                            pareja = int(pareja_str)
+                    Alumno.objects.create(nombre=nombre_alumno, apellido=apellido, email=correo ,pareja=pareja, grupo=grupo_asignado)
             messages.success(request, 'Alumnos agregados desde el archivo CSV exitosamente.')
         
         if 'create_alumno' in request.POST:
