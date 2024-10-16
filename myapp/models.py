@@ -35,6 +35,8 @@ class Grupo(models.Model):
 class Alumno(models.Model):
     id_alumno = models.AutoField(primary_key=True)
     nombre = models.CharField(max_length=100)
+    apellido = models.CharField(max_length=100)
+    email = models.EmailField()
     pareja = models.IntegerField(null=True, blank=True)
     grupo = models.ForeignKey(Grupo, on_delete=models.CASCADE, default=1)
     
