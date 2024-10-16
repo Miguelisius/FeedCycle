@@ -95,6 +95,8 @@ def project_detail(request, project_id):
                         pareja_str = row[3].strip().replace(';', '')
                         if pareja_str:
                             pareja = int(pareja_str)
+                        else:
+                            pareja = None
                     Alumno.objects.create(nombre=nombre_alumno, apellido=apellido, email=correo ,pareja=pareja, grupo=grupo_asignado)
             messages.success(request, 'Alumnos agregados desde el archivo CSV exitosamente.')
         
