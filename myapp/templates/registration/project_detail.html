@@ -23,9 +23,15 @@
         <h3>Agrega a los estudiantes manualmente</h3>
         <form method="POST">
             {% csrf_token %}
-            <label for="nombre">Nombre y apellido:</label>
+            <label for="nombre">Nombre:</label>
             <input type="text" name="nombre" id="nombre" required><br><br>
             
+            <label for="apellido">Apellido:</label>
+            <input type="text" name="apellido" id="apellido" required><br><br>
+
+            <label for="email">Email:</label>
+            <input type="email" name="email" id="email" required><br><br>
+
             <label for="pareja">Pareja:</label>
             <input type="number" name="pareja" id="pareja" required><br><br>
 

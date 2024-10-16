@@ -92,9 +92,11 @@ def project_detail(request, project_id):
         
         if 'create_alumno' in request.POST:
             nombre_alumno = request.POST.get('nombre')
+            apellido = request.POST.get('apellido')
+            correo = request.POST.get('email')
             pareja = request.POST.get('pareja')
             if nombre_alumno and pareja:
-                Alumno.objects.create(nombre=nombre_alumno, pareja=pareja, grupo=grupo_asignado)
+                Alumno.objects.create(nombre=nombre_alumno, apellido = apellido, email = correo , pareja=pareja, grupo=grupo_asignado)
                 messages.success(request, f'Alumno: {nombre_alumno} agregado exitosamente a la pareja: {pareja}.')
     
     alumnos = Alumno.objects.filter(grupo=grupo_asignado)
