@@ -5,6 +5,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth import authenticate, login
 from django.contrib import messages
 from django.contrib.auth.models import User
+from django.http import HttpResponse
 import csv
 
 # Create your views here.
@@ -71,10 +72,8 @@ def register(request):
         return redirect('login')
     return render(request, 'registration/register.html')
 
-@login_required
-def project_detail(request, project_id):
-    import csv
-from django.http import HttpResponse
+
+
 
 @login_required
 def project_detail(request, project_id):
@@ -108,13 +107,21 @@ def project_detail(request, project_id):
             if nombre_alumno and pareja:
                 Alumno.objects.create(nombre=nombre_alumno, apellido = apellido, email = correo , pareja=pareja, grupo=grupo_asignado)
                 messages.success(request, f'Alumno: {nombre_alumno} agregado exitosamente a la pareja: {pareja}.')
+                
+        if 'create_task' in request.POST:
+            task_name = request.POST.get('title')
+            task_description = request.POST.get('description')
+            
+            Task.objects.create(title=task_name, description=task_description, grupo=grupo_asignado, asignatura=project)
+            messages.success(request, 'Tarea creada exitosamente.')
     
     alumnos = Alumno.objects.filter(grupo=grupo_asignado)
-    
+    tareas = Task.objects.filter(grupo=grupo_asignado)
     return render(request, 'registration/project_detail.html', {
         'project': project,
         'grupo': grupo_asignado,
         'alumnos': alumnos,
+        'tareas': tareas,
     })
 
 

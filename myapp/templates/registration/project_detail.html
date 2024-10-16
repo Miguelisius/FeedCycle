@@ -67,5 +67,33 @@
             </tbody>
         </table>
     </div>
+    <div>
+        <h3>Crea una nueva tarea</h3>
+        <form method="POST">
+            {% csrf_token %}
+            <label for="title">Título:</label>
+            <input type="text" name="title" id="title" required><br><br>
+
+            <label for="description">Descripción:</label>
+            <textarea name="description" id="description" required></textarea><br><br>
+
+            <button type="submit" name="create_task">Crear Tarea</button>
+        </form>
+        {% if messages %}
+        <ul>
+            {% for message in messages %}
+                <li>{{ message }}</li>
+            {% endfor %}
+        </ul>
+        {% endif %}
+        <ul>
+            {% for task in tareas %}
+            <li>
+                <strong>{{ task.title }}</strong><br>
+                {% empty %}
+                <li>No hay tareas asociados a esta asignatura.</li>
+            {% endfor %}
+        </ul>
+    </div>
 </body>
 </html>
