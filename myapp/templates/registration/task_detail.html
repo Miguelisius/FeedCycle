@@ -20,10 +20,24 @@
         <label for="criterio">Criterio:</label>
         <input type="text" name="criterio" id="criterio" placeholder="Criterio" required>
         <button type="submit" name="create_criterio">Añadir Criterio</button>
-        
-        <h3>Establece los niveles de desempeño: </h3>
-        
     </form>
+    <ul>
+        {% for c in criterio %}
+            <li>{{ c.descripcion_criterio }}</li>
+        {% endfor %}
+    </ul>
+    <form method="POST">
+        {% csrf_token %}
+        <h3>Establece los niveles de desempeño: </h3>
+        <label for="nivel">Nivel de Desempeño:</label>
+        <input type="text" name="nivel" id="nivel" placeholder="Nivel" required>
+        <button type="submit" name="create_nivel">Añadir Nivel de Desempeño</button>
+    </form>
+    <ul>
+        {% for n in nivel %}
+            <li>{{ n.nivel }}</li>
+        {% endfor %}
+    </ul>
     
 </body>
 </html>

@@ -132,17 +132,22 @@ def taskrubric_detail(request, task_id):
 
     if request.method == 'POST':
         criterio = request.POST.get('criterio')
+        nivel = request.POST.get('nivel')
         if criterio:
-            # Crear el criterio y asociarlo a la rúbrica correspondiente
             Criterios.objects.create(rubrica=rubrica, descripcion_criterio=criterio)
             messages.success(request, 'Criterio agregado exitosamente.')
+        if nivel:
+            NivelDeDesempeno.objects.create(rubrica=rubrica, nivel=nivel)
+            messages.success(request, 'Nivel de desempeño agregado exitosamente.')
 
     # Obtener los criterios asociados a la rúbrica actual
-    criterio_new = Criterios.objects.filter(rubrica=rubrica)                    
+    criterio_new = Criterios.objects.filter(rubrica=rubrica)
+    nivel_new = NivelDeDesempeno.objects.filter(rubrica=rubrica)
     return render(request,'registration/task_detail.html', {
         'task': task,
         'rubricas': [rubrica],
         'criterio' : criterio_new,
+        'nivel' : nivel_new,
     })
     
 
