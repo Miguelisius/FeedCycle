@@ -17,49 +17,13 @@
     <form method="POST">
         {% csrf_token %}
         <h3>Establece los criterios: </h3>
-        <div id="contenedor-criterios">
-            <div class="input-group">
-                <label for="criterio">Criterio:</label>
-                <input type="text" name="criterios[]" id="criterio" placeholder="Criterio" required>
-                <button type="button" onclick="deleteinput(this)">Eliminar Criterio</button>
-                <button type="button" onclick="addcriterio()">Agregar Criterio</button>
-            </div>
-        </div>
+        <label for="criterio">Criterio:</label>
+        <input type="text" name="criterio" id="criterio" placeholder="Criterio" required>
+        <button type="submit" name="create_criterio">Añadir Criterio</button>
+        
         <h3>Establece los niveles de desempeño: </h3>
-        <div id="contenedor-desempeno">
-            <div class="input-group">
-                <label for="criterio">Nivel de Desempeño:</label>
-                <input type="text" name="desempenos[]" id="desempeno" placeholder="Nivel de Desempeño" required>
-                <button type="button" onclick="deleteinput(this)">Eliminar Desempeño</button>
-                <button type="button" onclick="adddesempeno()">Agregar Nivel de Desempeño</button>
-            </div>
-        </div>
+        
     </form>
-    <button type="submit" name="create_rubrica">Crear Rúbrica</button>
-    <script>
-        function addcriterio(){
-            var contenedor = document.getElementById('contenedor-criterios');
-            var criterio = document.createElement('div');
-            criterio.className = 'input-group';
-            newcriterio.innerHTML = `
-            <input type="text" name="criterios[]" placeholder="Descripción del criterio" required>
-            <button type="button" onclick="deletecriterio(this)">Eliminar Criterio</button>
-        `;
-        document.getElementById('criterios-container').appendChild(criterio);
-        }
-        function adddesempeno(){
-            var contenedor = document.getElementById('contenedor-desempeno');
-            var desempeno = document.createElement('div');
-            desempeno.className = 'input-group';
-            newdesempeno.innerHTML = `
-            <input type="text" name="desempenos[]" placeholder="Nivel de Desempeño" required>
-            <button type="button" onclick="deletecriterio(this)">Eliminar Criterio</button>
-            `;
-            contenedor.appendChild(desempeno);
-        }
-        function deleteinput(button){
-            button.parentElement.remove();
-        }
-    </script>
+    
 </body>
 </html>
