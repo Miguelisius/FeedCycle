@@ -1,5 +1,5 @@
 from django.http import HttpResponse, JsonResponse
-from .models import Project, Task, Tutor, Alumno, Grupo
+from .models import Project, Task, Tutor, Alumno, Grupo, Rubrica, Criterios, NivelDeDesempeno, Descriptores, Notas, Calificacion
 from django.shortcuts import get_object_or_404, render, redirect
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import authenticate, login
@@ -112,8 +112,9 @@ def project_detail(request, project_id):
             task_name = request.POST.get('title')
             task_description = request.POST.get('description')
             
-            Task.objects.create(title=task_name, description=task_description, grupo=grupo_asignado, asignatura=project)
+            new_task = Task.objects.create(title=task_name, description=task_description, grupo=grupo_asignado, asignatura=project)
             messages.success(request, 'Tarea creada exitosamente.')
+            return redirect('registration/task_detail.html', task_id=new_task.id_task)
     
     alumnos = Alumno.objects.filter(grupo=grupo_asignado)
     tareas = Task.objects.filter(grupo=grupo_asignado)
@@ -123,6 +124,16 @@ def project_detail(request, project_id):
         'alumnos': alumnos,
         'tareas': tareas,
     })
+    
+@login_required
+def taskrubric_detail(request, task_id):
+    task = get_object_or_404(Task, id_task=task_id)
+    rubricas = Rubrica.objects.filter(tarea=task) 
+    return render(request,'registration/task_detail.html', {
+        'task': task,
+        'rubricas': rubricas,
+    })
+    
 
 
 def index(request):

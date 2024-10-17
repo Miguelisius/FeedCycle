@@ -89,7 +89,7 @@
         <ul>
             {% for task in tareas %}
             <li>
-                <strong>{{ task.title }}</strong><br>
+                <a href= "{% url 'task_detail' task.id_task %}">{{ task.title }}</a><br>
                 {% empty %}
                 <li>No hay tareas asociados a esta asignatura.</li>
             {% endfor %}
