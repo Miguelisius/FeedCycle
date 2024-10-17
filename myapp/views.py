@@ -128,7 +128,26 @@ def project_detail(request, project_id):
 @login_required
 def taskrubric_detail(request, task_id):
     task = get_object_or_404(Task, id_task=task_id)
-    rubricas = Rubrica.objects.filter(tarea=task) 
+    rubricas = Rubrica.objects.filter(tarea=task)
+    if request.method == 'POST':
+        rubric = Rubrica.objects.create(tarea=task)
+        criterios = request.POST.getlist('criterios[]')
+        descriptores = request.POST.getlist('desempenos[]')
+        
+        
+        criterios_objs = []
+        for c in criterios:
+            if c:
+                criterio_obj = Criterios.objects.create(rubrica=rubric, descripcion_criterio=c)
+                criterios_objs.append(criterio_obj)
+        
+    
+        for i, d in enumerate(desempenos):
+            if d and i < len(criterios_objs):
+                Descriptores.objects.create(criterio=criterios_objs[i], nivel=d)
+        messages.success(request, 'Rúbrica creada exitosamente.')
+        #rubricas = Rubrica.objects.filter(tarea=task)
+                            
     return render(request,'registration/task_detail.html', {
         'task': task,
         'rubricas': rubricas,

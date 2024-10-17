@@ -31,7 +31,7 @@
                 <label for="criterio">Nivel de Desempeño:</label>
                 <input type="text" name="desempenos[]" id="desempeno" placeholder="Nivel de Desempeño" required>
                 <button type="button" onclick="deleteinput(this)">Eliminar Desempeño</button>
-                <button type="button" onclick="adddesempeño()">Agregar Nivel de Desempeño</button>
+                <button type="button" onclick="adddesempeno()">Agregar Nivel de Desempeño</button>
             </div>
         </div>
     </form>
@@ -40,21 +40,22 @@
         function addcriterio(){
             var contenedor = document.getElementById('contenedor-criterios');
             var criterio = document.createElement('div');
-            newcriterio = 'input-group';
+            criterio.className = 'input-group';
             newcriterio.innerHTML = `
             <input type="text" name="criterios[]" placeholder="Descripción del criterio" required>
             <button type="button" onclick="deletecriterio(this)">Eliminar Criterio</button>
         `;
-        document.getElementById('criterios-container').appendChild(criterioDiv);
+        document.getElementById('criterios-container').appendChild(criterio);
         }
         function adddesempeno(){
             var contenedor = document.getElementById('contenedor-desempeno');
             var desempeno = document.createElement('div');
-            newdesempeno = 'input-group';
+            desempeno.className = 'input-group';
             newdesempeno.innerHTML = `
             <input type="text" name="desempenos[]" placeholder="Nivel de Desempeño" required>
             <button type="button" onclick="deletecriterio(this)">Eliminar Criterio</button>
             `;
+            contenedor.appendChild(desempeno);
         }
         function deleteinput(button){
             button.parentElement.remove();
