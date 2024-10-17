@@ -4,8 +4,38 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{{ task.title }}</title>
+    <style>
+        .input-group {
+            margin-bottom: 10px;
+        }
+    </style>
 </head>
 <body>
     <h1>{{ task.title }}</h1>
+
+    <h2>Procede a crear la rúbrica para esta tarea: </h2>
+    <form method="POST">
+        {% csrf_token %}
+        <h3>Establece los criterios: </h3>
+        <div id="contenedor-criterios">
+            <div class="input-group">
+                <label for="criterio">Criterio:</label>
+                <input type="text" name="criterios[]" id="criterio" placeholder="Criterio" required>
+                <button type="button" onclick="deletecriterio(this)">Eliminar Criterio</button>
+                <button type="button" onclick="addcriterio()">Agregar Criterio</button>
+            </div>
+        </div>
+        <h3>Establece los niveles de desempeño: </h3>
+        <div id="contenedor-desempeno">
+            <div class="input-group">
+                <label for="criterio">Nivel de Desempeño:</label>
+                <input type="text" name="desempenos[]" id="desempeno" placeholder="Nivel de Desempeño" required>
+                <button type="button" onclick="deletedesemepno(this)">Eliminar Desempeño</button>
+                <button type="button" onclick="adddesempeño()">Agregar Nivel de Desempeño</button>
+            </div>
+        </div>
+    </form>
+    <button type="submit" name="create_rubrica">Crear Rúbrica</button>
+    
 </body>
 </html>
