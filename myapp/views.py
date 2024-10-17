@@ -139,7 +139,19 @@ def taskrubric_detail(request, task_id):
         if nivel:
             NivelDeDesempeno.objects.create(rubrica=rubrica, nivel=nivel)
             messages.success(request, 'Nivel de desempeño agregado exitosamente.')
-
+        if 'save_rubrica' in request.POST:
+            criterios = Criterios.objects.filter(rubrica=rubrica)
+            niveles = NivelDeDesempeno.objects.filter(rubrica=rubrica)
+            
+            for c in criterios:
+                for n in niveles:
+                    descriptor_key = f'descriptor_{c.id}_{n.id}'
+                    descriptor_value = request.POST.get(descriptor_key)
+                    if descriptor_value:
+                        Descriptores.objects.create(criterio=c, nivel=n, defaults={'descripcion': descriptor_value})
+            messages.success(request, 'Rúbrica guardada exitosamente.')
+            return redirect('taskrubric_display', task_id=task_id)
+                    
     # Obtener los criterios asociados a la rúbrica actual
     criterio_new = Criterios.objects.filter(rubrica=rubrica)
     nivel_new = NivelDeDesempeno.objects.filter(rubrica=rubrica)
@@ -148,6 +160,21 @@ def taskrubric_detail(request, task_id):
         'rubricas': [rubrica],
         'criterio' : criterio_new,
         'nivel' : nivel_new,
+    })
+    
+@login_required
+def taskrubric_display(request, task_id):
+    task = get_object_or_404(Task, id_task=task_id)
+    rubrica = get_object_or_404(Rubrica, tarea=task)
+
+    criterios = Criterios.objects.filter(rubrica=rubrica)
+    niveles = NivelDeDesempeno.objects.filter(rubrica=rubrica)
+
+    return render(request, 'registration/rubrica_final.html', {
+        'task': task,
+        'rubrica': rubrica,
+        'criterios': criterios,
+        'niveles': niveles,
     })
     
 

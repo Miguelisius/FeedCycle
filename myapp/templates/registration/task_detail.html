@@ -13,6 +13,9 @@
             border-collapse: collapse;
             padding: 10px;
         }
+        input[type="text"] {
+            width: 100px;
+        }
     </style>
 </head>
 <body>
@@ -53,12 +56,14 @@
                 <td>{{ c.descripcion_criterio }}</td>
                 
                 {% for n in nivel %}
-                    <td></td> 
+                    <td>
+                        <input type="text" name="descriptor_{{ c.id }}_{{ n.id }}" placeholder="Añadir descriptor">
+                    </td> 
                 {% endfor %}
             </tr>
             {% endfor %}
         </tbody>
     </table>
-    
+    <button type="submit" name="save_rubrica">Guardar Rúbrica</button>
 </body>
 </html>

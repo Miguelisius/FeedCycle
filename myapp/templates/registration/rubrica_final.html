@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rúbrica de {{ task.title }}</title>
+    <style>
+        table, th, td {
+            border: 1px solid black;
+            border-collapse: collapse;
+            padding: 10px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Rúbrica para la tarea: {{ task.title }}</h1>
+    
+    <table>
+        <thead>
+            <tr>
+                <th>Criterios</th>
+                {% for n in niveles %}
+                    <th>{{ n.nivel }}</th>
+                {% endfor %}
+            </tr>
+        </thead>
+        <tbody>
+            {% for c in criterios %}
+            <tr>
+                <td>{{ c.descripcion_criterio }}</td>
+                {% for n in niveles %}
+                    <td>
+                        {% with descriptor=c.descriptores_set.get(nivel=n) %}
+                            {{ descriptor.descripcion }}
+                        {% endwith %}
+                    </td>
+                {% endfor %}
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <a href="{% url 'taskrubric_detail' task.id_task %}">Volver a editar</a>
+</body>
+</html>
