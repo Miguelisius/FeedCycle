@@ -8,6 +8,11 @@
         .input-group {
             margin-bottom: 10px;
         }
+        table, th, td {
+            border: 1px solid black;
+            border-collapse: collapse;
+            padding: 10px;
+        }
     </style>
 </head>
 <body>
@@ -21,11 +26,7 @@
         <input type="text" name="criterio" id="criterio" placeholder="Criterio" required>
         <button type="submit" name="create_criterio">Añadir Criterio</button>
     </form>
-    <ul>
-        {% for c in criterio %}
-            <li>{{ c.descripcion_criterio }}</li>
-        {% endfor %}
-    </ul>
+    
     <form method="POST">
         {% csrf_token %}
         <h3>Establece los niveles de desempeño: </h3>
@@ -33,11 +34,31 @@
         <input type="text" name="nivel" id="nivel" placeholder="Nivel" required>
         <button type="submit" name="create_nivel">Añadir Nivel de Desempeño</button>
     </form>
-    <ul>
-        {% for n in nivel %}
-            <li>{{ n.nivel }}</li>
-        {% endfor %}
-    </ul>
+    
+    <h3>Rúbrica:</h3>
+    <table>
+        <thead>
+            <tr>
+                <th>Criterios</th>
+                
+                {% for n in nivel %}
+                    <th>{{ n.nivel }}</th>
+                {% endfor %}
+            </tr>
+        </thead>
+        <tbody>
+            
+            {% for c in criterio %}
+            <tr>
+                <td>{{ c.descripcion_criterio }}</td>
+                
+                {% for n in nivel %}
+                    <td></td> 
+                {% endfor %}
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
     
 </body>
 </html>
