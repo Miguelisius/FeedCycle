@@ -7,6 +7,7 @@ from django.contrib import messages
 from django.contrib.auth.models import User
 from django.http import HttpResponse
 import csv
+from django.urls import reverse
 
 # Create your views here.
 
@@ -136,23 +137,24 @@ def taskrubric_detail(request, task_id):
         if criterio:
             Criterios.objects.create(rubrica=rubrica, descripcion_criterio=criterio)
             messages.success(request, 'Criterio agregado exitosamente.')
-        if nivel:
+        elif nivel:
             NivelDeDesempeno.objects.create(rubrica=rubrica, nivel=nivel)
             messages.success(request, 'Nivel de desempeño agregado exitosamente.')
-        if 'save_rubrica' in request.POST:
+        elif 'save_rubrica' in request.POST:
             criterios = Criterios.objects.filter(rubrica=rubrica)
             niveles = NivelDeDesempeno.objects.filter(rubrica=rubrica)
             
             for c in criterios:
                 for n in niveles:
-                    descriptor_key = f'descriptor_{c.id}_{n.id}'
+                    descriptor_key = f'descriptor_{c.id_criterio}_{n.id_nivel_desempeno}'
                     descriptor_value = request.POST.get(descriptor_key)
                     if descriptor_value:
-                        Descriptores.objects.create(criterio=c, nivel=n, defaults={'descripcion': descriptor_value})
+                        Descriptores.objects.create(criterio=c, nivel_de_desempeno=n, descripcion= descriptor_value)
+            print("Leggo aqui\n")
             messages.success(request, 'Rúbrica guardada exitosamente.')
-            return redirect('taskrubric_display', task_id=task_id)
+            return redirect('rubric_detail', rubric_id= rubrica.id_rubrica)
                     
-    # Obtener los criterios asociados a la rúbrica actual
+
     criterio_new = Criterios.objects.filter(rubrica=rubrica)
     nivel_new = NivelDeDesempeno.objects.filter(rubrica=rubrica)
     return render(request,'registration/task_detail.html', {
@@ -163,20 +165,44 @@ def taskrubric_detail(request, task_id):
     })
     
 @login_required
-def taskrubric_display(request, task_id):
-    task = get_object_or_404(Task, id_task=task_id)
-    rubrica = get_object_or_404(Rubrica, tarea=task)
+def taskrubric_display(request, rubric_id):
+    #task = get_object_or_404(Task, id_task=task_id)
+    rubrica = get_object_or_404(Rubrica, id_rubrica=rubric_id)
+    task = rubrica.tarea
 
     criterios = Criterios.objects.filter(rubrica=rubrica)
     niveles = NivelDeDesempeno.objects.filter(rubrica=rubrica)
 
+    descriptores_list = []
+    for criterio in criterios:
+        crit_desc = []
+        for nivel in niveles:
+            descriptor = Descriptores.objects.filter(criterio=criterio, nivel_de_desempeno=nivel).first()
+            crit_desc.append(descriptor.descripcion if descriptor else '')
+        descriptores_list.append({
+            'criterio': criterio.descripcion_criterio,
+            'descriptores': crit_desc,
+        })
+    # Pass the prepared data to the template
     return render(request, 'registration/rubrica_final.html', {
         'task': task,
         'rubrica': rubrica,
         'criterios': criterios,
         'niveles': niveles,
+        'descriptores_list': descriptores_list,
     })
     
+@login_required
+def rubric_detail(request, rubric_id):
+    rubrica = get_object_or_404(Rubrica, id=rubric_id)
+    criterios = Criterios.objects.filter(rubrica=rubrica)
+    niveles = NivelDeDesempeno.objects.filter(rubrica=rubrica)
+
+    return render(request, 'registration/rubrica_final.html', {
+        'rubrica': rubrica,
+        'criterios': criterios,
+        'niveles': niveles,
+    })
 
 
 def index(request):

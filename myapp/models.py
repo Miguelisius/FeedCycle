@@ -83,6 +83,7 @@ class Descriptores(models.Model):
     id_descriptores = models.AutoField(primary_key=True)
     criterio = models.ForeignKey(Criterios, on_delete=models.CASCADE)
     descripcion = models.TextField()
+    nivel_de_desempeno = models.ForeignKey(NivelDeDesempeno, on_delete=models.CASCADE)
 
     def __str__(self):
         return self.descripcion[:30]

@@ -25,21 +25,18 @@
             </tr>
         </thead>
         <tbody>
-            {% for c in criterios %}
+            {% for c in descriptores_list %}
             <tr>
-                <td>{{ c.descripcion_criterio }}</td>
-                {% for n in niveles %}
-                    <td>
-                        {% with descriptor=c.descriptores_set.get(nivel=n) %}
-                            {{ descriptor.descripcion }}
-                        {% endwith %}
-                    </td>
+                <td>{{ c.criterio }}</td>
+                {% for d in c.descripcion_criterio %}
+                <td>
+                    {{d}}
+                </td>
                 {% endfor %}
             </tr>
             {% endfor %}
         </tbody>
     </table>
 
-    <a href="{% url 'taskrubric_detail' task.id_task %}">Volver a editar</a>
 </body>
 </html>

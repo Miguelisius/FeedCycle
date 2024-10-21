@@ -38,32 +38,35 @@
         <button type="submit" name="create_nivel">Añadir Nivel de Desempeño</button>
     </form>
     
-    <h3>Rúbrica:</h3>
-    <table>
-        <thead>
-            <tr>
-                <th>Criterios</th>
+    <form method="POST">
+        {% csrf_token %}
+        <h3>Rúbrica:</h3>
+        <table>
+            <thead>
+                <tr>
+                    <th>Criterios</th>
+                    
+                    {% for n in nivel %}
+                        <th>{{ n.nivel }}</th>
+                    {% endfor %}
+                </tr>
+            </thead>
+            <tbody>
                 
-                {% for n in nivel %}
-                    <th>{{ n.nivel }}</th>
+                {% for c in criterio %}
+                <tr>
+                    <td>{{ c.descripcion_criterio }}</td>
+                    
+                    {% for n in nivel %}
+                        <td>
+                            <input type="text" name="descriptor_{{ c.id_criterio }}_{{ n.id_nivel_desempeno }}" placeholder="Añadir descriptor">
+                        </td> 
+                    {% endfor %}
+                </tr>
                 {% endfor %}
-            </tr>
-        </thead>
-        <tbody>
-            
-            {% for c in criterio %}
-            <tr>
-                <td>{{ c.descripcion_criterio }}</td>
-                
-                {% for n in nivel %}
-                    <td>
-                        <input type="text" name="descriptor_{{ c.id }}_{{ n.id }}" placeholder="Añadir descriptor">
-                    </td> 
-                {% endfor %}
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
-    <button type="submit" name="save_rubrica">Guardar Rúbrica</button>
+            </tbody>
+        </table>
+        <button type="submit" name="save_rubrica">Guardar Rúbrica</button>
+    </form>
 </body>
 </html>
