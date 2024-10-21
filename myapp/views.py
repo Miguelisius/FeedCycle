@@ -150,7 +150,7 @@ def taskrubric_detail(request, task_id):
                     descriptor_value = request.POST.get(descriptor_key)
                     if descriptor_value:
                         Descriptores.objects.create(criterio=c, nivel_de_desempeno=n, descripcion= descriptor_value)
-            print("Leggo aqui\n")
+            #print("Leggo aqui\n")
             messages.success(request, 'Rúbrica guardada exitosamente.')
             return redirect('rubric_detail', rubric_id= rubrica.id_rubrica)
                     
@@ -162,6 +162,7 @@ def taskrubric_detail(request, task_id):
         'rubricas': [rubrica],
         'criterio' : criterio_new,
         'nivel' : nivel_new,
+        'rubrica': rubrica,
     })
     
 @login_required
