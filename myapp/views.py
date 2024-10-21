@@ -115,7 +115,7 @@ def project_detail(request, project_id):
             
             new_task = Task.objects.create(title=task_name, description=task_description, grupo=grupo_asignado, asignatura=project)
             messages.success(request, 'Tarea creada exitosamente.')
-            return redirect('registration/task_detail.html', task_id=new_task.id_task)
+            return redirect('task_detail.html', task_id=new_task.id_task)
     
     alumnos = Alumno.objects.filter(grupo=grupo_asignado)
     tareas = Task.objects.filter(grupo=grupo_asignado)
