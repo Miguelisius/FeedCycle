@@ -183,7 +183,7 @@ def taskrubric_display(request, rubric_id):
             'criterio': criterio.descripcion_criterio,
             'descriptores': crit_desc,
         })
-    # Pass the prepared data to the template
+
     return render(request, 'registration/rubrica_final.html', {
         'task': task,
         'rubrica': rubrica,
@@ -192,17 +192,6 @@ def taskrubric_display(request, rubric_id):
         'descriptores_list': descriptores_list,
     })
     
-@login_required
-def rubric_detail(request, rubric_id):
-    rubrica = get_object_or_404(Rubrica, id=rubric_id)
-    criterios = Criterios.objects.filter(rubrica=rubrica)
-    niveles = NivelDeDesempeno.objects.filter(rubrica=rubrica)
-
-    return render(request, 'registration/rubrica_final.html', {
-        'rubrica': rubrica,
-        'criterios': criterios,
-        'niveles': niveles,
-    })
 
 
 def index(request):
