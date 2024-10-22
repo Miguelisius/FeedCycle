@@ -71,35 +71,18 @@
     <a href="{% url 'rubric_detail' rubrica.id_rubrica %}">Ver rúbrica de la tarea</a>
 
     <h3>Rúbricas de la tarea:</h3>
-    <!--<div>
-        <h3>Rúbrica final de la tarea:</h3>
+    <div>
         <table>
             <thead>
                 <tr>
                     <th>Criterios</th>
-                    {% for n in niveles %}
-                        <th>{{ n.nivel }}</th>
-                    {% endfor %}
-                </tr>
-            </thead> 
-            
-            <tbody>
-                {% for desc in descriptores_list%}
-                {% endfor %}
-            </tbody>
-        </table>-->
-        <table>
-            <thead>
-                <tr>
-                    <th>Criterios</th>
-                    {% for n in niveles %}
-                        <th>Niveles de desemepño</th>
+                    {% for n in nivel_new %}
                         <th>{{ n.nivel }}</th>
                     {% endfor %}
                 </tr>
             </thead>
             <tbody>
-                {% for c in descriptores_list %}
+                {% for c in descriptores %}
                 <tr>
                     <td>{{ c.criterio }}</td>
                     {% for d in c.descriptores %}

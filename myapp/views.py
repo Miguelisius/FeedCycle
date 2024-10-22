@@ -154,16 +154,26 @@ def taskrubric_detail(request, task_id):
             messages.success(request, 'Rúbrica guardada exitosamente.')
             return redirect('rubric_detail', rubric_id= rubrica.id_rubrica)
                     
-    rubricas = Rubrica.objects.filter(tarea=task)
+    #rubricas = Rubrica.objects.filter(tarea=task)
     criterio_new = Criterios.objects.filter(rubrica=rubrica)
     nivel_new = NivelDeDesempeno.objects.filter(rubrica=rubrica)
+    
+    descriptores = []
+    for c in criterio_new:
+        c_dec = []
+        for n in nivel_new:
+            descr =  Descriptores.objects.filter(criterio=c, nivel_de_desempeno=n).first()
+            c_dec.append(descr.descripcion if descr else '')
+        descriptores.append({'criterio': c.descripcion_criterio, 'descriptores':c_dec})
+    
+    
     return render(request,'registration/task_detail.html', {
         'task': task,
         'rubricas': [rubrica],
         'criterio' : criterio_new,
         'nivel' : nivel_new,
         'rubrica': rubrica,
-        'rubricas': rubricas,
+        'descriptores': descriptores,
     })
     
 @login_required
