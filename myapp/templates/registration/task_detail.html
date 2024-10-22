@@ -69,5 +69,19 @@
         <button type="submit" name="save_rubrica">Guardar Rúbrica</button>
     </form>
     <a href="{% url 'rubric_detail' rubrica.id_rubrica %}">Ver rúbrica de la tarea</a>
+
+    <h3>Rúbricas de la tarea:</h3>
+    <ul>
+        {% if rubricas %}    
+            {% for r in rubricas %}
+                <li>
+                    <a href="{% url 'rubric_detail' rubrica.id_rubrica %}">{{}}</a>
+                </li>
+            {% endfor %}
+        {% else%}
+            <li>No hay rúbricas para esta tarea</li>
+        {% endif %}
+    </ul>
+
 </body>
 </html>

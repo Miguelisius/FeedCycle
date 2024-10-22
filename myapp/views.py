@@ -154,7 +154,7 @@ def taskrubric_detail(request, task_id):
             messages.success(request, 'Rúbrica guardada exitosamente.')
             return redirect('rubric_detail', rubric_id= rubrica.id_rubrica)
                     
-
+    rubricas = Rubrica.objects.filter(tarea=task)
     criterio_new = Criterios.objects.filter(rubrica=rubrica)
     nivel_new = NivelDeDesempeno.objects.filter(rubrica=rubrica)
     return render(request,'registration/task_detail.html', {
@@ -163,6 +163,7 @@ def taskrubric_detail(request, task_id):
         'criterio' : criterio_new,
         'nivel' : nivel_new,
         'rubrica': rubrica,
+        'rubricas': rubricas,
     })
     
 @login_required
