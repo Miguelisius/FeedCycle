@@ -157,7 +157,7 @@ def taskrubric_detail(request, task_id):
     #rubricas = Rubrica.objects.filter(tarea=task)
     criterio_new = Criterios.objects.filter(rubrica=rubrica)
     nivel_new = NivelDeDesempeno.objects.filter(rubrica=rubrica)
-    
+    print(nivel_new)
     descriptores = []
     for c in criterio_new:
         c_dec = []

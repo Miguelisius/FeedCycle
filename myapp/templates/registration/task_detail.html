@@ -76,9 +76,10 @@
             <thead>
                 <tr>
                     <th>Criterios</th>
-                    {% for n in nivel_new %}
-                        <th>{{ n.nivel }}</th>
+                    {% for ni in nivel %}
+                        <th>{{ni.nivel}}</th>
                     {% endfor %}
+                    
                 </tr>
             </thead>
             <tbody>
