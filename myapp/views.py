@@ -8,6 +8,7 @@ from django.contrib.auth.models import User
 from django.http import HttpResponse
 import csv
 from django.urls import reverse
+from io import StringIO
 
 # Create your views here.
 
@@ -83,21 +84,33 @@ def project_detail(request, project_id):
     
     if request.method == 'POST':
         if 'archivo' in request.FILES:
-            archivo_csv = request.FILES['archivo'].read().decode('utf-8').splitlines()
-            reader = csv.reader(archivo_csv, delimiter=',')
+            archivo_csv = request.FILES['archivo'].read().decode('utf-8').replace('\"', '')
+            archivo_io = StringIO(archivo_csv)
+            
+            reader = csv.reader(archivo_io, delimiter=',' , quotechar='"')
             next(reader)
+            print("Leggo aquiantes de row in reader\n")
             for row in reader:
                 row = [cell.strip() for cell in row]
-                if len(row)>=4:
-                    nombre_alumno, apellido,correo= row[0], row[1], row[2]
-                    pareja = None
-                    if len(row) == 4:
-                        pareja_str = row[3].strip().replace(';', '')
-                        if pareja_str:
-                            pareja = int(pareja_str)
-                        else:
-                            pareja = None
-                    Alumno.objects.create(nombre=nombre_alumno, apellido=apellido, email=correo ,pareja=pareja, grupo=grupo_asignado)
+                print(len(row))
+                #print(row[1])
+                #if len(row)<4:
+                print("Dentrop del if\n")
+                nombre_alumno = row[0].strip()
+                apellido = row[1].strip()
+                correo=  row[2].strip()
+                pareja = None
+                #print(nombre_alumno, apellido, correo)
+                if Alumno.objects.filter(email=correo).exists():
+                    messages.error(request, f'El correo {correo} ya está registrado.')
+                    continue
+                if len(row) == 4:
+                    pareja_str = row[3].strip()
+                    if pareja_str:
+                        pareja = int(pareja_str)
+                    else:
+                        pareja = None
+                Alumno.objects.create(nombre=nombre_alumno, apellido=apellido, email=correo ,pareja=pareja, grupo=grupo_asignado)
             messages.success(request, 'Alumnos agregados desde el archivo CSV exitosamente.')
         
         if 'create_alumno' in request.POST:
@@ -105,7 +118,7 @@ def project_detail(request, project_id):
             apellido = request.POST.get('apellido')
             correo = request.POST.get('email')
             pareja = request.POST.get('pareja')
-            if nombre_alumno and pareja:
+            if nombre_alumno and pareja and not Alumno.objects.filter(email=correo).exists():
                 Alumno.objects.create(nombre=nombre_alumno, apellido = apellido, email = correo , pareja=pareja, grupo=grupo_asignado)
                 messages.success(request, f'Alumno: {nombre_alumno} agregado exitosamente a la pareja: {pareja}.')
                 
