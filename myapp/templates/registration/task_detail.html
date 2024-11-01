@@ -87,11 +87,11 @@
                     <th>Criterios\Niveles de Desemepeño</th>
                     
                     {% for ni in nivel %}
-                        {%if n.nivel%}
-                            <th>{{ n.nivel }}</th>
+                        {%if ni.nivel%}
+                            <th>{{ ni.nivel }}</th>
                         {%endif%}
-                        {%if n.descripcion_nivel%}
-                            <th>{{ n.descripcion_nivel }}</th>
+                        {%if ni.descripcion_nivel%}
+                            <th>{{ ni.descripcion_nivel }}</th>
                         {%endif%}
                     {% endfor %}
                     

@@ -20,7 +20,12 @@
             <tr>
                 <th>Criterios\Niveles de Desemepeño</th>
                 {% for n in niveles %}
-                    <th>{{ n.nivel }}</th>
+                    {%if n.nivel%}
+                            <th>{{ n.nivel }}</th>
+                        {%endif%}
+                        {%if n.descripcion_nivel%}
+                            <th>{{ n.descripcion_nivel }}</th>
+                        {%endif%}
                 {% endfor %}
             </tr>
         </thead>
