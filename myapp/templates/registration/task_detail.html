@@ -21,96 +21,12 @@
 <body>
     <h1>{{ task.title }}</h1>
 
-    <h2>Procede a crear la rúbrica para esta tarea: </h2>
-    <form method="POST">
-        {% csrf_token %}
-        <h3>Establece los criterios: </h3>
-        <label for="criterio">Criterio:</label>
-        <input type="text" name="criterio" id="criterio" placeholder="Criterio" required>
-        <button type="submit" name="create_criterio">Añadir Criterio</button>
+    <form action="{% url 'taskrubric_detail' task.id_task%}" method="get">
+        <button type="submit">Crear Rúbrica</button>
     </form>
-    
-    <form method="POST">
-        {% csrf_token %}
-        <h3>Establece los niveles de desempeño: </h3>
-        <label for="nivel">Nivel de Desempeño (Numérico):</label>
-        <input type="text" name="nivel" id="nivel" placeholder="Nivel numércio">
-        
-        <label for="descripcion_nivel">Nivel de Desempeño (descriptor):</label>
-        <input type="text" name="descripcion_nivel" id="descripcion_nivel" placeholder="Nivel descriptivo">
 
-        <button type="submit" name="create_nivel">Añadir Nivel de Desempeño</button>
-    </form>
-    
-    <form method="POST">
-        {% csrf_token %}
-        <h3>Rúbrica:</h3>
-        <table>
-            <thead>
-                <tr>
-                    <th>Criterios\Niveles de Desemepeño</th>
-                    
-                    {% for n in nivel %}
-                        {%if n.nivel%}
-                            <th>{{ n.nivel }}</th>
-                        {%endif%}
-                        {%if n.descripcion_nivel%}
-                            <th>{{ n.descripcion_nivel }}</th>
-                        {%endif%}
-                    {% endfor %}
-                </tr>
-            </thead>
-            <tbody>
-                
-                {% for c in criterio %}
-                <tr>
-                    <td>{{ c.descripcion_criterio }}</td>
-                    
-                    {% for n in nivel %}
-                        <td>
-                            <textarea type="textarea" name="descriptor_{{ c.id_criterio }}_{{ n.id_nivel_desempeno }}" placeholder="Añadir descriptor"></textarea>
-                        </td> 
-                    {% endfor %}
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-        <button type="submit" name="save_rubrica">Guardar Rúbrica</button>
-    </form>
-    <a href="{% url 'rubric_detail' rubrica.id_rubrica %}">Ver rúbrica de la tarea</a>
+    <button type="button" onclick="alert('stillworking')">Corregir Tarea</button>
 
-    <h3>Rúbricas de la tarea:</h3>
-    <div>
-        <table>
-            <thead>
-                <tr>
-                    <th>Criterios\Niveles de Desemepeño</th>
-                    
-                    {% for ni in nivel %}
-                        {%if ni.nivel%}
-                            <th>{{ ni.nivel }}</th>
-                        {%endif%}
-                        {%if ni.descripcion_nivel%}
-                            <th>{{ ni.descripcion_nivel }}</th>
-                        {%endif%}
-                    {% endfor %}
-                    
-                </tr>
-            </thead>
-            <tbody>
-                {% for c in descriptores %}
-                <tr>
-                    <td>{{ c.criterio }}</td>
-                    {% for d in c.descriptores %}
-                    <td>
-                        {{d}}
-                    </td>
-                    {% endfor %}
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-    </div>
     
 
 </body>

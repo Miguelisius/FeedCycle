@@ -138,6 +138,15 @@ def project_detail(request, project_id):
         'alumnos': alumnos,
         'tareas': tareas,
     })
+
+@login_required
+def task_detail(request, task_id):
+    task = get_object_or_404(Task, id_task=task_id)
+    
+    return render(request, 'registration/task_detail.html', {
+        'task': task,
+    }
+    )
     
 @login_required
 def taskrubric_detail(request, task_id):
@@ -195,7 +204,7 @@ def taskrubric_detail(request, task_id):
         descriptores.append({'criterio': c.descripcion_criterio, 'descriptores':c_dec})
     
     
-    return render(request,'registration/task_detail.html', {
+    return render(request,'registration/taskrubric_detail.html', {
         'task': task,
         'rubricas': [rubrica],
         'criterio' : criterio_new,
