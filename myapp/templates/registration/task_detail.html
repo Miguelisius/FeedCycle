@@ -33,8 +33,12 @@
     <form method="POST">
         {% csrf_token %}
         <h3>Establece los niveles de desempeño: </h3>
-        <label for="nivel">Nivel de Desempeño:</label>
-        <input type="text" name="nivel" id="nivel" placeholder="Nivel" required>
+        <label for="nivel">Nivel de Desempeño (Numérico):</label>
+        <input type="text" name="nivel" id="nivel" placeholder="Nivel numércio">
+        
+        <label for="descripcion_nivel">Nivel de Desempeño (descriptor):</label>
+        <input type="text" name="descripcion_nivel" id="descripcion_nivel" placeholder="Nivel descriptivo">
+
         <button type="submit" name="create_nivel">Añadir Nivel de Desempeño</button>
     </form>
     
@@ -47,7 +51,12 @@
                     <th>Criterios\Niveles de Desemepeño</th>
                     
                     {% for n in nivel %}
-                        <th>{{ n.nivel }}</th>
+                        {%if n.nivel%}
+                            <th>{{ n.nivel }}</th>
+                        {%endif%}
+                        {%if n.descripcion_nivel%}
+                            <th>{{ n.descripcion_nivel }}</th>
+                        {%endif%}
                     {% endfor %}
                 </tr>
             </thead>
@@ -78,7 +87,12 @@
                     <th>Criterios\Niveles de Desemepeño</th>
                     
                     {% for ni in nivel %}
-                        <th>{{ni.nivel}}</th>
+                        {%if n.nivel%}
+                            <th>{{ n.nivel }}</th>
+                        {%endif%}
+                        {%if n.descripcion_nivel%}
+                            <th>{{ n.descripcion_nivel }}</th>
+                        {%endif%}
                     {% endfor %}
                     
                 </tr>

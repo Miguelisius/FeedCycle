@@ -74,11 +74,17 @@ class Criterios(models.Model):
 class NivelDeDesempeno(models.Model):
     id_nivel_desempeno = models.AutoField(primary_key=True)
     rubrica = models.ForeignKey(Rubrica, on_delete=models.CASCADE)
-    nivel = models.TextField()
-    descripcion_nivel = models.TextField()
+    nivel = models.TextField(blank=True, null=True)
+    descripcion_nivel = models.TextField(blank=True, null=True)
+
+    def clean(self):
+        if not self.nivel and not self.descripcion_nivel:
+            raise ValidationError('Debe ingresar un nivel o descripción de nivel')
 
     def __str__(self):
         return f"Nivel {self.nivel}"
+    
+        
     
 class Descriptores(models.Model):
     id_descriptores = models.AutoField(primary_key=True)

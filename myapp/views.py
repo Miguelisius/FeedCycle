@@ -143,16 +143,31 @@ def project_detail(request, project_id):
 def taskrubric_detail(request, task_id):
     task = get_object_or_404(Task, id_task=task_id)
     rubrica, created = Rubrica.objects.get_or_create(tarea=task)
+    
 
     if request.method == 'POST':
         criterio = request.POST.get('criterio')
-        nivel = request.POST.get('nivel')
+        nivel = request.POST.get('nivel','').strip()
+        descripcion_nivel = request.POST.get('descripcion_nivel',  '').strip()
         if criterio:
             Criterios.objects.create(rubrica=rubrica, descripcion_criterio=criterio)
             messages.success(request, 'Criterio agregado exitosamente.')
-        elif nivel:
-            NivelDeDesempeno.objects.create(rubrica=rubrica, nivel=nivel)
-            messages.success(request, 'Nivel de desempeño agregado exitosamente.')
+        elif nivel or descripcion_nivel:
+            #NivelDeDesempeno.objects.create(rubrica=rubrica, nivel=nivel)
+            #messages.success(request, 'Nivel de desempeño agregado exitosamente.')
+            print("Valor de descripcion_nivel:", descripcion_nivel)
+            try:
+                new_level = NivelDeDesempeno(
+                    rubrica=rubrica,
+                    nivel=nivel if nivel else None,
+                    descripcion_nivel=descripcion_nivel if descripcion_nivel else None,
+                )
+                new_level.full_clean()
+                new_level.save()
+                messages.success(request, 'Nivel de desempeño agregado exitosamente.')
+            except ValidationError as e:
+                messages.error(request, e)
+            nivel_new = NivelDeDesempeno.objects.filter(rubrica=rubrica)
         elif 'save_rubrica' in request.POST:
             criterios = Criterios.objects.filter(rubrica=rubrica)
             niveles = NivelDeDesempeno.objects.filter(rubrica=rubrica)
