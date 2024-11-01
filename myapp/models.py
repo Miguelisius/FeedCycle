@@ -74,7 +74,8 @@ class Criterios(models.Model):
 class NivelDeDesempeno(models.Model):
     id_nivel_desempeno = models.AutoField(primary_key=True)
     rubrica = models.ForeignKey(Rubrica, on_delete=models.CASCADE)
-    nivel = models.IntegerField()
+    nivel = models.TextField()
+    descripcion_nivel = models.TextField()
 
     def __str__(self):
         return f"Nivel {self.nivel}"
