@@ -17,6 +17,7 @@
     </head>
 
     <body>
+        <a href="javascript:history.back()" class="back-button">Atrás</a>
         <h1>Creación de la Rúbrica para la tarea: {{task.title}}</h1>
         <form method="POST">
             {% csrf_token %}
@@ -33,7 +34,7 @@
             <input type="text" name="nivel" id="nivel" placeholder="Nivel numércio">
             
             <label for="descripcion_nivel">Nivel de Desempeño (descriptor):</label>
-            <input type="text" name="descripcion_nivel" id="descripcion_nivel" placeholder="Nivel descriptivo">
+            <input type="textarea" name="descripcion_nivel" id="descripcion_nivel" placeholder="Nivel descriptivo">
     
             <button type="submit" name="create_nivel">Añadir Nivel de Desempeño</button>
         </form>
