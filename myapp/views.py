@@ -247,6 +247,9 @@ def correccion_rubrica(request, task_id):
     rubrica = Rubrica.objects.filter(tarea=task).first()
     criterios = Criterios.objects.filter(rubrica=rubrica)
     niveles = NivelDeDesempeno.objects.filter(rubrica=rubrica)
+    
+    alumnos = Alumno.objects.filter(grupo=task.grupo)
+    
     descriptores = []
     for c in criterios:
         c_dec = []
@@ -271,6 +274,7 @@ def correccion_rubrica(request, task_id):
         'criterios': criterios,
         'niveles': niveles,
         'descriptores': descriptores,
+        'alumnos': alumnos,
     })
 
 
