@@ -45,7 +45,9 @@
             <form action="{% url 'taskrubric_detail' task.id_task %}" method="get" class="d-inline">
                 <button type="submit" class="btn btn-lg btn-primary btn-custom">Crear Rúbrica</button>
             </form>
-            <button type="button" class="btn btn-lg btn-secondary btn-custom" onclick="alert('still working')">Corregir Tarea</button>
+            <form action="{% url 'correcion' task.id_task %}" method="get" class="d-inline">
+                <button type="submit" class="btn btn-lg btn-secondary btn-custom">Corregir Tarea</button>
+            </form>
         </div>
 
         

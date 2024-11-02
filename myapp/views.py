@@ -241,6 +241,37 @@ def taskrubric_display(request, rubric_id):
         'descriptores_list': descriptores_list,
     })
     
+@login_required
+def correccion_rubrica(request, task_id):
+    task = get_object_or_404(Task, id_task=task_id)
+    rubrica = Rubrica.objects.filter(tarea=task).first()
+    criterios = Criterios.objects.filter(rubrica=rubrica)
+    niveles = NivelDeDesempeno.objects.filter(rubrica=rubrica)
+    descriptores = []
+    for c in criterios:
+        c_dec = []
+        for n in niveles:
+            descr = Descriptores.objects.filter(criterio=c, nivel_de_desempeno=n).first()
+            c_dec.append(descr.descripcion if descr else '')
+        descriptores.append({'criterio': c.descripcion_criterio, 'descriptores': c_dec})
+    
+    if request.method == 'POST':
+        for c in criterios:
+            for n in niveles:
+                descriptor_key = f'descriptor_{c.id_criterio}_{n.id_nivel_desempeno}'
+                descriptor_value = request.POST.get(descriptor_key)
+                if descriptor_value:
+                    Descriptores.objects.create(criterio=c, nivel_de_desempeno=n, descripcion=descriptor_value)
+        messages.success(request, 'Corrección guardada exitosamente.')
+        return redirect('rubric_detail', rubric_id=rubrica.id_rubrica)
+    
+    return render(request, 'registration/correccion.html', {
+        'task': task,
+        'rubrica': rubrica,
+        'criterios': criterios,
+        'niveles': niveles,
+        'descriptores': descriptores,
+    })
 
 
 def index(request):
