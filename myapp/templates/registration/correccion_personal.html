@@ -13,6 +13,25 @@
         input[type="text"] {
             width: 100px;
         }
+        .table-container{
+            margin-right: 48px;
+            flex-direction: column; 
+            align-items: center;
+            margin-right: 20px;
+        }
+        .table-title{
+            margin-bottom:10px;
+            text-align: center;
+            display: flex;
+            align-items: flex-start;
+            
+        }
+        .tables-space{
+            display: flex;
+            gap: 20px;
+            align-items: flex-start;
+            
+        }
     </style>
 </head>
 <body>
@@ -28,8 +47,11 @@
         </ul>
     </div>
 
-    <div>
-        <table>
+    <div class="tables-space">
+        <div class="table-container">
+            <h3 class="table-title">Rubrica existente</h3>
+        <table class="table-container">
+            
             <thead>
                 <tr>
                     <th>Criterios\Niveles de Desemepeño</th>
@@ -58,6 +80,43 @@
                 {% endfor %}
             </tbody>
         </table>
+    </div>
+        
+        <form method="POST">
+            {% csrf_token %}
+            <table class="table-container">
+                <h3 class="table-title">Correcion</h3>
+                <thead>
+                    <tr>
+                        <th>Criterios\Niveles de Desemepeño</th>
+                        
+                        {% for ni in niveles %}
+                            {%if ni.nivel%}
+                                <th>{{ ni.nivel }}</th>
+                            {%endif%}
+                            {%if ni.descripcion_nivel%}
+                                <th>{{ ni.descripcion_nivel }}</th>
+                            {%endif%}
+                        {% endfor %}
+                        
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for c in descriptores %}
+                    <tr>
+                        <td>{{ c.criterio }}</td>
+                        {% for d in c.descriptores %}
+                        <td>
+                            
+                        </td>
+                        {% endfor %}
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </form>
+
+
     </div>
 
     
