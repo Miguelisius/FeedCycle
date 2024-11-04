@@ -66,7 +66,8 @@
                 <tr>
                     <td>{{ alumno.nombre }}</td>
                     <td>{{ alumno.apellido }}</td>
-                    <td>{{ alumno.email }}</td>
+                    <!--<td>{{ alumno.email }}</td>-->
+                    <td><a href="{% url 'correccion_personal' alumno.id_alumno %}" target="_blank"> {{ alumno.email }}</a></td>
                     <td>{{ alumno.pareja }}</td>
                 </tr>
                 {% endfor %}

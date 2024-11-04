@@ -276,6 +276,14 @@ def correccion_rubrica(request, task_id):
         'descriptores': descriptores,
         'alumnos': alumnos,
     })
+    
+@login_required
+def correccion_personal(request, id_alumno):
+    alumno = get_object_or_404(Alumno, id_alumno=id_alumno)
+    
+    return render(request, 'registration/correccion_personal.html', {
+        'alumno': alumno,
+    })
 
 
 def index(request):
