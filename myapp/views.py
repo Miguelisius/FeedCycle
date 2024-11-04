@@ -282,12 +282,27 @@ def correccion_personal(request, id_alumno):
     alumno = get_object_or_404(Alumno, id_alumno=id_alumno)
     pareja = Alumno.objects.filter(grupo = alumno.grupo,pareja=alumno.pareja).exclude()
     
+    task = Task.objects.filter(grupo=alumno.grupo).first()
+    rubrica = Rubrica.objects.filter(tarea=task).first()
+    niveles = NivelDeDesempeno.objects.filter(rubrica=rubrica)
+    criterios = Criterios.objects.filter(rubrica=rubrica)
     
-    
+    descriptores = []
+    for c in criterios:
+        c_dec = []
+        for n in niveles:
+            descr = Descriptores.objects.filter(criterio=c, nivel_de_desempeno=n).first()
+            c_dec.append(descr.descripcion if descr else '')
+        descriptores.append({'criterio': c.descripcion_criterio, 'descriptores': c_dec})
     
     return render(request, 'registration/correccion_personal.html', {
         'alumno': alumno,
         'pareja': pareja,
+        'task': task,
+        'rubrica': rubrica,
+        'niveles': niveles,
+        'descriptores': descriptores,
+        'criterios': criterios,
     })
 
 

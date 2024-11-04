@@ -1,6 +1,19 @@
 <html lang="es">
 <head>
     <title>Corrección de la pareja {{alumno.pareja}}</title>
+    <style>
+        .input-group {
+            margin-bottom: 10px;
+        }
+        table, th, td {
+            border: 1px solid black;
+            border-collapse: collapse;
+            padding: 10px;
+        }
+        input[type="text"] {
+            width: 100px;
+        }
+    </style>
 </head>
 <body>
     <h1>Corrección de la pareja {{alumno.pareja}}</h1>
@@ -15,7 +28,37 @@
         </ul>
     </div>
 
-    
+    <div>
+        <table>
+            <thead>
+                <tr>
+                    <th>Criterios\Niveles de Desemepeño</th>
+                    
+                    {% for ni in niveles %}
+                        {%if ni.nivel%}
+                            <th>{{ ni.nivel }}</th>
+                        {%endif%}
+                        {%if ni.descripcion_nivel%}
+                            <th>{{ ni.descripcion_nivel }}</th>
+                        {%endif%}
+                    {% endfor %}
+                    
+                </tr>
+            </thead>
+            <tbody>
+                {% for c in descriptores %}
+                <tr>
+                    <td>{{ c.criterio }}</td>
+                    {% for d in c.descriptores %}
+                    <td>
+                        {{d}}
+                    </td>
+                    {% endfor %}
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
 
     
 </body>
