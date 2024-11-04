@@ -280,9 +280,14 @@ def correccion_rubrica(request, task_id):
 @login_required
 def correccion_personal(request, id_alumno):
     alumno = get_object_or_404(Alumno, id_alumno=id_alumno)
+    pareja = Alumno.objects.filter(grupo = alumno.grupo,pareja=alumno.pareja).exclude()
+    
+    
+    
     
     return render(request, 'registration/correccion_personal.html', {
         'alumno': alumno,
+        'pareja': pareja,
     })
 
 

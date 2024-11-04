@@ -1,11 +1,22 @@
 <html lang="es">
 <head>
-    <title>Corrección de pareja {{alumno.pareja}}</title>
+    <title>Corrección de la pareja {{alumno.pareja}}</title>
 </head>
 <body>
-    <h1>Corrección Personal de {{ alumno.nombre }} {{ alumno.apellido }}</h1>
-    <p>Email: {{ alumno.email }}</p>
-    <p>Pareja: {{ alumno.pareja }}</p>
+    <h1>Corrección de la pareja {{alumno.pareja}}</h1>
 
+    <div>
+        <h2>Alumnos de la pareja {{alumno.pareja}}</h2>
+        <ul>
+            
+            {% for alumno in pareja%}
+                <li>{{ alumno.nombre }} {{ alumno.apellidos }} - {{alumno.email}}</li>
+            {% endfor %}
+        </ul>
+    </div>
+
+    
+
+    
 </body>
 </html>
