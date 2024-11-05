@@ -257,15 +257,6 @@ def correccion_rubrica(request, task_id):
             c_dec.append(descr.descripcion if descr else '')
         descriptores.append({'criterio': c.descripcion_criterio, 'descriptores': c_dec})
     
-    if request.method == 'POST':
-        for c in criterios:
-            for n in niveles:
-                descriptor_key = f'descriptor_{c.id_criterio}_{n.id_nivel_desempeno}'
-                descriptor_value = request.POST.get(descriptor_key)
-                if descriptor_value:
-                    Descriptores.objects.create(criterio=c, nivel_de_desempeno=n, descripcion=descriptor_value)
-        messages.success(request, 'Corrección guardada exitosamente.')
-        return redirect('rubric_detail', rubric_id=rubrica.id_rubrica)
     
     return render(request, 'registration/correccion.html', {
         'task': task,
@@ -274,6 +265,7 @@ def correccion_rubrica(request, task_id):
         'niveles': niveles,
         'descriptores': descriptores,
         'alumnos': alumnos,
+        
     })
     
 @login_required
@@ -295,19 +287,19 @@ def correccion_personal(request, id_alumno):
         descriptores.append({'criterio': c.descripcion_criterio, 'descriptores': c_dec})
         
     if request.method == 'POST':
-        if 'save_califications' in request.POST:
-            #calificatores = []
-            for c in criterios:
-                c_cal = []
-                for n in niveles:
-                    calificacion_key = f'calificacion_{c.id_criterio}_{n.id_nivel_desempeno}'
-                    calificacion_value = request.POST.get(calificacion_key)
-                    if calificacion_value:
-                        calificacion = Calificacion.objects.create(criterio=c, nivel_de_desempeno=n, nota=calificacion_value, alumno=alumno)
-                        c_cal.append(calificacion)
-            messages.success(request, 'Calificado correctamente.')
-            return redirect('correccion_personal', id_alumno=alumno.id_alumno)
-                
+        if 'fin_corregir' in request.POST:
+            
+            crit = Criterios.objects.filter(rubrica=rubrica)
+            niv = NivelDeDesempeno.objects.filter(rubrica=rubrica)
+            
+            for c in crit:
+                for n in niv:
+                    descriptor_nota = f'descriptor_{c.id_criterio}_{n.id_nivel_desempeno}'
+                    nota_descriptiva = request.POST.get(descriptor_nota)
+                    if nota_descriptiva:
+                        Notas.objects.create(nivel_desempeno=n, descriptor=Descriptores.objects.get(criterio=c, nivel_de_desempeno=n), calificacion_descriptiva=nota_descriptiva)
+            messages.success(request, 'Corregido exitosamente.')
+            return redirect('correccion_personal', id_alumno=id_alumno)
     return render(request, 'registration/correccion_personal.html', {
         'alumno': alumno,
         'pareja': pareja,
@@ -316,7 +308,7 @@ def correccion_personal(request, id_alumno):
         'niveles': niveles,
         'descriptores': descriptores,
         'criterios': criterios,
-        'calificaciones': Calificacion.objects.filter(alumno=alumno),
+        
     })
 
 

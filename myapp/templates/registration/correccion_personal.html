@@ -105,15 +105,16 @@
                     {% for c in descriptores %}
                     <tr>
                         <td>{{ c.criterio }}</td>
-                        {% for d in c.descriptores %}
+                        {% for n in niveles %}
                         <td>
-                            <textarea>Descripcion: </textarea>
+                            <textarea name="descriptor_descriptor_{c.id_criterio}_{n.id_nivel_desempeno}}}" placeholder="Corrige"></textarea>
                         </td>
                         {% endfor %}
                     </tr>
                     {% endfor %}
                 </tbody>
             </table>
+            <button type="submit" name="fin_corregir">Guardar corrección</button>
         </form>
 
 
