@@ -100,6 +100,7 @@ class Notas(models.Model):
     nivel_desempeno = models.ForeignKey(NivelDeDesempeno, on_delete=models.CASCADE)
     descriptor = models.ForeignKey(Descriptores, on_delete=models.CASCADE)
     nota = models.IntegerField()
+    calificacion_descriptivo = models.TextField(blank=True, null=True)
 
     def __str__(self):
         return f"Nota: {self.nota}"

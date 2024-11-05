@@ -294,7 +294,21 @@ def correccion_personal(request, id_alumno):
             descr = Descriptores.objects.filter(criterio=c, nivel_de_desempeno=n).first()
             c_dec.append(descr.descripcion if descr else '')
         descriptores.append({'criterio': c.descripcion_criterio, 'descriptores': c_dec})
-    
+        
+    if request.method == 'POST':
+        if 'save_califications' in request.POST:
+            #calificatores = []
+            for c in criterios:
+                c_cal = []
+                for n in niveles:
+                    calificacion_key = f'calificacion_{c.id_criterio}_{n.id_nivel_desempeno}'
+                    calificacion_value = request.POST.get(calificacion_key)
+                    if calificacion_value:
+                        calificacion = Calificacion.objects.create(criterio=c, nivel_de_desempeno=n, nota=calificacion_value, alumno=alumno)
+                        c_cal.append(calificacion)
+            messages.success(request, 'Calificado correctamente.')
+            return redirect('correccion_personal', id_alumno=alumno.id_alumno)
+                
     return render(request, 'registration/correccion_personal.html', {
         'alumno': alumno,
         'pareja': pareja,
@@ -303,6 +317,7 @@ def correccion_personal(request, id_alumno):
         'niveles': niveles,
         'descriptores': descriptores,
         'criterios': criterios,
+        'calificaciones': Calificacion.objects.filter(alumno=alumno),
     })
 
 
