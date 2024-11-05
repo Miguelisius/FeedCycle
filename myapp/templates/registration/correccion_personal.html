@@ -117,6 +117,30 @@
             <button type="submit" name="fin_corregir">Guardar corrección</button>
         </form>
 
+        <div>
+            <div>
+                
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Criterio</th>
+                            {% for nivel in niveles %}
+                                <th>{{ nivel.descripcion_nivel }}</th>
+                            {% endfor %}
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for criterio in calificaciones %}
+                            <tr>
+                                <td>{{ criterio.criterio }}</td>
+                                {% for calificacion in criterio.calificaciones %}
+                                    <td>{{ calificacion }}</td>
+                                {% endfor %}
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+        </div>
 
     </div>
 

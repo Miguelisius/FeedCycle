@@ -272,7 +272,7 @@ def correccion_rubrica(request, task_id):
 def correccion_personal(request, id_alumno):
     alumno = get_object_or_404(Alumno, id_alumno=id_alumno)
     pareja = Alumno.objects.filter(grupo = alumno.grupo,pareja=alumno.pareja).exclude()
-    
+    calif = []
     task = Task.objects.filter(grupo=alumno.grupo).first()
     rubrica = Rubrica.objects.filter(tarea=task).first()
     niveles = NivelDeDesempeno.objects.filter(rubrica=rubrica)
@@ -285,7 +285,7 @@ def correccion_personal(request, id_alumno):
             descr = Descriptores.objects.filter(criterio=c, nivel_de_desempeno=n).first()
             c_dec.append(descr.descripcion if descr else '')
         descriptores.append({'criterio': c.descripcion_criterio, 'descriptores': c_dec})
-        
+    
     if request.method == 'POST':
         if 'fin_corregir' in request.POST:
             
@@ -311,19 +311,31 @@ def correccion_personal(request, id_alumno):
                             messages.error(request, f"Error al guardar la nota: {str(e)}")
                             print(f"Error: {str(e)}")
             messages.success(request, 'Corregido exitosamente.')
-            return redirect('correccion_personal', id_alumno=id_alumno)
+            #return redirect('correccion_personal', id_alumno=id_alumno)
         
-    """
-    descriptores = []
+            for c in criterios:
+                calif_desc = []
+                for n in niveles:
+                    nota_descr = Notas.objects.filter(nivel_desempeno=n, descriptor=Descriptores.objects.get(criterio=c, nivel_de_desempeno=n)).first()
+                    calif_desc.append(nota_descr.calificacion_descriptivo if nota_descr else '')
+                calif.append({'criterio': c.descripcion_criterio, 'calificaciones': calif_desc})
+            
+            return render(request, 'registration/correccion_personal.html', {
+                'alumno': alumno,
+                'pareja': pareja,
+                'task': task,
+                'rubrica': rubrica,
+                'niveles': niveles,
+                'descriptores': descriptores,
+                'criterios': criterios,
+                'calificaciones': calif,
+            })
     for c in criterios:
-        c_dec = []
-        for n in niveles:
-            descr = Descriptores.objects.filter(criterio=c, nivel_de_desempeno=n).first()
-            c_dec.append(descr.descripcion if descr else '')
-        descriptores.append({'criterio': c.descripcion_criterio, 'descriptores': c_dec})
-    
-    """
-    
+            calif_desc = []
+            for n in niveles:
+                nota_descr = Notas.objects.filter(nivel_desempeno=n, descriptor=Descriptores.objects.get(criterio=c, nivel_de_desempeno=n)).first()
+                calif_desc.append(nota_descr.calificacion_descriptivo if nota_descr else '')
+            calif.append({'criterio': c.descripcion_criterio, 'calificaciones': calif_desc})
     return render(request, 'registration/correccion_personal.html', {
         'alumno': alumno,
         'pareja': pareja,
@@ -332,7 +344,7 @@ def correccion_personal(request, id_alumno):
         'niveles': niveles,
         'descriptores': descriptores,
         'criterios': criterios,
-        
+        'calificaciones': calif,
     })
 
 
