@@ -107,7 +107,7 @@
                         <td>{{ c.criterio }}</td>
                         {% for n in niveles %}
                         <td>
-                            <textarea name="descriptor_descriptor_{c.id_criterio}_{n.id_nivel_desempeno}}}" placeholder="Corrige"></textarea>
+                            <textarea name="descriptor_descriptor_{{n.descripcion_nivel}}_{{n.id_nivel_desempeno}}" placeholder="Corrige"></textarea>
                         </td>
                         {% endfor %}
                     </tr>

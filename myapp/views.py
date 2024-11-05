@@ -294,12 +294,36 @@ def correccion_personal(request, id_alumno):
             
             for c in crit:
                 for n in niv:
-                    descriptor_nota = f'descriptor_{c.id_criterio}_{n.id_nivel_desempeno}'
+                    descriptor_nota = f'descriptor_descriptor_{n.descripcion_nivel}_{n.id_nivel_desempeno}'
+                    #print("Esto es descriptor_nota: "+descriptor_nota)
                     nota_descriptiva = request.POST.get(descriptor_nota)
+                    #print("ENTROOOOOOOOOOOOOOOOOOOOOOOOOO")
+                    #print(nota_descriptiva)
+                    #descr, created = Descriptores.objects.get_or_create(criterio=c, nivel_de_desempeno=n)
+                    #print(descr)
                     if nota_descriptiva:
-                        Notas.objects.create(nivel_desempeno=n, descriptor=Descriptores.objects.get(criterio=c, nivel_de_desempeno=n), calificacion_descriptiva=nota_descriptiva)
+                        print("ENTRO IFFFFFFFFFFFFFFFFFFFFF")
+                        #Notas.objects.create(nivel_desempeno=n, descriptor=Descriptores.objects.get(criterio=c, nivel_de_desempeno=n), calificacion_descriptiva=nota_descriptiva)
+                        descr, created = Descriptores.objects.get_or_create(criterio=c, nivel_de_desempeno=n)
+                        try:
+                            Notas.objects.create(nivel_desempeno=n, descriptor=descr, calificacion_descriptivo=nota_descriptiva)
+                        except Exception as e:
+                            messages.error(request, f"Error al guardar la nota: {str(e)}")
+                            print(f"Error: {str(e)}")
             messages.success(request, 'Corregido exitosamente.')
             return redirect('correccion_personal', id_alumno=id_alumno)
+        
+    """
+    descriptores = []
+    for c in criterios:
+        c_dec = []
+        for n in niveles:
+            descr = Descriptores.objects.filter(criterio=c, nivel_de_desempeno=n).first()
+            c_dec.append(descr.descripcion if descr else '')
+        descriptores.append({'criterio': c.descripcion_criterio, 'descriptores': c_dec})
+    
+    """
+    
     return render(request, 'registration/correccion_personal.html', {
         'alumno': alumno,
         'pareja': pareja,

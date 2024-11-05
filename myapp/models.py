@@ -99,7 +99,7 @@ class Notas(models.Model):
     id_notas = models.AutoField(primary_key=True)
     nivel_desempeno = models.ForeignKey(NivelDeDesempeno, on_delete=models.CASCADE)
     descriptor = models.ForeignKey(Descriptores, on_delete=models.CASCADE)
-    nota = models.IntegerField()
+    nota = models.IntegerField(null=True, blank=True)
     calificacion_descriptivo = models.TextField(blank=True, null=True)
 
     def __str__(self):
