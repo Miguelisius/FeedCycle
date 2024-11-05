@@ -212,7 +212,6 @@ def taskrubric_detail(request, task_id):
         'rubrica': rubrica,
         'descriptores': descriptores,
     })
-    
 @login_required
 def taskrubric_display(request, rubric_id):
     #task = get_object_or_404(Task, id_task=task_id)
