@@ -285,9 +285,10 @@ def correccion_personal(request, id_alumno):
             descr = Descriptores.objects.filter(criterio=c, nivel_de_desempeno=n).first()
             c_dec.append(descr.descripcion if descr else '')
         descriptores.append({'criterio': c.descripcion_criterio, 'descriptores': c_dec})
-    
+    correccion_guardada = False
+    correccion_pareja = Notas.objects.filter(descriptor__criterio__rubrica=rubrica, nivel_desempeno__rubrica=rubrica).exists()
     if request.method == 'POST':
-        if 'fin_corregir' in request.POST:
+        if 'fin_corregir' in request.POST and not correccion_pareja:
             
             crit = Criterios.objects.filter(rubrica=rubrica)
             niv = NivelDeDesempeno.objects.filter(rubrica=rubrica)
@@ -311,6 +312,8 @@ def correccion_personal(request, id_alumno):
                             messages.error(request, f"Error al guardar la nota: {str(e)}")
                             print(f"Error: {str(e)}")
             messages.success(request, 'Corregido exitosamente.')
+            correccion_guardada = True
+            correccion_pareja = True
             #return redirect('correccion_personal', id_alumno=id_alumno)
         
             for c in criterios:
@@ -329,6 +332,9 @@ def correccion_personal(request, id_alumno):
                 'descriptores': descriptores,
                 'criterios': criterios,
                 'calificaciones': calif,
+                'correccion_guardada': correccion_guardada,
+                'correccion_pareja': correccion_pareja,
+                'task_id': task.id_task,
             })
     for c in criterios:
             calif_desc = []

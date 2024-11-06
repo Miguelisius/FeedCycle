@@ -101,7 +101,7 @@ class Notas(models.Model):
     descriptor = models.ForeignKey(Descriptores, on_delete=models.CASCADE)
     nota = models.IntegerField(null=True, blank=True)
     calificacion_descriptivo = models.TextField(blank=True, null=True)
-
+    #pareja_id = models.ForeignKey(Alumno, on_delete=models.CASCADE,related_name="correcciones", null=True)
     def __str__(self):
         return f"Nota: {self.nota}"
 

@@ -10,6 +10,12 @@
             border-collapse: collapse;
             padding: 10px;
         }
+        .fixez-bottom{
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+            padding: 10px 20px;
+        }
     </style>
 </head>
 <body>
@@ -42,6 +48,8 @@
             {% endfor %}
         </tbody>
     </table>
-    <a href="{% url 'task_detail' task.id_task %}">Volver a la tarea</a>
+    
+    <a  href="{% url 'task_detail' task.id_task %}" class="fixez-bottom">Volver a la tarea</a>
+    
 </body>
 </html>
