@@ -90,7 +90,7 @@
             </tbody>
         </table>
     </div>
-        {% if not correccion_guardada%}
+        {% if not correccion_guardada and not correccion_pareja%}
         <form method="POST">
             {% csrf_token %}
             <table class="table-container">
