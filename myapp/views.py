@@ -302,23 +302,12 @@ def correccion_personal(request, id_alumno):
     
     if correccion_guardada or correccion_pareja:
         print("Me meto en el if")
-        if correccion_guardada:
-            for c in criterios:
+        for c in criterios:
                 calif_desc = []
                 for n in niveles:
-                    nota_descr = Notas.objects.filter(nivel_desempeno=n, descriptor=Descriptores.objects.get(criterio=c, nivel_de_desempeno=n),alumno=alumno).first()
+                    nota_descr = Notas.objects.filter(nivel_desempeno=n, descriptor=Descriptores.objects.get(criterio=c, nivel_de_desempeno=n),alumno=alumno if correccion_guardada else pareja).first()
                     calif_desc.append(nota_descr.calificacion_descriptivo if nota_descr else '')
                 calif.append({'criterio': c.descripcion_criterio, 'calificaciones': calif_desc})
-        else:
-            print("Me meto en el else")
-            for c in criterios:
-                calif_desc = []
-                for n in niveles:
-                    nota_descr = Notas.objects.filter(nivel_desempeno=n, descriptor=Descriptores.objects.get(criterio=c, nivel_de_desempeno=n),alumno=pareja).first()
-                    calif_desc.append(nota_descr.calificacion_descriptivo if nota_descr else '')
-                calif.append({'criterio': c.descripcion_criterio, 'calificaciones': calif_desc})
-            print("Esto es calif: "+str(calif))
-
     if request.method == 'POST' and ((correccion_guardada == False ) or (correccion_pareja == False)):
         print("Me meto en el POST")
         print(correccion_guardada)
