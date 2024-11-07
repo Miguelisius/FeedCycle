@@ -32,6 +32,13 @@
             align-items: flex-start;
             
         }
+
+        .fixez-bottom{
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+            padding: 10px 20px;
+        }
     </style>
 </head>
 <body>
@@ -40,10 +47,12 @@
     <div>
         <h2>Alumnos de la pareja {{alumno.pareja}}</h2>
         <ul>
-            
-            {% for alumno in pareja%}
-                <li>{{ alumno.nombre }} {{ alumno.apellidos }} - {{alumno.email}}</li>
-            {% endfor %}
+            <li>{{ alumno.nombre }} {{ alumno.apellidos }} - {{ alumno.email }}</li>
+            {% if pareja %}
+                <li>{{ pareja.nombre }} {{ pareja.apellidos }} - {{ pareja.email }}</li>
+            {% else %}
+                <li>No hay pareja asignada.</li>
+            {% endif %}
         </ul>
     </div>
 
@@ -144,9 +153,9 @@
         </div>
     {% endif %}
     </div>
-    <div style="margin-top: 20px;">
-        <a href="{% url 'correcion' task.id_task %}">Volver a la tarea</a>
-    </div>
+    
+        <a  href="{% url 'correcion' task.id_task %}" >Volver a la tarea</a>
+    
     
 </body>
 </html>
