@@ -395,15 +395,12 @@ def export_correccion_pdf(request, id_alumno):
     for c in criterios:
         calif_desc = []
         for n in niveles:
-            # Buscar la nota descriptiva para cada combinación de criterio y nivel
             nota_descr = Notas.objects.filter(
                 nivel_desempeno=n,
                 descriptor__criterio=c,
                 alumno=alumno
             ).first()
-            # Agregar la calificación descriptiva (si existe) o un valor predeterminado
             calif_desc.append(nota_descr.calificacion_descriptivo if nota_descr else 'Sin calificación')
-        # Agregar la descripción del criterio y las calificaciones
         calif.append({'criterio': c.descripcion_criterio, 'calificaciones': calif_desc})
     
     context = {

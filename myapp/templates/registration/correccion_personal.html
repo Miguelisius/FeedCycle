@@ -135,7 +135,12 @@
                         <tr>
                             <th>Criterio</th>
                             {% for nivel in niveles %}
-                                <th>{{ nivel.descripcion_nivel }}</th>
+                                {%if nivel.nivel%}
+                                    <th>{{ nivel.nivel }}</th>
+                                {%endif%}
+                                {%if nivel.descripcion_nivel%}
+                                    <th>{{ nivel.descripcion_nivel }}</th>
+                                {%endif%}
                             {% endfor %}
                         </tr>
                     </thead>
