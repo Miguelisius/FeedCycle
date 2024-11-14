@@ -9,6 +9,9 @@ from django.http import HttpResponse
 import csv
 from django.urls import reverse
 from io import StringIO
+from weasyprint import HTML
+from django.template.loader import render_to_string
+
 
 # Create your views here.
 
@@ -379,6 +382,38 @@ def correccion_personal(request, id_alumno):
         'calificaciones': calif,
     })"""
 
+@login_required
+def export_correccion_pdf(request, id_alumno):
+    alumno = get_object_or_404(Alumno, id_alumno=id_alumno)
+    pareja = Alumno.objects.filter(grupo=alumno.grupo, pareja=alumno.pareja).exclude(id_alumno=alumno.id_alumno).first()
+    task = Task.objects.filter(grupo=alumno.grupo).first()
+    rubrica = Rubrica.objects.filter(tarea=task).first()
+    criterios = Criterios.objects.filter(rubrica=rubrica)
+    niveles = NivelDeDesempeno.objects.filter(rubrica=rubrica)
+    
+    descriptores_list = []
+    for criterio in criterios:
+        for nivel in niveles:
+            descriptor = criterio.descriptores_set.filter(nivel_de_desempeno=nivel).first()
+            descriptores_list.append((criterio, nivel, descriptor))
+    
+    context = {
+        'alumno': alumno,
+        'pareja': pareja,
+        'task': task,
+        'rubrica': rubrica,
+        'criterios': criterios,
+        'niveles': niveles,
+        'descriptores_list': descriptores_list,
+    }
+    
+    html_string = render_to_string('registration/correccion_personalpdf.html', context)
+    pdf = HTML(string=html_string).write_pdf()
+    
+    response = HttpResponse(pdf, content_type='application/pdf')
+    response['Content-Disposition'] = f'attachment; filename="Correccion_{alumno.nombre}_{alumno.apellido}.pdf"'
+    
+    return response
 
 def index(request):
     return render(request,'index.html')

@@ -12,4 +12,5 @@ urlpatterns = [
     path('rubric_detail/<int:rubric_id>', views.taskrubric_display, name='rubric_detail'),
     path('correcion/<int:task_id>', views.correccion_rubrica, name='correcion'),
     path('correcion_personal/<int:id_alumno>', views.correccion_personal, name='correccion_personal'),
+    path('correccion/<int:id_alumno>/exportar-pdf/', views.export_correccion_pdf, name='export_correction_pdf'),
 ]
