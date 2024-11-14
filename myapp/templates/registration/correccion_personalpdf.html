@@ -1,58 +1,53 @@
 <html lang="es">
     <head>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 20px;
-        }
-        h1, h2 {
-            text-align: center;
-        }
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 20px;
-        }
-        th, td {
-            border: 1px solid black;
-            padding: 10px;
-            text-align: center;
-        }
-        th {
-            background-color: #f2f2f2;
-        }
+        <style>
+            body {
+                font-family: Arial, sans-serif;
+                margin: 20px;
+            }
+            h1, h2 {
+                text-align: center;
+            }
+            table {
+                width: 100%;
+                border-collapse: collapse;
+                margin-top: 20px;
+            }
+            th, td {
+                border: 1px solid black;
+                padding: 10px;
+                text-align: center;
+            }
+            th {
+                background-color: #f2f2f2;
+            }
+        </style>
     </head>
         
     <body>
         <h1>{{task.title}}</h1>
         <h1>Corrección de la pareja {{alumno.pareja}}</h1>
-        <h1>Alumnos: {{alumno.nombre}} {{alumno.apellido}} ; {{pareja.nombre}} {{pareja.apellidos}}</h1>
+        <h1>Alumnos: {{alumno.nombre}} {{alumno.apellido}} ; {{pareja.nombre}} {{pareja.apellido}}</h1>
 
         <table>
             <thead>
                 <tr>
-                    <th>Criterios\Niveles de Desempeño</th>
+                    <th>Criterios / Niveles de Desempeño</th>
                     {% for ni in niveles %}
                         <th>{{ ni.nivel }}</th>
                     {% endfor %}
                 </tr>
             </thead>
             <tbody>
-                {% for criterio in criterios %}
-                <h3>{{ criterio.nombre }}</h3>
-                {% for nivel in niveles %}
-                    <p>Nivel {{ nivel.valor }}: 
-                        {% for criterio, nivel_item, descriptor in descriptores_list %}
-                            {% if criterio == criterio and nivel_item == nivel %}
-                                {% if descriptor %}
-                                    {{ descriptor.descripcion }}
-                                {% else %}
-                                    Sin descripción
-                                {% endif %}
-                            {% endif %}
+                {% for item in calif %}
+                    <tr>
+                        <td>{{ item.criterio }}</td>
+                        {% for calif_item in item.calificaciones %}
+                            <td>{{ calif_item }}</td>
                         {% endfor %}
-                    </p>
+                    </tr>
                 {% endfor %}
-            {% endfor %}
             </tbody>
+        </table>
     </body>
 </html>

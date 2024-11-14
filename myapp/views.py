@@ -391,11 +391,20 @@ def export_correccion_pdf(request, id_alumno):
     criterios = Criterios.objects.filter(rubrica=rubrica)
     niveles = NivelDeDesempeno.objects.filter(rubrica=rubrica)
     
-    descriptores_list = []
-    for criterio in criterios:
-        for nivel in niveles:
-            descriptor = criterio.descriptores_set.filter(nivel_de_desempeno=nivel).first()
-            descriptores_list.append((criterio, nivel, descriptor))
+    calif = []
+    for c in criterios:
+        calif_desc = []
+        for n in niveles:
+            # Buscar la nota descriptiva para cada combinación de criterio y nivel
+            nota_descr = Notas.objects.filter(
+                nivel_desempeno=n,
+                descriptor__criterio=c,
+                alumno=alumno
+            ).first()
+            # Agregar la calificación descriptiva (si existe) o un valor predeterminado
+            calif_desc.append(nota_descr.calificacion_descriptivo if nota_descr else 'Sin calificación')
+        # Agregar la descripción del criterio y las calificaciones
+        calif.append({'criterio': c.descripcion_criterio, 'calificaciones': calif_desc})
     
     context = {
         'alumno': alumno,
@@ -404,7 +413,7 @@ def export_correccion_pdf(request, id_alumno):
         'rubrica': rubrica,
         'criterios': criterios,
         'niveles': niveles,
-        'descriptores_list': descriptores_list,
+        'calif': calif,
     }
     
     html_string = render_to_string('registration/correccion_personalpdf.html', context)
