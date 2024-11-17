@@ -1,6 +1,7 @@
 <html>
     <head>
         <title>Rúbrica de {{ task.title }}</title>
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
         <style>
             .input-group {
                 margin-bottom: 10px;
@@ -17,29 +18,69 @@
     </head>
 
     <body>
-        <a href="javascript:history.back()" class="back-button">Atrás</a>
+        <a href="javascript:history.back()" class="btn btn-secondary mb-3">Atrás</a>
         <h1>Creación de la Rúbrica para la tarea: {{task.title}}</h1>
-        <form method="POST">
-            {% csrf_token %}
-            <h3>Establece los criterios: </h3>
-            <label for="criterio">Criterio:</label>
-            <input type="text" name="criterio" id="criterio" placeholder="Criterio" required>
-            <button type="submit" name="create_criterio">Añadir Criterio</button>
-        </form>
+
+        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#criterioModal">
+            Crea la rúbrica
+        </button>
+
+        <div class="modal fade" id="criterioModal" tabindex="-1" aria-labelledby="criterioModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="criterioModalLabel">Establece los criterios</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+                    </div>
+                    <form method="POST">
+                        {% csrf_token %}
+                        <div class="modal-body">
+                            <!--<h3>Establece los criterios: </h3>-->
+                            <label for="criterio">Criterio:</label>
+                            <input type="text" name="criterio" id="criterio" placeholder="Criterio" required>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="submit" name="create_criterio">Añadir Criterio</button>
+                            <button type="button" class="btn btn-primary" data-bs-target="#nivelModal" data-bs-toggle="modal" data-bs-dismiss="modal">
+                                Siguiente
+                            </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <div class="modal fade" id="nivelModal" tabindex="-1" aria-labelledby="nivelModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="nivelModalLabel">Establece los niveles de desempeño</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+                    </div>
+                    <form method="POST">
+                        {% csrf_token %}
+                        <div class="modal-body">
+                            <!--<h3>Establece los niveles de desempeño: </h3>-->
+                            <label for="nivel">Nivel de Desempeño (Numérico):</label>
+                            <input type="text" name="nivel" id="nivel" placeholder="Nivel numércio">
+                        
+                            <label for="descripcion_nivel">Nivel de Desempeño (descriptor):</label>
+                            <input type="textarea" name="descripcion_nivel" id="descripcion_nivel" placeholder="Nivel descriptivo">
+                        </div>
+                        <div class="modal-footer">
+                            <button type="submit" name="create_nivel">Añadir Nivel de Desempeño</button>
+                            <button type="button" class="btn btn-primary" data-bs-target="#criterioModal" data-bs-toggle="modal" data-bs-dismiss="modal">
+                                Atrás
+                            </button>
+                            <button type="button" class="btn btn-primary" data-bs-dismiss="modal">
+                                Finalizar
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
         
-        <form method="POST">
-            {% csrf_token %}
-            <h3>Establece los niveles de desempeño: </h3>
-            <label for="nivel">Nivel de Desempeño (Numérico):</label>
-            <input type="text" name="nivel" id="nivel" placeholder="Nivel numércio">
-            
-            <label for="descripcion_nivel">Nivel de Desempeño (descriptor):</label>
-            <input type="textarea" name="descripcion_nivel" id="descripcion_nivel" placeholder="Nivel descriptivo">
-    
-            <button type="submit" name="create_nivel">Añadir Nivel de Desempeño</button>
-        </form>
-        
-        <form method="POST">
+        <form method="POST" class="mt-4">
             {% csrf_token %}
             <h3>Rúbrica:</h3>
             <table>
@@ -107,6 +148,6 @@
             </tbody>
         </table>
     </div>
-    
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     </body>
 </html>
