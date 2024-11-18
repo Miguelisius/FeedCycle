@@ -1,124 +1,124 @@
+<!DOCTYPE html>
 <html>
-    <head>
-        <title>Rúbrica de {{ task.title }}</title>
-        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-        <style>
-            .input-group {
-                margin-bottom: 10px;
-            }
-            table, th, td {
-                border: 1px solid black;
-                border-collapse: collapse;
-                padding: 10px;
-            }
-            input[type="text"] {
-                width: 100px;
-            }
-        </style>
-    </head>
+<head>
+    <title>Rúbrica de {{ task.title }}</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        .input-group {
+            margin-bottom: 10px;
+        }
+        table, th, td {
+            border: 1px solid black;
+            border-collapse: collapse;
+            padding: 10px;
+        }
+        input[type="text"] {
+            width: 100px;
+        }
+    </style>
+</head>
+<body>
+    <iframe name="hidden_iframe" style="display: none;"></iframe>
+    <a href="javascript:history.back()" class="btn btn-secondary mb-3">Atrás</a>
+    <h1>Creación de la Rúbrica para la tarea: {{task.title}}</h1>
 
-    <body>
-        <iframe name="hidden_iframe" style="display: none;"></iframe>
-        <a href="javascript:history.back()" class="btn btn-secondary mb-3">Atrás</a>
-        <h1>Creación de la Rúbrica para la tarea: {{task.title}}</h1>
+    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#criterioModal">
+        Crea la rúbrica
+    </button>
 
-        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#criterioModal">
-            Crea la rúbrica
-        </button>
-
-        <div class="modal fade" id="criterioModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="criterioModalLabel" aria-hidden="true">
-            <div class="modal-dialog">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title" id="criterioModalLabel">Establece los criterios</h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
-                    </div>
-                    <form method="POST" target="hidden_iframe">
-                        {% csrf_token %}
-                        <div class="modal-body">
-                            <!--<h3>Establece los criterios: </h3>-->
-                            <label for="criterio">Criterio:</label>
-                            <input type="text" name="criterio" id="criterio" placeholder="Criterio" required>
-                            <button type="submit" class="btn btn-success mt-3" name="create_criterio">Añadir Criterio</button>
-                        </div>
-                        <div class="modal-footer">
-                            
-                            <button type="button" class="btn btn-primary" data-bs-dismiss="modal" data-bs-toggle="modal" data-bs-target="#nivelModal">
-                                Siguiente
-                            </button>
-                    </form>
+    <div class="modal fade" id="criterioModal" tabindex="-1" aria-labelledby="criterioModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="criterioModalLabel">Establece los criterios</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
                 </div>
+                <form method="POST" target="hidden_iframe">
+                    {% csrf_token %}
+                    <div class="modal-body">
+                        <!--<h3>Establece los criterios: </h3>-->
+                        <label for="criterio">Criterio:</label>
+                        <input type="text" name="criterio" id="criterio" placeholder="Criterio" required>
+                        <button type="submit" class="btn btn-success mt-3" name="create_criterio">Añadir Criterio</button>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" id="nextButton" class="btn btn-primary">
+                            Siguiente
+                        </button>
+                    </div>
+                </form>
             </div>
         </div>
+    </div>
 
-        <div class="modal fade" id="nivelModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="nivelModalLabel" aria-hidden="true">
-            <div class="modal-dialog">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title" id="nivelModalLabel">Establece los niveles de desempeño</h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
-                    </div>
-                    <form method="POST" target="hidden_iframe">
-                        {% csrf_token %}
-                        <div class="modal-body">
-                            <!--<h3>Establece los niveles de desempeño: </h3>-->
-                            <label for="nivel">Nivel de Desempeño (Numérico):</label>
-                            <input type="text" name="nivel" id="nivel" placeholder="Nivel numércio">
-                        
-                            <label for="descripcion_nivel">Nivel de Desempeño (descriptor):</label>
-                            <input type="textarea" name="descripcion_nivel" id="descripcion_nivel" placeholder="Nivel descriptivo">
-                        </div>
-                        <div class="modal-footer">
-                            <button type="submit" name="create_nivel">Añadir Nivel de Desempeño</button>
-                            <button type="button" class="btn btn-primary" data-bs-dismiss="modal" data-bs-toggle="modal" data-bs-target="#criterioModal">
-                                Atrás
-                            </button>
-                            <button type="button" class="btn btn-primary" data-bs-dismiss="modal">
-                                Finalizar
-                            </button>
-                        </div>
-                    </form>
+    <div class="modal fade" id="nivelModal" tabindex="-1" aria-labelledby="nivelModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="nivelModalLabel">Establece los niveles de desempeño</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
                 </div>
-            </div>
-        </div>
-        
-        <form method="POST" class="mt-4">
-            {% csrf_token %}
-            <h3>Rúbrica:</h3>
-            <table>
-                <thead>
-                    <tr>
-                        <th>Criterios\Niveles de Desemepeño</th>
-                        
-                        {% for n in nivel %}
-                            {%if n.nivel%}
-                                <th>{{ n.nivel }}</th>
-                            {%endif%}
-                            {%if n.descripcion_nivel%}
-                                <th>{{ n.descripcion_nivel }}</th>
-                            {%endif%}
-                        {% endfor %}
-                    </tr>
-                </thead>
-                <tbody>
+                <form method="POST" target="hidden_iframe">
+                    {% csrf_token %}
+                    <div class="modal-body">
+                        <!--<h3>Establece los niveles de desempeño: </h3>-->
+                        <label for="nivel">Nivel de Desempeño (Numérico):</label>
+                        <input type="text" name="nivel" id="nivel" placeholder="Nivel numércio">
                     
-                    {% for c in criterio %}
-                    <tr>
-                        <td>{{ c.descripcion_criterio }}</td>
-                        
-                        {% for n in nivel %}
-                            <td>
-                                <textarea type="textarea" name="descriptor_{{ c.id_criterio }}_{{ n.id_nivel_desempeno }}" placeholder="Añadir descriptor"></textarea>
-                            </td> 
-                        {% endfor %}
-                    </tr>
+                        <label for="descripcion_nivel">Nivel de Desempeño (descriptor):</label>
+                        <input type="textarea" name="descripcion_nivel" id="descripcion_nivel" placeholder="Nivel descriptivo">
+                    </div>
+                    <div class="modal-footer">
+                        <button type="submit" name="create_nivel">Añadir Nivel de Desempeño</button>
+                        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#criterioModal">
+                            Atrás
+                        </button>
+                        <button type="button" class="btn btn-primary" data-bs-dismiss="modal">
+                            Finalizar
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    
+    <form method="POST" class="mt-4">
+        {% csrf_token %}
+        <h3>Rúbrica:</h3>
+        <table>
+            <thead>
+                <tr>
+                    <th>Criterios\Niveles de Desemepeño</th>
+                    
+                    {% for n in nivel %}
+                        {%if n.nivel%}
+                            <th>{{ n.nivel }}</th>
+                        {%endif%}
+                        {%if n.descripcion_nivel%}
+                            <th>{{ n.descripcion_nivel }}</th>
+                        {%endif%}
                     {% endfor %}
-                </tbody>
-            </table>
-            <button type="submit" name="save_rubrica">Guardar Rúbrica</button>
-        </form>
-        <a href="{% url 'rubric_detail' rubrica.id_rubrica %}">Ver rúbrica de la tarea</a>
-        <h3>Rúbricas de la tarea:</h3>
+                </tr>
+            </thead>
+            <tbody>
+                
+                {% for c in criterio %}
+                <tr>
+                    <td>{{ c.descripcion_criterio }}</td>
+                    
+                    {% for n in nivel %}
+                        <td>
+                            <textarea type="textarea" name="descriptor_{{ c.id_criterio }}_{{ n.id_nivel_desempeno }}" placeholder="Añadir descriptor"></textarea>
+                        </td> 
+                    {% endfor %}
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        <button type="submit" name="save_rubrica">Guardar Rúbrica</button>
+    </form>
+    <a href="{% url 'rubric_detail' rubrica.id_rubrica %}">Ver rúbrica de la tarea</a>
+    <h3>Rúbricas de la tarea:</h3>
     <div>
         <table>
             <thead>
@@ -160,7 +160,24 @@
                 bootstrapModal.show();
             }
         });
+
+        document.getElementById('nextButton').addEventListener('click', function () {
+            // Obtén una referencia a los modales
+            const criterioModal = document.getElementById('criterioModal');
+            const nivelModal = document.getElementById('nivelModal');
+            
+            // Cierra el modal actual si existe
+            if (criterioModal) {
+                const modalInstance = bootstrap.Modal.getInstance(criterioModal);
+                if (modalInstance) {
+                    modalInstance.hide();
+                }
+            }
+        
+            // Muestra el siguiente modal
+            const nivelModalInstance = new bootstrap.Modal(nivelModal);
+            nivelModalInstance.show();
+        });
     </script>
-    
-    </body>
+</body>
 </html>
