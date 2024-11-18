@@ -157,6 +157,7 @@ def taskrubric_detail(request, task_id):
     rubrica, created = Rubrica.objects.get_or_create(tarea=task)
     
     modal = None
+    tabla = False
 
     if request.method == 'POST':
         criterio = request.POST.get('criterio')
@@ -183,10 +184,13 @@ def taskrubric_detail(request, task_id):
             except ValidationError as e:
                 messages.error(request, e)
             nivel_new = NivelDeDesempeno.objects.filter(rubrica=rubrica)
-        elif 'save_rubrica' in request.POST:
+        #elif 'fin_modal' in request.POST:
+        # tabla = True
+        elif 'save_rubrica' in request.POST or 'fin_modal' in request.POST:
+            print("Leggo aqui 7777777777\n")
             criterios = Criterios.objects.filter(rubrica=rubrica)
             niveles = NivelDeDesempeno.objects.filter(rubrica=rubrica)
-            
+            tabla = True
             for c in criterios:
                 for n in niveles:
                     descriptor_key = f'descriptor_{c.id_criterio}_{n.id_nivel_desempeno}'
@@ -194,9 +198,13 @@ def taskrubric_detail(request, task_id):
                     if descriptor_value:
                         Descriptores.objects.create(criterio=c, nivel_de_desempeno=n, descripcion= descriptor_value)
             #print("Leggo aqui\n")
-            messages.success(request, 'Rúbrica guardada exitosamente.')
-            return redirect('rubric_detail', rubric_id= rubrica.id_rubrica)
-                    
+            if 'save_rubrica' in request.POST:
+                messages.success(request, 'Rúbrica guardada exitosamente.')
+                return redirect('rubric_detail', rubric_id= rubrica.id_rubrica)
+            else:
+                tabla = True
+                modal = None
+
     #rubricas = Rubrica.objects.filter(tarea=task)
     criterio_new = Criterios.objects.filter(rubrica=rubrica)
     nivel_new = NivelDeDesempeno.objects.filter(rubrica=rubrica)
@@ -218,6 +226,7 @@ def taskrubric_detail(request, task_id):
         'rubrica': rubrica,
         'descriptores': descriptores,
         'modal': modal,
+        'tabla': tabla,
     })
 @login_required
 def taskrubric_display(request, rubric_id):
