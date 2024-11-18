@@ -156,6 +156,7 @@ def taskrubric_detail(request, task_id):
     task = get_object_or_404(Task, id_task=task_id)
     rubrica, created = Rubrica.objects.get_or_create(tarea=task)
     
+    modal = None
 
     if request.method == 'POST':
         criterio = request.POST.get('criterio')
@@ -164,6 +165,7 @@ def taskrubric_detail(request, task_id):
         if criterio:
             Criterios.objects.create(rubrica=rubrica, descripcion_criterio=criterio)
             messages.success(request, 'Criterio agregado exitosamente.')
+            modal = 'criterioModal'
         elif nivel or descripcion_nivel:
             #NivelDeDesempeno.objects.create(rubrica=rubrica, nivel=nivel)
             #messages.success(request, 'Nivel de desempeño agregado exitosamente.')
@@ -177,6 +179,7 @@ def taskrubric_detail(request, task_id):
                 new_level.full_clean()
                 new_level.save()
                 messages.success(request, 'Nivel de desempeño agregado exitosamente.')
+                modal = 'nivelModal'
             except ValidationError as e:
                 messages.error(request, e)
             nivel_new = NivelDeDesempeno.objects.filter(rubrica=rubrica)
@@ -214,6 +217,7 @@ def taskrubric_detail(request, task_id):
         'nivel' : nivel_new,
         'rubrica': rubrica,
         'descriptores': descriptores,
+        'modal': modal,
     })
 @login_required
 def taskrubric_display(request, rubric_id):
