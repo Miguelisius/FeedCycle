@@ -81,7 +81,7 @@
             </div>
         </div>
     </div>
-    {% if tabla %}
+    
         <form method="POST" class="mt-4">
             {% csrf_token %}
             <h3>Rúbrica:</h3>
@@ -117,7 +117,7 @@
             </table>
             <button type="submit" name="save_rubrica">Guardar Rúbrica</button>
         </form>
-    {% endif %}
+    
     <a href="{% url 'rubric_detail' rubrica.id_rubrica %}">Ver rúbrica de la tarea</a>
     <h3>Rúbricas de la tarea:</h3>
     <div>
@@ -182,6 +182,7 @@
             if (modalInstance) {
                 modalInstance.hide();
             }
+            window.location.reload();
         });
     </script>
 </body>
