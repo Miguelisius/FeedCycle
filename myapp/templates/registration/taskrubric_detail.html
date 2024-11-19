@@ -53,7 +53,7 @@
                             </div>
                         {% endif %}
                         <label for="criterio">Criterio:</label>
-                        <input type="text" name="criterio" id="criterio" placeholder="Criterio" required>
+                        <input type="text" name="criterio" id="criterio" placeholder="Criterio"> <!--required-->
                         <button type="submit" class="btn btn-success mt-3" name="create_criterio" id="addButton">Añadir Criterio</button>
                     </div>
                     <div class="modal-footer">
@@ -208,7 +208,12 @@
         });
 
         document.getElementById('addButton').addEventListener('click', function() {
+            event.preventDefault();
             alert("Añadido correctamente");
+            this.closest('form').submit();
+            document.getElementById('criterio').value = '';
+            document.getElementById('nivel').value = '';
+            document.getElementById('descripcion_nivel').value = '';
         });
     </script>
     </div>
