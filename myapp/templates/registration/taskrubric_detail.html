@@ -66,6 +66,29 @@
         </div>
     </div>
 
+    <div class="modal fade" id="cuestion" tabindex="-1" aria-labelledby="cuestionmodal" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="cuestionmodal">¿Deseas establecer la media?</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+                </div>
+                
+                <div class="modal-body">
+                    <label for="calcular_media">¿Calcular media?</label>
+                    <input type="checkbox" id="calcular_media"> Sí, calcular media.
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" id="check" class="btn btn-primary">
+                        Siguiente
+                    </button>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
     <div class="modal fade" id="nivelModal" tabindex="-1" aria-labelledby="nivelModalLabel" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
@@ -187,7 +210,8 @@
 
         document.getElementById('nextButton').addEventListener('click', function () {
             const criterioModal = document.getElementById('criterioModal');
-            const nivelModal = document.getElementById('nivelModal');
+            //const nivelModal = document.getElementById('nivelModal');
+            const cuestion = document.getElementById('cuestion');
 
             if (criterioModal) {
                 const modalInstance = bootstrap.Modal.getInstance(criterioModal);
@@ -195,8 +219,10 @@
                     modalInstance.hide();
                 }
             }
-            const nivelModalInstance = new bootstrap.Modal(nivelModal);
-            nivelModalInstance.show();
+            const cuestionInstance = new bootstrap.Modal(cuestion);
+            cuestionInstance.show();
+            //const nivelModalInstance = new bootstrap.Modal(nivelModal);
+            //nivelModalInstance.show();
         });
 
         document.getElementById('fin_modal').addEventListener('click', function () {
@@ -223,6 +249,17 @@
             //document.getElementById('criterio').value = '';
             document.getElementById('nivel').value = '';
             document.getElementById('descripcion_nivel').value = '';
+        });
+
+        document.getElementById('check').addEventListener('click', function() {
+            const nivelModal = document.getElementById('nivelModal');
+            const cuestion = document.getElementById('cuestion');
+            const modalInstance = bootstrap.Modal.getInstance(cuestion);
+            if (modalInstance) {
+                modalInstance.hide();
+            }
+            const nivelModalInstance = new bootstrap.Modal(nivelModal);
+            nivelModalInstance.show();
         });
     </script>
     </div>
