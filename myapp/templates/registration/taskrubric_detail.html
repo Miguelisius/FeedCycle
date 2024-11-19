@@ -87,9 +87,10 @@
                     
                         <label for="descripcion_nivel">Nivel de Desempeño (descriptor):</label>
                         <input type="textarea" name="descripcion_nivel" id="descripcion_nivel" placeholder="Nivel descriptivo">
+                        <button type="submit" name="create_nivel" id="adButton">Añadir Nivel de Desempeño</button>
                     </div>
                     <div class="modal-footer">
-                        <button type="submit" name="create_nivel" id="addButton">Añadir Nivel de Desempeño</button>
+                        
                         <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#criterioModal">
                             Atrás
                         </button>
@@ -209,9 +210,17 @@
 
         document.getElementById('addButton').addEventListener('click', function() {
             event.preventDefault();
-            alert("Añadido correctamente");
+            alert("Criterio añadido correctamente");
             this.closest('form').submit();
             document.getElementById('criterio').value = '';
+            
+        });
+
+        document.getElementById('adButton').addEventListener('click', function() {
+            event.preventDefault();
+            alert("Nivel de desemepeño añadido correctamente");
+            this.closest('form').submit();
+            //document.getElementById('criterio').value = '';
             document.getElementById('nivel').value = '';
             document.getElementById('descripcion_nivel').value = '';
         });
