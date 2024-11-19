@@ -15,9 +15,15 @@
         input[type="text"] {
             width: 100px;
         }
+        .container {
+            margin-left: 10px;
+        }
     </style>
 </head>
 <body>
+<div class="container mt-4">
+    
+
     <iframe name="hidden_iframe" style="display: none;"></iframe>
     <a href="javascript:history.back()" class="btn btn-secondary mb-3">Atrás</a>
     <h1>Creación de la Rúbrica para la tarea: {{task.title}}</h1>
@@ -37,9 +43,18 @@
                     {% csrf_token %}
                     <div class="modal-body">
                         <!--<h3>Establece los criterios: </h3>-->
+                        {% if messages %}
+                            <div>
+                                {% for message in messages %}
+                                    <div class="alert alert-{{ message.tags }}" role="alert">
+                                        {{ message }}
+                                    </div>
+                                {% endfor %}
+                            </div>
+                        {% endif %}
                         <label for="criterio">Criterio:</label>
                         <input type="text" name="criterio" id="criterio" placeholder="Criterio" required>
-                        <button type="submit" class="btn btn-success mt-3" name="create_criterio">Añadir Criterio</button>
+                        <button type="submit" class="btn btn-success mt-3" name="create_criterio" id="addButton">Añadir Criterio</button>
                     </div>
                     <div class="modal-footer">
                         <button type="button" id="nextButton" class="btn btn-primary">
@@ -62,6 +77,11 @@
                     {% csrf_token %}
                     <div class="modal-body">
                         <!--<h3>Establece los niveles de desempeño: </h3>-->
+                        {% for message in messages %}
+                        <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                            {{ message }}
+                        </div>
+                        {% endfor %}
                         <label for="nivel">Nivel de Desempeño (Numérico):</label>
                         <input type="text" name="nivel" id="nivel" placeholder="Nivel numércio">
                     
@@ -69,7 +89,7 @@
                         <input type="textarea" name="descripcion_nivel" id="descripcion_nivel" placeholder="Nivel descriptivo">
                     </div>
                     <div class="modal-footer">
-                        <button type="submit" name="create_nivel">Añadir Nivel de Desempeño</button>
+                        <button type="submit" name="create_nivel" id="addButton">Añadir Nivel de Desempeño</button>
                         <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#criterioModal">
                             Atrás
                         </button>
@@ -157,8 +177,10 @@
             const modalToOpen = "{{ modal }}";
             if (modalToOpen) {
                 const modalElement = document.getElementById(modalToOpen);
-                const bootstrapModal = new bootstrap.Modal(modalElement);
-                bootstrapModal.show();
+                if (modalElement) {
+                    const bootstrapModal = new bootstrap.Modal(modalElement);
+                    bootstrapModal.show();
+                }
             }
         });
 
@@ -184,6 +206,11 @@
             }
             window.location.reload();
         });
+
+        document.getElementById('addButton').addEventListener('click', function() {
+            alert("Añadido correctamente");
+        });
     </script>
+    </div>
 </body>
 </html>
