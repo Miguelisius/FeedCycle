@@ -158,12 +158,12 @@ def taskrubric_detail(request, task_id):
     
     modal = None
     tabla = False
-    media =False
+    #media =False
     if request.method == 'POST':
         criterio = request.POST.get('criterio')
         nivel = request.POST.get('nivel','').strip()
         descripcion_nivel = request.POST.get('descripcion_nivel',  '').strip()
-        
+        calcular_media = request.POST.get('calcular_media')
         
         #print("Valor de calcular_media:", calcular_media)
         if criterio:
@@ -171,15 +171,17 @@ def taskrubric_detail(request, task_id):
             messages.success(request, 'Criterio agregado exitosamente.')
             modal = 'criterioModal'
             
-        elif 'calcular_media' in request.POST:
+        elif calcular_media is not None:
             #Obtener ek valor del checkedbox y almacenarlo en la BD (cambia models)
-            media = request.POST.get('calcular_media')=='True'
+            #media = request.POST.get('calcular_media')=='True'
             #media.save()
-            print("Valor de media: ", media)
-            rubrica.checked = media
+            rubrica.checked = calcular_media == 'True'
             rubrica.save()
-            messages.success(request, 'Rúbrica guardada exitosamente.')
-            
+            #print("Valor de media: ", calcular_media)
+            #rubrica.checked = media
+            #rubrica.save()
+            #messages.success(request, 'Rúbrica guardada exitosamente.')
+            modal = 'nivelModal'
         
         elif nivel or descripcion_nivel:
             #NivelDeDesempeno.objects.create(rubrica=rubrica, nivel=nivel)

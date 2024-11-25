@@ -75,7 +75,7 @@
                 </div>
                 
                 <div class="modal-body">
-                    <form method="POST" id=calcular_media>
+                    <form method="POST" id=cuestionForm>
                     {% csrf_token %}
                     <label for="calcular_media">¿Calcular media?</label>
                     <input type="hidden" name="calcular_media" value="False">
@@ -230,14 +230,6 @@
             //nivelModalInstance.show();
         });
 
-        document.getElementById('fin_modal').addEventListener('click', function () {
-            const nivelModal = document.getElementById('nivelModal');
-            const modalInstance = bootstrap.Modal.getInstance(nivelModal);
-            if (modalInstance) {
-                modalInstance.hide();
-            }
-            window.location.reload();
-        });
 
         document.getElementById('addButton').addEventListener('click', function() {
             event.preventDefault();
@@ -258,31 +250,42 @@
 
         
 
-        document.getElementById('check').addEventListener('click', function() {
+        document.getElementById('check').addEventListener('click', function(event) {
             event.preventDefault();
             //document.querySelector('form').submit();
-            const form = document.getElementById('calcular_media');
+            const form = document.getElementById('cuestionForm');
             form.submit();
-            event.preventDefault();
-            const nivelModal = document.getElementById('nivelModal');
-            const cuestion = document.getElementById('cuestion');
-            const modalInstance = bootstrap.Modal.getInstance(cuestion);
-            if (modalInstance) {
-                modalInstance.hide();
-            }
-            const nivelModalInstance = new bootstrap.Modal(nivelModal);
-            nivelModalInstance.show();
+            //print("Estoy aquiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiii");
+            //event.preventDefault();
+            form.addEventListener('submit', function(e) {
+                e.preventDefault();
+                const nivelModal = document.getElementById('nivelModal'); 
+                const cuestion = document.getElementById('cuestion');
+                const modalInstance = bootstrap.Modal.getInstance(cuestion);
+                if (modalInstance) {
+                    modalInstance.hide();
+                }
+                const nivelModalInstance = new bootstrap.Modal(nivelModal);
+                nivelModalInstance.show();
+            });
+            
         });
 
-        document.getElementById('check').addEventListener('click', function(event) {
-            
-            const form = this.closest('form');
-            
-            form.submit();
-            event.preventDefault();
-        });
+        
         document.getElementById('fin_modal').addEventListener('click', function () {
-            window.location.reload();
+            const nivelModal = document.getElementById('nivelModal');
+            const modalInstance = bootstrap.Modal.getInstance(nivelModal);
+            if (modalInstance) {
+                modalInstance.hide();
+                history.pushState(null, '', location.href);
+                window.location.reload();
+                
+            } else {
+                
+                const newModalInstance = new bootstrap.Modal(nivelModal);
+                newModalInstance.hide();
+            }
+            
         });
     </script>
     </div>
