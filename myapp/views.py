@@ -158,15 +158,29 @@ def taskrubric_detail(request, task_id):
     
     modal = None
     tabla = False
-
+    media =False
     if request.method == 'POST':
         criterio = request.POST.get('criterio')
         nivel = request.POST.get('nivel','').strip()
         descripcion_nivel = request.POST.get('descripcion_nivel',  '').strip()
+        
+        
+        #print("Valor de calcular_media:", calcular_media)
         if criterio:
             Criterios.objects.create(rubrica=rubrica, descripcion_criterio=criterio)
             messages.success(request, 'Criterio agregado exitosamente.')
             modal = 'criterioModal'
+            
+        elif 'calcular_media' in request.POST:
+            #Obtener ek valor del checkedbox y almacenarlo en la BD (cambia models)
+            media = request.POST.get('calcular_media')=='True'
+            #media.save()
+            print("Valor de media: ", media)
+            rubrica.checked = media
+            rubrica.save()
+            messages.success(request, 'Rúbrica guardada exitosamente.')
+            
+        
         elif nivel or descripcion_nivel:
             #NivelDeDesempeno.objects.create(rubrica=rubrica, nivel=nivel)
             #messages.success(request, 'Nivel de desempeño agregado exitosamente.')
@@ -187,7 +201,7 @@ def taskrubric_detail(request, task_id):
         #elif 'fin_modal' in request.POST:
         # tabla = True
         elif 'save_rubrica' in request.POST:# or 'fin_modal' in request.POST:
-            print("Leggo aqui 7777777777\n")
+            #print("Leggo aqui 7777777777\n")
             criterios = Criterios.objects.filter(rubrica=rubrica)
             niveles = NivelDeDesempeno.objects.filter(rubrica=rubrica)
             tabla = True
@@ -199,6 +213,9 @@ def taskrubric_detail(request, task_id):
                         Descriptores.objects.create(criterio=c, nivel_de_desempeno=n, descripcion= descriptor_value)
             #print("Leggo aqui\n")
             #if 'save_rubrica' in request.POST:
+            #rubrica.checked = calcular_media
+            #print("Valor de calcular_media:", calcular_media)
+            #rubrica.save()
             messages.success(request, 'Rúbrica guardada exitosamente.')
             modal = None
             return redirect('rubric_detail', rubric_id= rubrica.id_rubrica)
@@ -227,6 +244,7 @@ def taskrubric_detail(request, task_id):
         'rubrica': rubrica,
         'descriptores': descriptores,
         'modal': modal,
+        #'checked': rubrica.checked,
         #'tabla': tabla,
     })
 @login_required

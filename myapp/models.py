@@ -58,6 +58,7 @@ class Task(models.Model): #Tarea
 class Rubrica(models.Model):
     id_rubrica = models.AutoField(primary_key=True)
     tarea = models.OneToOneField(Task, on_delete=models.CASCADE)
+    checked = models.BooleanField(default=False) #Boton de checkbox para ver si se calcula la media de la nota
 
     def __str__(self):
         return f"Rúbrica de {self.tarea.title}"

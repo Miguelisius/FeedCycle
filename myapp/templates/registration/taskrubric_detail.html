@@ -65,7 +65,7 @@
             </div>
         </div>
     </div>
-
+    <!--Modal de la cuestion para hacer media-->
     <div class="modal fade" id="cuestion" tabindex="-1" aria-labelledby="cuestionmodal" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
@@ -75,8 +75,13 @@
                 </div>
                 
                 <div class="modal-body">
+                    <form method="POST" id=calcular_media>
+                    {% csrf_token %}
                     <label for="calcular_media">¿Calcular media?</label>
-                    <input type="checkbox" id="calcular_media"> Sí, calcular media.
+                    <input type="hidden" name="calcular_media" value="False">
+                    <input class="form-check-input" type="checkbox" name="calcular_media" id="calcular_media" value="True" {% if rubrica.checked %}checked{% endif %}>
+                    <!--<button type="button" class="btn btn-primary" id="guardarCheck" name="guardarCheck">Guardar</button>-->
+                    </form>
                 </div>
 
                 <div class="modal-footer">
@@ -251,7 +256,14 @@
             document.getElementById('descripcion_nivel').value = '';
         });
 
+        
+
         document.getElementById('check').addEventListener('click', function() {
+            event.preventDefault();
+            //document.querySelector('form').submit();
+            const form = document.getElementById('calcular_media');
+            form.submit();
+            event.preventDefault();
             const nivelModal = document.getElementById('nivelModal');
             const cuestion = document.getElementById('cuestion');
             const modalInstance = bootstrap.Modal.getInstance(cuestion);
@@ -260,6 +272,17 @@
             }
             const nivelModalInstance = new bootstrap.Modal(nivelModal);
             nivelModalInstance.show();
+        });
+
+        document.getElementById('check').addEventListener('click', function(event) {
+            
+            const form = this.closest('form');
+            
+            form.submit();
+            event.preventDefault();
+        });
+        document.getElementById('fin_modal').addEventListener('click', function () {
+            window.location.reload();
         });
     </script>
     </div>
