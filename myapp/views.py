@@ -121,7 +121,12 @@ def project_detail(request, project_id):
             apellido = request.POST.get('apellido')
             correo = request.POST.get('email')
             pareja = request.POST.get('pareja')
-            if nombre_alumno and pareja and not Alumno.objects.filter(email=correo).exists():
+            grupo = Alumno.objects.filter(grupo_id=grupo_asignado.id_grupo)
+            #print("Contiene Correo de grupo: ", grupo.contains(correo))
+            #if grupo.contains(correo): 
+            print("Grupo: "+ str(grupo_asignado.id_grupo))
+            
+            if nombre_alumno and pareja and not Alumno.objects.filter(email=correo, grupo=grupo_asignado.id_grupo).exists():
                 Alumno.objects.create(nombre=nombre_alumno, apellido = apellido, email = correo , pareja=pareja, grupo=grupo_asignado)
                 messages.success(request, f'Alumno: {nombre_alumno} agregado exitosamente a la pareja: {pareja}.')
                 
