@@ -129,6 +129,8 @@ def project_detail(request, project_id):
             if nombre_alumno and pareja and not Alumno.objects.filter(email=correo, grupo=grupo_asignado.id_grupo).exists():
                 Alumno.objects.create(nombre=nombre_alumno, apellido = apellido, email = correo , pareja=pareja, grupo=grupo_asignado)
                 messages.success(request, f'Alumno: {nombre_alumno} agregado exitosamente a la pareja: {pareja}.')
+            else:
+                messages.error(request, f'El Alumno {nombre_alumno} {apellido} con correo: {correo} ya está registrado.')
                 
         if 'create_task' in request.POST:
             task_name = request.POST.get('title')
