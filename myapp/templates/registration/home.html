@@ -63,59 +63,13 @@
         </div>
 
     </div>
-    <!--<h2>Agregar Grupo a una Asignatura</h2>
-
-    <form method="POST">
-        {% csrf_token %}
-        <label for="project_id">Selecciona una Asignatura:</label>
-        <select name="project_id" id="project_id" required>
-            {% for project in projects %}
-                <option value="{{ project.id_project }}">{{ project.title }}</option>
-            {% endfor %}
-        </select><br><br>
-
-        <label for="numero_grupo">Número del Grupo:</label>
-        <input type="number" name="numero_grupo" id="numero_grupo" required><br><br>
-
-        <button type="submit" name="create_group">Agregar Grupo</button>
-    </form>
-
-
-    {% if messages %}
-        <ul>
-            {% for message in messages %}
-                <li>{{ message }}</li>
-            {% endfor %}
-        </ul>
-    {% endif %}
-
-    <h2>Asignaturas Guardadas</h2>
-    <ul>
-        {% for project in projects %}
-        <li>
-            <strong>Asignatura: </strong>{{ project.title }}<br>
-            <ul>
-                {% for grupo in project.grupo_set.all %}
-                <li>
-                    <a href = "{% url 'project_detail' grupo.id_grupo %}">Grupo {{ grupo.numero_grupo }}</a>
-                </li>
-                {% empty %}
-                <li>No hay grupos asociados a esta asignatura.</li>
-                {% endfor %}
-            </ul>
-        </li>
-        {% empty %}
-            <li>No tienes asignaturas creadas aún.</li>
-        {% endfor %}
-        
-    </ul>-->
-
+    
     <div class="tablex">
         <table class="table table-bordered">
             <thead class="thead-dark">
                 <tr>
                     <th>Asignatura</th>
-                    <th>Descripción</th>
+                    <th>Grupo</th>
                     <th>Acciones</th>
                 </tr>
             </thead>
@@ -126,7 +80,7 @@
                         <td>
                             {% if project.grupo_set.all %}
                                 <ul>{% for grupo in project.grupo_set.all %}
-                                    <a href="{% url 'project_detail' grupo.id_grupo %}">Grupo {{ grupo.numero_grupo }}</a>
+                                    <a href="{% url 'project_detail' project.id_project grupo.id_grupo %}">Grupo {{ grupo.numero_grupo }}</a>{% if not forloop.last %}, {% endif %}
                                 {% endfor %} </ul>
                             {% else %}
                             {% endif %}

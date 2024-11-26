@@ -81,9 +81,9 @@ def register(request):
 
 
 @login_required
-def project_detail(request, project_id):
+def project_detail(request, project_id, group_id):
     project = get_object_or_404(Project, id_project=project_id)
-    grupo_asignado = Grupo.objects.filter(project=project).first()
+    grupo_asignado = get_object_or_404(Grupo,project=project,id_grupo=group_id)
     
     if request.method == 'POST':
         if 'archivo' in request.FILES:
