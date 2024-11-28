@@ -11,7 +11,7 @@
         .tablex{
             margin-top:30px;
             margin-left: 20px;
-            margin-right: 82%;
+            margin-right: 70%;
 
         }
         th, td {
@@ -112,15 +112,16 @@
                     <input type="text" name="criterio" id="criterio" placeholder="Criterio"> <!--required-->
                     
                 </div>
-                <div class="modal-footer">
-                    <button type="submit" class="btn btn-success mt-3" name="create_criterio" id="addButton">Añadir Criterio</button>
+                <div class="modal-footer d-flex justify-content-between align-items-center">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="submit" class="btn btn-success mt-3" name="create_criterio" id="addButton">Añadir</button>
+                    
                 </div>
             </form>
         </div>
     </div>
 </div>
-<!--Modal de la cuestion para hacer media-->
+
 <div class="modal fade" id="calificacionModal" tabindex="-1" aria-labelledby="calificacionModalLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
@@ -138,9 +139,9 @@
                         </label>
                     </div>
                 </div>
-                <div class="modal-footer">
+                <div class="modal-footer d-flex justify-content-between" >
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-                    <button type="submit" class="btn btn-warning">Guardar Configuración</button>
+                    <button type="submit" class="btn btn-warning">Añadir</button>
                 </div>
             </form>
         </div>
@@ -166,10 +167,10 @@
                     <input type="textarea" name="descripcion_nivel" id="descripcion_nivel" placeholder="Nivel descriptivo">
                     <button type="submit" name="create_nivel" id="adButton">Añadir Nivel de Desempeño</button>
                 </div>
-                <div class="modal-footer">
-                    
-                    <button type="submit" class="btn btn-success mt-3">Añadir</button>
+                <div class="modal-footer d-flex justify-content-between">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="submit" class="btn btn-success mt-3">Añadir</button>
+                    
                 </div>
             </form>
         </div>
