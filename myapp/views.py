@@ -323,14 +323,18 @@ def correccion_personal(request, id_alumno):
     criterios = Criterios.objects.filter(rubrica=rubrica)
     calificacion = rubrica.checked
     
-    descriptores = []
-    for c in criterios:
-        c_dec = []
-        for n in niveles:
-            descr = Descriptores.objects.filter(criterio=c, nivel_de_desempeno=n).first()
-            c_dec.append(descr.descripcion if descr else '')
-        descriptores.append({'criterio': c.descripcion_criterio, 'descriptores': c_dec})
-    
+    descriptores = [
+        {
+            'criterio': c.descripcion_criterio,
+            'descriptores': [
+                Descriptores.objects.filter(criterio=c, nivel_de_desempeno=n).first().descripcion
+                if Descriptores.objects.filter(criterio=c, nivel_de_desempeno=n).exists()
+                else ''
+                for n in niveles
+            ],
+        }
+        for c in criterios
+    ]
     correccion_guardada = Notas.objects.filter(alumno=alumno, nivel_desempeno__rubrica=rubrica).exists()
     correccion_pareja = False
     
@@ -345,15 +349,23 @@ def correccion_personal(request, id_alumno):
     
     print("Mi pareja tiene la correcion: "+str(correccion_pareja))
     print("Checked: "+str(calificacion))
-    
+    calificaciones = []
     if correccion_guardada or correccion_pareja:
         print("Me meto en el if")
+        alumno_referencia = alumno if correccion_guardada else pareja
         for c in criterios:
-                calif_desc = []
-                for n in niveles:
-                    nota_descr = Notas.objects.filter(nivel_desempeno=n, descriptor=Descriptores.objects.get(criterio=c, nivel_de_desempeno=n),alumno=alumno if correccion_guardada else pareja).first()
-                    calif_desc.append(nota_descr.calificacion_descriptivo if nota_descr else '')
-                calif.append({'criterio': c.descripcion_criterio, 'calificaciones': calif_desc})
+            calif_desc = []
+            for n in niveles:
+                descriptor = Descriptores.objects.filter(criterio=c, nivel_de_desempeno=n).first()
+                nota = Notas.objects.filter(nivel_desempeno=n, descriptor=descriptor, alumno=alumno_referencia).first()
+                calificacion_num = Calificacion.objects.filter(descriptor=descriptor, alumno=alumno_referencia).first()
+
+                calif_desc.append({
+                    'descriptiva': nota.calificacion_descriptivo if nota else '',
+                    'numerica': calificacion_num.calificacion if calificacion_num else ''
+                })
+            calificaciones.append({'criterio': c.descripcion_criterio, 'calificaciones': calif_desc})
+    
     if request.method == 'POST' and ((correccion_guardada == False ) or (correccion_pareja == False)):
         print("Me meto en el POST")
         print(correccion_guardada)
@@ -365,37 +377,36 @@ def correccion_personal(request, id_alumno):
             
             for c in crit:
                 for n in niv:
-                    descriptor_nota = f'descriptor_descriptor_{n.descripcion_nivel}_{n.id_nivel_desempeno}'
+                    descriptor_key = f'descriptor_descriptor_{n.descripcion_nivel}_{n.id_nivel_desempeno}'
+                    calificacion_key = f'calificacion_{n.descripcion_nivel}_{n.id_nivel_desempeno}'
+                    
+                    descriptor_value = request.POST.get(descriptor_key)
+                    calificacion_value = request.POST.get(calificacion_key)
                     #nota = request.POST.get(descriptor_nota)
                     #print("Esto es descriptor_nota: "+descriptor_nota)
-                    nota_descriptiva = request.POST.get(descriptor_nota)
+                    #nota_descriptiva = request.POST.get(descriptor_nota)
                     print("ENTROOOOOOOOOOOOOOOOOOOOOOOOOO")
                     #print(nota_descriptiva)
                     #descr, created = Descriptores.objects.get_or_create(criterio=c, nivel_de_desempeno=n)
                     #print(descr)
-                    if calificacion:
-                        calificacion_numerica = request.POST.get(f'calificacion_{n.descripcion_nivel}_{n.id_nivel_desempeno}')
-                    else:
-                        calificacion_numerica = None
-                        
-                    if nota_descriptiva:
-                        print("ENTRO IFFFFFFFFFFFFFFFFFFFFF")
-                        #Notas.objects.create(nivel_desempeno=n, descriptor=Descriptores.objects.get(criterio=c, nivel_de_desempeno=n), calificacion_descriptiva=nota_descriptiva)
-                        descr, created = Descriptores.objects.get_or_create(criterio=c, nivel_de_desempeno=n)
+                    if descriptor_value:
+                        descriptor, _ = Descriptores.objects.get_or_create(criterio=c, nivel_de_desempeno=n)
                         Notas.objects.update_or_create(
                             nivel_desempeno=n,
-                            descriptor=descr,
+                            descriptor=descriptor,
                             alumno=alumno,
-                            defaults={'calificacion_descriptivo': nota_descriptiva}
+                            defaults={'calificacion_descriptivo': descriptor_value}
                         )
-                        if calificacion and calificacion_numerica:
+                        if calificacion and calificacion_value:
                             Calificacion.objects.update_or_create(
-                                descriptor=descr,
+                                descriptor=descriptor,
                                 alumno=alumno,
-                                defaults={'calificacion': int(calificacion_numerica)}
+                                defaults={'calificacion': int(calificacion_value)}
                             )
             correccion_guardada = True
             correccion_pareja = True
+            return redirect('correccion_personal', id_alumno=id_alumno)
+            
             #return redirect('correccion_personal', id_alumno=id_alumno)
         
     for c in criterios:
