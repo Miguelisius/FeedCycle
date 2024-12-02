@@ -119,6 +119,11 @@
                         {% for n in niveles %}
                         <td>
                             <textarea name="descriptor_descriptor_{{n.descripcion_nivel}}_{{n.id_nivel_desempeno}}" placeholder="Corrige"></textarea>
+                            <div>
+                                {% if calificacion %}
+                                <textarea name="calificacion_{{ n.descripcion_nivel }}_{{ n.id_nivel_desempeno }}" placeholder="Calificación"></textarea>
+                                {% endif %}
+                            </div>
                         </td>
                         {% endfor %}
                     </tr>
