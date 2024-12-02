@@ -156,7 +156,14 @@
                             <tr>
                                 <td>{{ criterio.criterio }}</td>
                                 {% for calificacion in criterio.calificaciones %}
-                                    <td>{{ calificacion }}</td>
+                                    <td>
+                                        {{ calificacion.descriptiva }}
+                                        <div>
+                                            {%if calificacion.numerica %}
+                                            Nota: {{calificacion.numerica}}
+                                            {% endif %}
+                                        </div>
+                                    </td>
                                 {% endfor %}
                             </tr>
                         {% endfor %}

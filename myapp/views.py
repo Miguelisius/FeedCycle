@@ -366,7 +366,7 @@ def correccion_personal(request, id_alumno):
             for c in crit:
                 for n in niv:
                     descriptor_nota = f'descriptor_descriptor_{n.descripcion_nivel}_{n.id_nivel_desempeno}'
-                    nota = request.POST.get(descriptor_nota)
+                    #nota = request.POST.get(descriptor_nota)
                     #print("Esto es descriptor_nota: "+descriptor_nota)
                     nota_descriptiva = request.POST.get(descriptor_nota)
                     print("ENTROOOOOOOOOOOOOOOOOOOOOOOOOO")
@@ -382,37 +382,40 @@ def correccion_personal(request, id_alumno):
                         print("ENTRO IFFFFFFFFFFFFFFFFFFFFF")
                         #Notas.objects.create(nivel_desempeno=n, descriptor=Descriptores.objects.get(criterio=c, nivel_de_desempeno=n), calificacion_descriptiva=nota_descriptiva)
                         descr, created = Descriptores.objects.get_or_create(criterio=c, nivel_de_desempeno=n)
-                        try:
-                            Notas.objects.create(nivel_desempeno=n, descriptor=descr, calificacion_descriptivo=nota_descriptiva, alumno=alumno)
-                        except Exception as e:
-                            print("MEMETOOOOOOOOOOEROR")
-                            messages.error(request, f"Error al guardar la nota: {str(e)}")
-                            print(f"Error: {str(e)}")
+                        Notas.objects.update_or_create(
+                            nivel_desempeno=n,
+                            descriptor=descr,
+                            alumno=alumno,
+                            defaults={'calificacion_descriptivo': nota_descriptiva}
+                        )
                         if calificacion and calificacion_numerica:
-                            Calificacion.objects.create(descriptor=descr, calificacion=int(calificacion_numerica), alumno=alumno)
-            messages.success(request, 'Corregido exitosamente.')
+                            Calificacion.objects.update_or_create(
+                                descriptor=descr,
+                                alumno=alumno,
+                                defaults={'calificacion': int(calificacion_numerica)}
+                            )
             correccion_guardada = True
             correccion_pareja = True
             #return redirect('correccion_personal', id_alumno=id_alumno)
         
-            for c in criterios:
-                calif_desc = []
-                for n in niveles:
-                    nota_descr = Notas.objects.filter(nivel_desempeno=n, descriptor=Descriptores.objects.get(criterio=c, nivel_de_desempeno=n), alumno=alumno).first()
-                    calificacion_numerica = None
-                    
-                    calificacion_numerica = Calificacion.objects.filter(
-                        descriptor=Descriptores.objects.get(criterio=c, nivel_de_desempeno=n),
-                        alumno=alumno
-                    ).first()
-                
-                    
-                    calif_desc.append({
-                        'descriptiva': nota_descr.calificacion_descriptivo if nota_descr else '',
-                        'numerica': calificacion_numerica.calificacion if calificacion_numerica else ''
-                    })
+    for c in criterios:
+        calif_desc = []
+        for n in niveles:
+            nota_descr = Notas.objects.filter(nivel_desempeno=n, descriptor=Descriptores.objects.get(criterio=c, nivel_de_desempeno=n), alumno=alumno).first()
+            calificacion_numerica = None
+            
+            calificacion_numerica = Calificacion.objects.filter(
+                descriptor=Descriptores.objects.get(criterio=c, nivel_de_desempeno=n),
+                alumno=alumno
+            ).first()
         
-                calif.append({'criterio': c.descripcion_criterio, 'calificaciones': calif_desc})
+            
+            calif_desc.append({
+                'descriptiva': nota_descr.calificacion_descriptivo if nota_descr else '',
+                'numerica': calificacion_numerica.calificacion if calificacion_numerica else ''
+            })
+
+        calif.append({'criterio': c.descripcion_criterio, 'calificaciones': calif_desc})
             
     return render(request, 'registration/correccion_personal.html', {
         'alumno': alumno,
