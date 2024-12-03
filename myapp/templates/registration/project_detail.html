@@ -79,7 +79,7 @@
     </div>
 
 
-    <div class="modal-fade" id="addAlumnoModal" tabindex="-1" role="dialog" aria-labelledby="addAlumnoModalLabel" aria-hidden="true">
+    <div class="modal fade" id="addAlumnoModal" tabindex="-1" role="dialog" aria-labelledby="addAlumnoModalLabel" aria-hidden="true">
         <div class="modal-dialog" role="document">
             <div class="modal-header">
                 <h5 class="modal-title" id="addAlumnoModalLabel">Añadir alumno</h5>
@@ -119,91 +119,63 @@
         </div>
     </div>
 
-    <div>
-        <h2>Agregue los integrantes mediante un archivo .csv:</h2>
-        <form method="POST" enctype="multipart/form-data">
-            {% csrf_token %}
-            <label for="archivo">Adjunte archivo .csv</label><br>
-            <input type="file" name="archivo" id="archivo" accept=".csv" required><br><br>
-            <button type="submit" name="upload_csv">Cargar Alumnos desde CSV</button>
-        </form>
+    <div class="modal fade" id="uploadCSVModal" tabindex="-1" role="dialog" aria-labelledby="uploadCSVModal" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-header">
+                <h5 class="modal-title" id="uploadCSVModal">Cargar alumnos desde fichero</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
 
-        <h3>Agrega a los estudiantes manualmente</h3>
-        <form method="POST">
-            {% csrf_token %}
-            <label for="nombre">Nombre:</label>
-            <input type="text" name="nombre" id="nombre" required><br><br>
-            
-            <label for="apellido">Apellido:</label>
-            <input type="text" name="apellido" id="apellido" required><br><br>
-
-            <label for="email">Email:</label>
-            <input type="email" name="email" id="email" required><br><br>
-
-            <label for="pareja">Pareja:</label>
-            <input type="number" name="pareja" id="pareja" required><br><br>
-
-            <button type="submit" name="create_alumno">Agregar Alumno</button>
-        </form>
-
-        {% if messages %}
-        <ul>
-            {% for message in messages %}
-                <li>{{ message }}</li>
-            {% endfor %}
-        </ul>
-        {% endif %}
-        <h3>Lista de alumnos en el grupo {{ grupo.numero_grupo }}</h3>
-        <table border="1">
-            <thead>
-                <tr>
-                    <th>Nombre</th>
-                    <th>Apellido</th>
-                    <th>Email</th>
-                    <th>Pareja</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for alumno in alumnos %}
-                <tr>
-                    <td>{{ alumno.nombre }}</td>
-                    <td>{{ alumno.apellido }}</td>
-                    <td>{{ alumno.email }}</td>
-                    <td>{{ alumno.pareja }}</td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-    </div>
-    <div>
-        <h3>Crea una nueva tarea</h3>
-        <form method="POST">
-            {% csrf_token %}
-            <label for="title">Título:</label>
-            <input type="text" name="title" id="title" required><br><br>
-
-            <label for="description">Descripción:</label>
-            <textarea name="description" id="description" required></textarea><br><br>
-
-            <button type="submit" name="create_task">Crear Tarea</button>
-        </form>
-        {% if messages %}
-        <ul>
-            {% for message in messages %}
-                <li>{{ message }}</li>
-            {% endfor %}
-        </ul>
-        {% endif %}
-        <ul>
-            {% for task in tareas %}
-            <li>
-                <a href= "{% url 'task_detail' task.id_task %}">{{ task.title }}</a><br>
-                {% empty %}
-                <li>No hay tareas asociados a esta asignatura.</li>
-            {% endfor %}
-        </ul>
+            <form method="POST" enctype="multipart/form-data">
+                {% csrf_token %}
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label for="archivo">Adjunte archivo .csv</label><br>
+                        <input type="file" name="archivo" id="archivo" accept=".csv" class="form-control" required><br><br>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+                    <button type="submit" class="btn btn-primary" name="upload_csv">Guardar</button>
+                </div>
+            </form>
+        </div>
     </div>
 
+    <div class="modal fade" id="createTaskModal" tabindex="-1" role="dialog" aria-labelledby="createTaskModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="createTaskModalLabel">Crear Tarea</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <form method="POST">
+                    {% csrf_token%}ç
+                    <div class="modal-body">
+                        <div class="form-group">
+                            <label for="title">Título:</label>
+                            <input type="text" name="title" id="title" class="form-control" required><br><br>
+                        </div>
+                        <div class="form-group">
+                            <label for="description">Descripción:</label>
+                            <textarea name="description" id="description" class="form-control" required></textarea><br><br>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+                        <button type="submit" class="btn btn-primary" name="create_task">Guardar</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+        
+        
+    
 
     <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/popper.js@1.12.9/dist/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
