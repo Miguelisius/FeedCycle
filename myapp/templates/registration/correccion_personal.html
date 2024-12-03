@@ -172,7 +172,7 @@
         </div>
     {% endif %}
     </div>
-    <div>
+    <div  class="fixez-bottom">
         <a  href="{% url 'correcion' task.id_task %}" >Volver a la tarea</a>
     
         <form action="{% url 'export_correction_pdf' alumno.id_alumno %}" method="get" style="display:inline;">
