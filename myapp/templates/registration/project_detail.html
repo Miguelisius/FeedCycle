@@ -20,61 +20,61 @@
                 <a class="nav-link" id="tareas-tab" data-toggle="tab" href="#tareas" role="tab" aria-controls="tareas" aria-selected="false">Tareas</a>
             </li>
         </ul>
-
-        <div class="tab-pane fade show active" id="alumnos" role="tabpanel" aria-labelledby="alumnos-tab">
-                <div class="d-flex justify-content-between mb-3">
-                    <button class="btn btn-primary" data-toggle="modal" data-target="#addAlumnoModal">Añadir Alumno Manualmente</button>
-                    <button class="btn btn-secondary" data-toggle="modal" data-target="#uploadCSVModal">Seleccionar Archivo</button>
+        <div class="tab-content mt-3">
+            <div class="tab-pane fade show active" id="alumnos" role="tabpanel" aria-labelledby="alumnos-tab">
+                    <div class="d-flex justify-content-between mb-3">
+                        <button class="btn btn-primary" data-toggle="modal" data-target="#addAlumnoModal">Añadir Alumno Manualmente</button>
+                        <button class="btn btn-secondary" data-toggle="modal" data-target="#uploadCSVModal">Seleccionar Archivo</button>
+                    </div>
+                    <table class="table table-bordered">
+                        <thead class="thead-dark">
+                            <tr>
+                                <th>Nombre</th>
+                                <th>Apellido</th>
+                                <th>Email</th>
+                                <th>Pareja</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for alumno in alumnos %}
+                            <tr>
+                                <td>{{ alumno.nombre }}</td>
+                                <td>{{ alumno.apellido }}</td>
+                                <td>{{ alumno.email }}</td>
+                                <td>{{ alumno.pareja }}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
                 </div>
-                <table class="table table-bordered">
-                    <thead class="thead-dark">
-                        <tr>
-                            <th>Nombre</th>
-                            <th>Apellido</th>
-                            <th>Email</th>
-                            <th>Pareja</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% for alumno in alumnos %}
-                        <tr>
-                            <td>{{ alumno.nombre }}</td>
-                            <td>{{ alumno.apellido }}</td>
-                            <td>{{ alumno.email }}</td>
-                            <td>{{ alumno.pareja }}</td>
-                        </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
-            </div>
 
-            <div class="tab-pane fade" id="tareas" role="tabpanel" aria-labelledby="tareas-tab">
-                <button class="btn btn-primary mb-3" data-toggle="modal" data-target="#createTaskModal">Crear Tarea</button>
-                <table class="table table-bordered">
-                    <thead class="thead-dark">
-                        <tr>
-                            <th>Título</th>
-                            <th>Descripción</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% for task in tareas %}
-                        <tr>
-                            <td>
-                                <a href="{% url 'task_detail' task.id_task %}" class="text-primary">{{ task.title }}</a>
-                            </td>
-                            <td>{{ task.description }}</td>
-                        </tr>
-                        {% empty %}
-                        <tr>
-                            <td colspan="2" class="text-center">No hay tareas asociadas a este grupo.</td>
-                        </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
+                <div class="tab-pane fade" id="tareas" role="tabpanel" aria-labelledby="tareas-tab">
+                    <button class="btn btn-primary mb-3" data-toggle="modal" data-target="#createTaskModal">Crear Tarea</button>
+                    <table class="table table-bordered">
+                        <thead class="thead-dark">
+                            <tr>
+                                <th>Título</th>
+                                <th>Descripción</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for task in tareas %}
+                            <tr>
+                                <td>
+                                    <a href="{% url 'task_detail' task.id_task %}" class="text-primary">{{ task.title }}</a>
+                                </td>
+                                <td>{{ task.description }}</td>
+                            </tr>
+                            {% empty %}
+                            <tr>
+                                <td colspan="2" class="text-center">No hay tareas asociadas a este grupo.</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
             </div>
         </div>
-
     </div>
 
 
@@ -157,20 +157,20 @@
                     </button>
                 </div>
                 <form method="POST">
-                    {% csrf_token%}
+                    {% csrf_token %}
                     <div class="modal-body">
                         <div class="form-group">
                             <label for="title">Título:</label>
-                            <input type="text" name="title" id="title" class="form-control" required><br><br>
+                            <input type="text" name="title" id="title" class="form-control" required>
                         </div>
                         <div class="form-group">
                             <label for="description">Descripción:</label>
-                            <textarea name="description" id="description" class="form-control" required></textarea><br><br>
+                            <textarea name="description" id="description" class="form-control" required></textarea>
                         </div>
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
-                        <button type="submit" class="btn btn-primary" name="create_task">Guardar</button>
+                        <button type="submit" name="create_task" class="btn btn-primary">Guardar</button>
                     </div>
                 </form>
             </div>
