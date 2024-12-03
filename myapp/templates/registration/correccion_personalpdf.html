@@ -26,30 +26,33 @@
         </style>
     </head>
         
-    <body>
-        <h1>{{task.title}}</h1>
-        <h1>Corrección de la pareja {{alumno.pareja}}</h1>
-        <h1>Alumnos: {{alumno.nombre}} {{alumno.apellido}} ; {{pareja.nombre}} {{pareja.apellido}}</h1>
-
-        <table>
-            <thead>
+    <table>
+        <thead>
+            <tr>
+                <th>Criterios / Niveles de Desempeño</th>
+                {% for ni in niveles %}
+                    <th>{{ ni.nivel }}</th>
+                {% endfor %}
+            </tr>
+        </thead>
+        <tbody>
+            {% for item in calificaciones %}
                 <tr>
-                    <th>Criterios / Niveles de Desempeño</th>
-                    {% for ni in niveles %}
-                        <th>{{ ni.nivel }}</th>
+                    <td>{{ item.criterio }}</td>
+                    {% for calif in item.calificaciones %}
+                        <td>
+                            {{ calif.descriptiva }}
+                            <div>
+                                {% if calif.numerica %}
+                                    Nota: {{ calif.numerica }}
+                                {% endif %}
+                            </div>
+                        </td>
                     {% endfor %}
                 </tr>
-            </thead>
-            <tbody>
-                {% for item in calif %}
-                    <tr>
-                        <td>{{ item.criterio }}</td>
-                        {% for calif_item in item.calificaciones %}
-                            <td>{{ calif_item }}</td>
-                        {% endfor %}
-                    </tr>
-                {% endfor %}
-            </tbody>
-        </table>
+            {% endfor %}
+        </tbody>
+    </table>
+    
     </body>
 </html>

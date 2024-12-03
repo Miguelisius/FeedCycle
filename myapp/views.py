@@ -469,17 +469,19 @@ def export_correccion_pdf(request, id_alumno):
     criterios = Criterios.objects.filter(rubrica=rubrica)
     niveles = NivelDeDesempeno.objects.filter(rubrica=rubrica)
     
-    calif = []
-    for c in criterios:
+    calificaciones = []
+    for criterio in criterios:
         calif_desc = []
-        for n in niveles:
-            nota_descr = Notas.objects.filter(
-                nivel_desempeno=n,
-                descriptor__criterio=c,
-                alumno=alumno
-            ).first()
-            calif_desc.append(nota_descr.calificacion_descriptivo if nota_descr else 'Sin calificación')
-        calif.append({'criterio': c.descripcion_criterio, 'calificaciones': calif_desc})
+        for nivel in niveles:
+            descriptor = Descriptores.objects.filter(criterio=criterio, nivel_de_desempeno=nivel).first()
+            nota = Notas.objects.filter(nivel_desempeno=nivel, descriptor=descriptor, alumno=alumno).first()
+            calificacion_num = Calificacion.objects.filter(descriptor=descriptor, alumno=alumno).first()
+
+            calif_desc.append({
+                'descriptiva': nota.calificacion_descriptivo if nota else 'Sin descripción',
+                'numerica': calificacion_num.calificacion if calificacion_num else ''
+            })
+        calificaciones.append({'criterio': criterio.descripcion_criterio, 'calificaciones': calif_desc})
     
     context = {
         'alumno': alumno,
@@ -488,7 +490,7 @@ def export_correccion_pdf(request, id_alumno):
         'rubrica': rubrica,
         'criterios': criterios,
         'niveles': niveles,
-        'calif': calif,
+        'calificaciones': calificaciones,
     }
     
     html_string = render_to_string('registration/correccion_personalpdf.html', context)
