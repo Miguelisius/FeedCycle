@@ -21,19 +21,18 @@
             </li>
         </ul>
 
-        <div class="tab-content mt-3">
-            <div class="tab-pane fade show active" id="alumnos" role="tabpanel" aria-labelledby="alumnos-tab">
-                <div class="d-flex justify-content-betweenmb-3">
+        <div class="tab-pane fade show active" id="alumnos" role="tabpanel" aria-labelledby="alumnos-tab">
+                <div class="d-flex justify-content-between mb-3">
                     <button class="btn btn-primary" data-toggle="modal" data-target="#addAlumnoModal">Añadir Alumno Manualmente</button>
                     <button class="btn btn-secondary" data-toggle="modal" data-target="#uploadCSVModal">Seleccionar Archivo</button>
                 </div>
                 <table class="table table-bordered">
                     <thead class="thead-dark">
                         <tr>
-                            <td>Nombre</td>
-                            <td>Apellidos</td>
-                            <td>Email</td>
-                            <td>Pareja</td>
+                            <th>Nombre</th>
+                            <th>Apellido</th>
+                            <th>Email</th>
+                            <th>Pareja</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -50,12 +49,12 @@
             </div>
 
             <div class="tab-pane fade" id="tareas" role="tabpanel" aria-labelledby="tareas-tab">
-                <button class="btn btn-primary mb-3" data-bs-toggle="modal" data-target="#createTaskModal">Crear Tarea</button>
+                <button class="btn btn-primary mb-3" data-toggle="modal" data-target="#createTaskModal">Crear Tarea</button>
                 <table class="table table-bordered">
                     <thead class="thead-dark">
                         <tr>
-                            <td>Tarea</td>
-                            <td>Descripción</td>
+                            <th>Título</th>
+                            <th>Descripción</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -158,7 +157,7 @@
                     </button>
                 </div>
                 <form method="POST">
-                    {% csrf_token%}ç
+                    {% csrf_token%}
                     <div class="modal-body">
                         <div class="form-group">
                             <label for="title">Título:</label>
