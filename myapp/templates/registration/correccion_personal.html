@@ -92,47 +92,48 @@
             </tbody>
         </table>
     </div>
-        {% if not correccion_guardada and not correccion_pareja%}
-        <form method="POST">
-            {% csrf_token %}
-            <table class="table-container">
-                <h3 class="table-title">Correción:</h3>
-                <thead>
-                    <tr>
-                        <th>Criterios\Niveles de Desemepeño</th>
-                        
-                        {% for ni in niveles %}
-                            {%if ni.nivel%}
-                                <th>{{ ni.nivel }}</th>
-                            {%endif%}
-                            {%if ni.descripcion_nivel%}
-                                <th>{{ ni.descripcion_nivel }}</th>
-                            {%endif%}
-                        {% endfor %}
-                        
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for c in descriptores %}
-                    <tr>
-                        <td>{{ c.criterio }}</td>
-                        {% for n in niveles %}
-                        <td>
-                            <textarea name="descriptor_descriptor_{{n.descripcion_nivel}}_{{n.id_nivel_desempeno}}" placeholder="Corrige"></textarea>
-                            <div>
-                                {% if calificacion %}
-                                <textarea name="calificacion_{{ n.descripcion_nivel }}_{{ n.id_nivel_desempeno }}" placeholder="Calificación"></textarea>
-                                {% endif %}
-                            </div>
-                        </td>
-                        {% endfor %}
-                    </tr>
+    {% if not correccion_guardada and not correccion_pareja%}
+    <form method="POST">
+        {% csrf_token %}
+        <table class="table-container">
+            <h3 class="table-title">Correción:</h3>
+            <thead>
+                <tr>
+                    <th>Criterios\Niveles de Desemepeño</th>
+                    
+                    {% for ni in niveles %}
+                        {%if ni.nivel%}
+                            <th>{{ ni.nivel }}</th>
+                        {%endif%}
+                        {%if ni.descripcion_nivel%}
+                            <th>{{ ni.descripcion_nivel }}</th>
+                        {%endif%}
                     {% endfor %}
-                </tbody>
-            </table>
-            <button type="submit" name="fin_corregir">Guardar corrección</button>
-        </form>
-        {%else%}
+                    
+                </tr>
+            </thead>
+            <tbody>
+                {% for c in descriptores %}
+                <tr>
+                    <td>{{ c.criterio }}</td>
+                    {% for n in niveles %}
+                    <td>
+                        <textarea name="descriptor_descriptor_{{n.descripcion_nivel}}_{{n.id_nivel_desempeno}}" placeholder="Corrige"></textarea>
+                        <div>
+                            {% if calificacion %}
+                            <textarea name="calificacion_{{ n.descripcion_nivel }}_{{ n.id_nivel_desempeno }}" placeholder="Calificación"></textarea>
+                            {% endif %}
+                        </div>
+                    </td>
+                    {% endfor %}
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        <button type="submit" name="fin_corregir">Guardar corrección</button>
+    </form>
+    {%endif%}
+    {%if correccion_guardada or correccion_pareja%}
         <div>
             <div>
                 
@@ -159,10 +160,8 @@
                                     <td>
                                         {{ calificacion.descriptiva }}
                                         <div>
-                                            {%if calificacion.numerica %}
-                                            Nota: {{calificacion.numerica}}
-                                            {%else%}
-                                            
+                                            {% if calificacion.numerica != '' %}
+                                                Nota: {{ calificacion.numerica }}
                                             {% endif %}
                                         </div>
                                     </td>
@@ -170,10 +169,13 @@
                             </tr>
                         {% endfor %}
                     </tbody>
+                    
                 </table>
+            </div>
         </div>
+    
     {% endif %}
-    </div>
+    
     <div  class="fixez-bottom">
         <a  href="{% url 'correcion' task.id_task %}" >Volver a la tarea</a>
     
