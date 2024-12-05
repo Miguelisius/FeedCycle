@@ -30,8 +30,13 @@
         <thead>
             <tr>
                 <th>Criterios / Niveles de Desempeño</th>
-                {% for ni in niveles %}
-                    <th>{{ ni.nivel }}</th>
+                {% for nivel in niveles %}
+                    {%if nivel.nivel%}
+                        <th>{{ nivel.nivel }}</th>
+                    {%endif%}
+                    {%if nivel.descripcion_nivel%}
+                        <th>{{ nivel.descripcion_nivel }}</th>
+                    {%endif%}
                 {% endfor %}
             </tr>
         </thead>

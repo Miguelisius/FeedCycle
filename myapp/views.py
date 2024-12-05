@@ -451,18 +451,27 @@ def correccion_personal(request, id_alumno):
 
 @login_required
 def export_rubrica_pdf(request, rubric_id):
+    # Obtener la rúbrica y sus elementos relacionados
     rubrica = get_object_or_404(Rubrica, id_rubrica=rubric_id)
     task = rubrica.tarea
     criterios = Criterios.objects.filter(rubrica=rubrica)
-    niveles = NivelDeDesempeno.objects.filter(rubrica=rubrica)
+    niveles = NivelDeDesempeno.objects.filter(rubrica=rubrica).exclude(nivel__isnull=True, descripcion_nivel__isnull=True)
+    
+    # Construir la matriz de descriptores
     descriptores = []
     for c in criterios:
         c_dec = []
         for n in niveles:
+            # Buscar descriptor para cada criterio y nivel
             descr = Descriptores.objects.filter(criterio=c, nivel_de_desempeno=n).first()
-            c_dec.append(descr.descripcion if descr else '')
+            # Si no existe descriptor, asignar valor vacío
+            if descr and descr.nivel_de_desempeno:
+                c_dec.append(descr.descripcion)
+            else:
+                c_dec.append('Sin descriptor')
         descriptores.append({'criterio': c.descripcion_criterio, 'descriptores': c_dec})
     
+    # Contexto para el template
     context = {
         'task': task,
         'rubrica': rubrica,
@@ -471,13 +480,16 @@ def export_rubrica_pdf(request, rubric_id):
         'descriptores': descriptores,
     }
     
+    # Generar PDF
     html_string = render_to_string('registration/rubrica_finalpdf.html', context)
     pdf = HTML(string=html_string).write_pdf()
     
+    # Respuesta HTTP con el archivo PDF
     response = HttpResponse(pdf, content_type='application/pdf')
     response['Content-Disposition'] = f'attachment; filename="Rubrica_{task.title}.pdf"'
     
     return response
+
 
 @login_required
 def export_correccion_pdf(request, id_alumno):
