@@ -25,41 +25,54 @@
             }
         </style>
     </head>
+    <body>
+        <h1>Rúbrica de la tarea {{ tarea.title }}</h1>
         
-    <table>
-        <thead>
-            <tr>
-                <th>Criterios / Niveles de Desempeño</th>
-                {% for nivel in niveles %}
-                    {%if nivel.nivel%}
-                        <th>{{ nivel.nivel }}</th>
-                    {%endif%}
-                    {%if nivel.descripcion_nivel%}
-                        <th>{{ nivel.descripcion_nivel }}</th>
-                    {%endif%}
-                {% endfor %}
-            </tr>
-        </thead>
-        <tbody>
-            {% for item in calificaciones %}
+        
+        <ul>
+            <a>Corrección de la pareja {{ alumno.pareja }}</a>
+            <li>{{ alumno.nombre }} {{ alumno.apellidos }} - {{ alumno.email }}</li>
+            {% if pareja %}
+                <li>{{ pareja.nombre }} {{ pareja.apellidos }} - {{ pareja.email }}</li>
+            {% else %}
+                <li>No hay pareja asignada.</li>
+            {% endif %}
+        </ul>
+        
+        <table>
+            <thead>
                 <tr>
-                    <td>{{ item.criterio }}</td>
-                    {% for calif in item.calificaciones %}
-                        <td>
-                            {{ calif.descriptiva }}
-                            <div>
-                                {% if calif.numerica %}
-                                    Nota: {{ calif.numerica }}
-                                {% else %}
-                                
-                                {% endif %}
-                            </div>
-                        </td>
+                    <th>Criterios / Niveles de Desempeño</th>
+                    {% for nivel in niveles %}
+                        {%if nivel.nivel%}
+                            <th>{{ nivel.nivel }}</th>
+                        {%endif%}
+                        {%if nivel.descripcion_nivel%}
+                            <th>{{ nivel.descripcion_nivel }}</th>
+                        {%endif%}
                     {% endfor %}
                 </tr>
-            {% endfor %}
-        </tbody>
-    </table>
+            </thead>
+            <tbody>
+                {% for item in calificaciones %}
+                    <tr>
+                        <td>{{ item.criterio }}</td>
+                        {% for calif in item.calificaciones %}
+                            <td>
+                                {{ calif.descriptiva }}
+                                <div>
+                                    {% if calif.numerica %}
+                                        Nota: {{ calif.numerica }}
+                                    {% else %}
+                                    
+                                    {% endif %}
+                                </div>
+                            </td>
+                        {% endfor %}
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
     
     </body>
 </html>
