@@ -163,6 +163,8 @@ def taskrubric_detail(request, task_id):
     task = get_object_or_404(Task, id_task=task_id)
     rubrica, created = Rubrica.objects.get_or_create(tarea=task)
     
+    show_toast = False
+    toast_message = ""
     modal = None
     tabla = False
     #media =False
@@ -175,8 +177,10 @@ def taskrubric_detail(request, task_id):
         #print("Valor de calcular_media:", calcular_media)
         if criterio:
             Criterios.objects.create(rubrica=rubrica, descripcion_criterio=criterio)
-            messages.success(request, 'Criterio agregado exitosamente.')
+            #messages.success(request, 'Criterio agregado exitosamente.')
+            toast_message = "Criterio agregado exitosamente."
             modal = 'criterioModal'
+            show_toast = True
             
         elif calcular_media is not None:
             #Obtener ek valor del checkedbox y almacenarlo en la BD (cambia models)
@@ -202,10 +206,14 @@ def taskrubric_detail(request, task_id):
                 )
                 new_level.full_clean()
                 new_level.save()
-                messages.success(request, 'Nivel de desempeño agregado exitosamente.')
+                #messages.success(request, 'Nivel de desempeño agregado exitosamente.')
+                toast_message = "Nivel de desempeño agregado exitosamente."
+                show_toast = True
                 modal = 'nivelModal'
             except ValidationError as e:
-                messages.error(request, e)
+                #messages.error(request, e)
+                toast_message = f"Error al agregar nivel: {e}"
+                show_toast = True
             nivel_new = NivelDeDesempeno.objects.filter(rubrica=rubrica)
         #elif 'fin_modal' in request.POST:
         # tabla = True
@@ -225,7 +233,9 @@ def taskrubric_detail(request, task_id):
             #rubrica.checked = calcular_media
             #print("Valor de calcular_media:", calcular_media)
             #rubrica.save()
-            messages.success(request, 'Rúbrica guardada exitosamente.')
+            #messages.success(request, 'Rúbrica guardada exitosamente.')
+            toast_message = "Rúbrica guardada exitosamente."
+            show_toast = True
             modal = None
             return redirect('rubric_detail', rubric_id= rubrica.id_rubrica)
             #else:
@@ -253,6 +263,8 @@ def taskrubric_detail(request, task_id):
         'rubrica': rubrica,
         'descriptores': descriptores,
         'modal': modal,
+        'show_toast': show_toast,
+        'toast_message': toast_message,
         #'checked': rubrica.checked,
         #'tabla': tabla,
     })
