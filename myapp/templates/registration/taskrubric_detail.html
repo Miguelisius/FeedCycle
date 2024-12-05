@@ -95,6 +95,9 @@
         </form>
     
     <a href="{% url 'rubric_detail' rubrica.id_rubrica %}">Ver rúbrica de la tarea</a>
+    <form action="{% url 'export_rubrica_pdf' rubrica.id_rubrica %}" method="get" style="display: inline;">
+        <button type="submit" class="btn btn-primary">Exportar a PDF</button>
+    </form>
 </div>
 
 <div class="modal fade" id="criterioModal" tabindex="-1" aria-labelledby="criterioModalLabel" aria-hidden="true">

@@ -450,6 +450,36 @@ def correccion_personal(request, id_alumno):
     })"""
 
 @login_required
+def export_rubrica_pdf(request, rubric_id):
+    rubrica = get_object_or_404(Rubrica, id_rubrica=rubric_id)
+    task = rubrica.tarea
+    criterios = Criterios.objects.filter(rubrica=rubrica)
+    niveles = NivelDeDesempeno.objects.filter(rubrica=rubrica)
+    descriptores = []
+    for c in criterios:
+        c_dec = []
+        for n in niveles:
+            descr = Descriptores.objects.filter(criterio=c, nivel_de_desempeno=n).first()
+            c_dec.append(descr.descripcion if descr else '')
+        descriptores.append({'criterio': c.descripcion_criterio, 'descriptores': c_dec})
+    
+    context = {
+        'task': task,
+        'rubrica': rubrica,
+        'criterios': criterios,
+        'niveles': niveles,
+        'descriptores': descriptores,
+    }
+    
+    html_string = render_to_string('registration/rubrica_finalpdf.html', context)
+    pdf = HTML(string=html_string).write_pdf()
+    
+    response = HttpResponse(pdf, content_type='application/pdf')
+    response['Content-Disposition'] = f'attachment; filename="Rubrica_{task.title}.pdf"'
+    
+    return response
+
+@login_required
 def export_correccion_pdf(request, id_alumno):
     alumno = get_object_or_404(Alumno, id_alumno=id_alumno)
     pareja = Alumno.objects.filter(grupo=alumno.grupo, pareja=alumno.pareja).exclude(id_alumno=alumno.id_alumno).first()
