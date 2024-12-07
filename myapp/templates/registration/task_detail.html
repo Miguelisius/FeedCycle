@@ -37,6 +37,17 @@
     </style>
 </head>
 <body>
+    <nav aria-label="breadcrumb" class="w-100">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item">
+                <a href="{% url 'home' %}">Inicio</a>
+            </li>
+            <li class="breadcrumb-item">
+                <a href="{% url 'project_detail' task.grupo.project.id_project task.grupo.id_grupo %}">Grupo {{ task.grupo.numero_grupo }}</a>
+            </li>
+            <li class="breadcrumb-item active" aria-current="page">Tarea: {{ task.title }}</li>
+        </ol>
+    </nav>
     <button class="btn btn-secondary backbutton" onclick="window.history.back()">Volver a la lista de tareas</button>
     <main>
         <h1 class="display-4">{{ task.title }}</h1>
