@@ -44,6 +44,25 @@
     </style>
 </head>
 <body>
+    <nav aria-label="breadcrumb" class="container mt-4">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item">
+                <a href="{% url 'home' %}">Inicio</a>
+            </li>
+            <li class="breadcrumb-item">
+                <a href="{% url 'project_detail' task.grupo.project.id_project task.grupo.id_grupo %}">Grupo {{ task.grupo.numero_grupo }}</a>
+            </li>
+            <li class="breadcrumb-item">
+                <a href="{% url 'task_detail' task.id_task %}">Tarea: {{ task.title }}</a>
+            </li>
+            <li class="breadcrumb-item">
+                <a href="{% url 'correcion' task.id_task %}">Corrección Tarea</a>
+            </li>
+            <li class="breadcrumb-item active" aria-current="page">
+                Pareja {{ alumno.pareja }}
+            </li>
+        </ol>
+    </nav>
     <h1>Corrección de la pareja {{alumno.pareja}}</h1>
 
     <div>
