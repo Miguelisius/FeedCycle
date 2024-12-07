@@ -6,6 +6,16 @@
 </head>
 
 <body>
+    <div class="container mt-3">
+        <!-- Breadcrumb -->
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="{% url 'home' %}">Inicio</a></li>
+                <li class="breadcrumb-item"><a href="{% url 'projects' %}">Proyectos</a></li>
+                <li class="breadcrumb-item active" aria-current="page">{{ project.title }} - Grupo {{ grupo.numero_grupo }}</li>
+            </ol>
+        </nav>
+    </div>
     <div class="container mt-5">
         <h1>{{ project.title }} - Grupo {{ grupo.numero_grupo }}</h1>
         <p>{{ project.description }}</p>

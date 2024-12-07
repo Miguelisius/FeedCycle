@@ -26,6 +26,12 @@
 
 <body>
     <h1 class="text-center">Bienvenido, {{ request.user.username }}</h1>
+    <nav aria-label="breadcrumb" class="mt-3">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="{% url 'home' %}">Inicio</a></li>
+            <li class="breadcrumb-item active" aria-current="page">Asignaturas y Grupos</li>
+        </ol>
+    </nav>
 
     <div class="container mt-5">
         <h2 >Asignaturas y Grupos</h2>
