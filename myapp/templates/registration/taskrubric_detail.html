@@ -31,27 +31,37 @@
     </style>
 </head>
 <body>
-    <nav aria-label="breadcrumb" class="container mt-4">
-        <ol class="breadcrumb">
-            <li class="breadcrumb-item">
-                <a href="{% url 'home' %}">Inicio</a>
-            </li>
-            <li class="breadcrumb-item">
-                <a href="{% url 'project_detail' task.grupo.project.id_project task.grupo.id_grupo %}">Grupo {{ task.grupo.numero_grupo }}</a>
-            </li>
-            <li class="breadcrumb-item">
-                <a href="{% url 'task_detail' task.id_task %}">Tarea: {{ task.title }}</a>
-            </li>
-            <li class="breadcrumb-item active" aria-current="page">Crear Rúbrica</li>
-        </ol>
+    <div class="mt-3 px-3">
+        <h1>Creación de la Rúbrica para la tarea: {{task.title}}</h1>
+    </div>
+    <nav aria-label="breadcrumb" class="mt-4 px-3 w-100">
+        <div class="bg-light p-3 border">
+            <ol class="breadcrumb mb-0">
+                <li class="breadcrumb-item">
+                    <a href="{% url 'home' %}">Inicio</a>
+                </li>
+                <li class="breadcrumb-item">
+                    <a href="{% url 'project_detail' task.grupo.project.id_project task.grupo.id_grupo %}">
+                        Grupo {{ task.grupo.numero_grupo }}
+                    </a>
+                </li>
+                <li class="breadcrumb-item">
+                    <a href="{% url 'task_detail' task.id_task %}">
+                        Tarea: {{ task.title }}
+                    </a>
+                </li>
+                <li class="breadcrumb-item active" aria-current="page">Crear Rúbrica</li>
+            </ol>
+        </div>
     </nav>
+    
     <!--div de los botones mediante modales-->
     <div class="container mt-4">
         
 
         
         <!--<a href="javascript:history.back()" class="btn btn-secondary mb-3">Atrás</a>-->
-        <h1>Creación de la Rúbrica para la tarea: {{task.title}}</h1>
+    
 
         <!--<button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#criterioModal">
             Crea la rúbrica
