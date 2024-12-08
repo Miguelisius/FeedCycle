@@ -142,15 +142,17 @@ def project_detail(request, project_id, group_id):
             print("Entro en delete_alumno")
             alumno_id = request.POST.get('id_alumno')
             alumno = get_object_or_404(Alumno, id_alumno=alumno_id)
+            alumno_name = alumno.nombre
             alumno.delete()
-            messages.success(request, 'Alumno eliminado exitosamente.')
+            messages.success(request, f'Alumno "{alumno_name}" eliminado exitosamente.')
             return redirect('project_detail', project_id=project_id, group_id=group_id)
         
         if 'delete_task' in request.POST:
             task_id = request.POST.get('id_task')
             task = get_object_or_404(Task, id_task=task_id)
+            task_name = task.title
             task.delete()
-            messages.success(request, 'Tarea eliminada exitosamente.')
+            messages.success(request, f'Tarea "{task_name}" eliminada exitosamente.')
             return redirect('project_detail', project_id=project_id, group_id=group_id)
         
         if 'create_alumno' in request.POST:
