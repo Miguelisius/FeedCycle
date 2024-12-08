@@ -51,12 +51,34 @@ def home(request):
             new_group.save()
 
             messages.success(request, f'Grupo {numero_grupo} creado y asignado a la asignatura {project.title}')
+        elif 'delete_project' in request.POST:
+            project_id = request.POST.get('delete_project')
+            project = get_object_or_404(Project, id_project=project_id)
+
+            if project.profesor != request.user.tutor:
+                messages.error(request, "No tienes permiso para eliminar esta asignatura.")
+                return redirect('home')
+            
+            project_name = project.title  # Nombre de la asignatura
+            project.delete()
+            messages.success(request, f'Asignatura "{project_name}" eliminada exitosamente.')
+        elif 'delete_group' in request.POST:
+            group_id = request.POST.get('delete_group')
+            grupo = get_object_or_404(Grupo, id_grupo=group_id)
+
+            if grupo.profesor != request.user.tutor:
+                messages.error(request, "No tienes permiso para eliminar este grupo.")
+                return redirect('home')
+
+            group_number = grupo.numero_grupo  # Número del grupo
+            grupo.delete()
+            messages.success(request, f'Grupo {group_number} eliminado exitosamente.')
     
     projects = Project.objects.filter(profesor=tutor_mail)
     grupos = Grupo.objects.filter(profesor=tutor_mail)
     return render(request, 'registration/home.html', {'projects': projects, 'grupos': grupos})
 
-@login_required
+"""@login_required
 def delete_project(request, project_id):
     project = get_object_or_404(Project, id_project=project_id)
     
@@ -78,7 +100,7 @@ def delete_group(request, group_id):
     
     grupo.delete()
     messages.success(request, 'Grupo eliminado exitosamente.')
-    return redirect('home')
+    return redirect('home')"""
 
 def register(request):
     if request.method == 'POST':

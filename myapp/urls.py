@@ -2,7 +2,7 @@ from django.urls import path
 from . import views
 from django.contrib.auth import views as auth_views
 from django.contrib.auth.views import LogoutView
-from .views import delete_project, delete_group
+#from .views import delete_project, delete_group
 
 urlpatterns = [
     path('', auth_views.LoginView.as_view(template_name='registration/login.html'), name='login'),
@@ -17,7 +17,7 @@ urlpatterns = [
     path('correcion_personal/<int:id_alumno>', views.correccion_personal, name='correccion_personal'),
     path('correccion/<int:id_alumno>/exportar-pdf/', views.export_correccion_pdf, name='export_correction_pdf'),
     path('rubrica/<int:rubric_id>/exportar-pdf/', views.export_rubrica_pdf, name='export_rubrica_pdf'),
-    path('delete_project/<int:project_id>/', delete_project, name='delete_project'),
-    path('delete_group/<int:group_id>/', delete_group, name='delete_group'),
+    #path('delete_project/<int:project_id>/', delete_project, name='delete_project'),
+    #path('delete_group/<int:group_id>/', delete_group, name='delete_group'),
     #path('delete-alumno/<int:alumno_id>/', views.delete_alumno, name='delete_alumno'),
 ]

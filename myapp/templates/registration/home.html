@@ -100,16 +100,18 @@
                         </td>
                         <td>
                             <a class="actions-btn" data-toggle="modal" data-target="#addGroupModal{{ project.id_project }}" title="Agregar Grupo">+</a>
-                            <form method="POST" action="{% url 'delete_project' project.id_project %}" style="display:inline;">
+                            <form method="POST" action="{% url 'home' %}" style="display:inline;">
                                 {% csrf_token %}
+                                <input type="hidden" name="delete_project" value="{{ project.id_project }}">
                                 <button type="submit" class="btn btn-danger" onclick="return confirm('¿Estás seguro de que deseas eliminar esta asignatura?')">Eliminar Asignatura</button>
                             </form>
                             
                             {% for grupo in project.grupo_set.all %}
-                                <form method="POST" action="{% url 'delete_group' grupo.id_grupo %}" style="display:inline;">
-                                    {% csrf_token %}
-                                    <button type="submit" class="btn btn-danger" onclick="return confirm('¿Estás seguro de que deseas eliminar este grupo?')">Eliminar Grupo</button>
-                                </form>
+                            <form method="POST" action="{% url 'home' %}" style="display:inline;">
+                                {% csrf_token %}
+                                <input type="hidden" name="delete_group" value="{{ grupo.id_grupo }}">
+                                <button type="submit" class="btn btn-danger" onclick="return confirm('¿Estás seguro de que deseas eliminar este grupo?')">Eliminar Grupo</button>
+                            </form>
                             {% endfor %}
                         </td>
                     </tr>
