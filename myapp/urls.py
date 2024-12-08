@@ -19,4 +19,5 @@ urlpatterns = [
     path('rubrica/<int:rubric_id>/exportar-pdf/', views.export_rubrica_pdf, name='export_rubrica_pdf'),
     path('delete_project/<int:project_id>/', delete_project, name='delete_project'),
     path('delete_group/<int:group_id>/', delete_group, name='delete_group'),
+    #path('delete-alumno/<int:alumno_id>/', views.delete_alumno, name='delete_alumno'),
 ]

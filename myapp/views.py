@@ -137,6 +137,14 @@ def project_detail(request, project_id, group_id):
                         pareja = None
                 Alumno.objects.create(nombre=nombre_alumno, apellido=apellido, email=correo ,pareja=pareja, grupo=grupo_asignado)
             messages.success(request, 'Alumnos agregados desde el archivo CSV exitosamente.')
+            
+        if 'delete_alumno' in request.POST:
+            print("Entro en delete_alumno")
+            alumno_id = request.POST.get('id_alumno')
+            alumno = get_object_or_404(Alumno, id_alumno=alumno_id)
+            alumno.delete()
+            messages.success(request, 'Alumno eliminado exitosamente.')
+            return redirect('project_detail', project_id=project_id, group_id=group_id)
         
         if 'create_alumno' in request.POST:
             nombre_alumno = request.POST.get('nombre')
