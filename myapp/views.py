@@ -146,6 +146,13 @@ def project_detail(request, project_id, group_id):
             messages.success(request, 'Alumno eliminado exitosamente.')
             return redirect('project_detail', project_id=project_id, group_id=group_id)
         
+        if 'delete_task' in request.POST:
+            task_id = request.POST.get('id_task')
+            task = get_object_or_404(Task, id_task=task_id)
+            task.delete()
+            messages.success(request, 'Tarea eliminada exitosamente.')
+            return redirect('project_detail', project_id=project_id, group_id=group_id)
+        
         if 'create_alumno' in request.POST:
             nombre_alumno = request.POST.get('nombre')
             apellido = request.POST.get('apellido')

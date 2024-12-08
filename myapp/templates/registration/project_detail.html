@@ -73,6 +73,7 @@
                             <tr>
                                 <th>Título</th>
                                 <th>Descripción</th>
+                                <th>Acciones</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -82,6 +83,13 @@
                                     <a href="{% url 'task_detail' task.id_task %}" class="text-primary">{{ task.title }}</a>
                                 </td>
                                 <td>{{ task.description }}</td>
+                                <td>
+                                    <form method="POST" action="{% url 'project_detail' project_id=project.id_project group_id=grupo.id_grupo %}">
+                                        {% csrf_token %}
+                                        <input type="hidden" name="id_task" value="{{ task.id_task }}">
+                                        <button type="submit" name="delete_task" class="btn btn-danger">Eliminar</button>
+                                    </form>
+                                </td>
                             </tr>
                             {% empty %}
                             <tr>
