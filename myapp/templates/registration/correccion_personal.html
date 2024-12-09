@@ -46,38 +46,39 @@
 <body>
     <div class="mt-3 px-3">
         <h1>Corrección de la pareja {{alumno.pareja}}</h1>
+        <nav aria-label="breadcrumb" >
+            <div class="bg-light p-3 border">
+                <ol class="breadcrumb mb-0">
+                    <li class="breadcrumb-item">
+                        <a href="{% url 'home' %}">Inicio</a>
+                    </li>
+                    <li class="breadcrumb-item">
+                        <a href="{% url 'project_detail' task.grupo.project.id_project task.grupo.id_grupo %}">
+                            Grupo {{ task.grupo.numero_grupo }}
+                        </a>
+                    </li>
+                    <li class="breadcrumb-item">
+                        <a href="{% url 'task_detail' task.id_task %}">
+                            Tarea: {{ task.title }}
+                        </a>
+                    </li>
+                    <li class="breadcrumb-item">
+                        <a href="{% url 'correcion' task.id_task %}">
+                            Corrección Tarea
+                        </a>
+                    </li>
+                    <li class="breadcrumb-item active" aria-current="page">
+                        Pareja {{ alumno.pareja }}
+                    </li>
+                </ol>
+            </div>
+        </nav>
     </div>
-    <nav aria-label="breadcrumb" class="container mt-4">
-        <div class="bg-light p-3 border">
-            <ol class="breadcrumb mb-0">
-                <li class="breadcrumb-item">
-                    <a href="{% url 'home' %}">Inicio</a>
-                </li>
-                <li class="breadcrumb-item">
-                    <a href="{% url 'project_detail' task.grupo.project.id_project task.grupo.id_grupo %}">
-                        Grupo {{ task.grupo.numero_grupo }}
-                    </a>
-                </li>
-                <li class="breadcrumb-item">
-                    <a href="{% url 'task_detail' task.id_task %}">
-                        Tarea: {{ task.title }}
-                    </a>
-                </li>
-                <li class="breadcrumb-item">
-                    <a href="{% url 'correcion' task.id_task %}">
-                        Corrección Tarea
-                    </a>
-                </li>
-                <li class="breadcrumb-item active" aria-current="page">
-                    Pareja {{ alumno.pareja }}
-                </li>
-            </ol>
-        </div>
-    </nav>
+    
     
     
 
-    <div>
+    <div class="mt-3 px-3">
         <h2>Alumnos de la pareja {{alumno.pareja}}</h2>
         <ul>
             <li>{{ alumno.nombre }} {{ alumno.apellidos }} - {{ alumno.email }}</li>
@@ -89,7 +90,7 @@
         </ul>
     </div>
 
-    <div class="tables-space">
+    <div class="tables-space mt-3 px-3">
         <div class="table-container">
             <h3 class="table-title">Rúbrica existente:</h3>
         <table class="table-container">
@@ -126,9 +127,9 @@
     {% if not correccion_guardada and not correccion_pareja%}
     <form method="POST">
         {% csrf_token %}
-        <table class="table-container">
+        <table class="table-container mt-4 px-3">
             <h3 class="table-title">Correción:</h3>
-            <thead>
+            <thead class="mt-3 px-3">
                 <tr>
                     <th>Criterios\Niveles de Desemepeño</th>
                     
@@ -207,8 +208,8 @@
     
     {% endif %}
     
-    <div  class="fixez-bottom">
-        <a  href="{% url 'correcion' task.id_task %}" >Volver a la tarea</a>
+    <div  class="fixez-bottom mt-3 px-3">
+        <!--<a  href="{% url 'correcion' task.id_task %}" >Volver a la tarea</a>-->
     
         <form action="{% url 'export_correction_pdf' alumno.id_alumno %}" method="get" style="display:inline;">
             <button type="submit">Exportar a PDF</button>
