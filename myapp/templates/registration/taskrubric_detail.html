@@ -14,6 +14,10 @@
             margin-right: 70%;
 
         }
+        table{
+            border: 1px solid black !important;
+            border-collapse: collapse;
+        }
         th, td {
             border: 1px solid black;
             border-collapse: collapse;
@@ -116,13 +120,15 @@
                         {% endfor %}
                     </tbody>
                 </table>
-                <button type="submit" name="save_rubrica">Guardar Rúbrica</button>
+                <button type="submit" class="btn btn-secondary" name="save_rubrica">Guardar Rúbrica</button>
+                <form action="{% url 'export_rubrica_pdf' rubrica.id_rubrica %}" method="get" style="display: inline;">
+                    <button type="submit" class="btn btn-primary">Exportar a PDF</button>
+                </form>
             </form>
         
-        <a href="{% url 'rubric_detail' rubrica.id_rubrica %}">Ver rúbrica de la tarea</a>
-        <form action="{% url 'export_rubrica_pdf' rubrica.id_rubrica %}" method="get" style="display: inline;">
-            <button type="submit" class="btn btn-primary">Exportar a PDF</button>
-        </form>
+        <!--<a href="{% url 'rubric_detail' rubrica.id_rubrica %}" class="btn btn-secondary">Ver rúbrica de la tarea</a>-->
+        
+    
     </div>
 
     <div class="toast-container position-fixed bottom-0 end-0 p-3" id="toastContainer" style="z-index: 1055;">
