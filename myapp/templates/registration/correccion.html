@@ -9,11 +9,14 @@
                 margin-bottom: 10px;
             }
             table, th, td {
-                border: 1px solid #000000;
+                border: 1px solid black !important;
                 border-collapse: collapse;
                 padding: 10px;
-                background-color: #000000;
-                color: #ffffff;
+            }
+            .table-alumnos{
+                border: 1px solid black !important;
+                border-collapse: collapse;
+                padding: 50px;
             }
             input[type="text"] {
                 width: 100px;
@@ -22,19 +25,19 @@
                 margin-left: 20px;
                 margin-right: 20px;
             }
-            
-            .criterio-col {
-                width: 10%;
-                overflow: hidden;
-                white-space: normal;
-            }
 
-            .nivel-col {
-                width: 10%;
+            .table-title{
+                margin-bottom:10px;
+                text-align: center;
+                display: flex;
+                align-items: flex-start;
+                
             }
-            .email-col {
-                width: 20%;
-
+            .tables-space{
+                display: flex;
+                gap: 20px;
+                align-items: flex-start;
+                
             }
         </style>
     </head>
@@ -66,44 +69,45 @@
         </nav>
 
 
-        <div class="custom-margin mt-4">
-            <h3>Rúbrica de la Tarea</h3>
-            <table class="table table-bordered">
-                <thead>
-                    <tr>
-                        <th class="criterio-col">Criterios \ Niveles de Desempeño</th>
-                        {% for ni in niveles %}
-                            {% if ni.nivel %}
-                                <th class="nivel-col">{{ ni.nivel }}</th>
-                            {% endif %}
-                            {% if ni.descripcion_nivel %}
-                                <th class="nivel-col">{{ ni.descripcion_nivel }}</th>
-                            {% endif %}
+        <div class="tables-space mt-3 px-3">
+            <div class="table-container">
+                <h3 class="table-title">Rúbrica de la Tarea</h3>
+                <table class="table table-bordered">
+                    <thead class="table-dark">
+                        <tr>
+                            <th>Criterios \ Niveles de Desempeño</th>
+                            {% for ni in niveles %}
+                                {% if ni.nivel %}
+                                    <th>{{ ni.nivel }}</th>
+                                {% endif %}
+                                {% if ni.descripcion_nivel %}
+                                    <th>{{ ni.descripcion_nivel }}</th>
+                                {% endif %}
+                            {% endfor %}
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for c in descriptores %}
+                        <tr>
+                            <td>{{ c.criterio }}</td>
+                            {% for d in c.descriptores %}
+                            <td>{{ d }}</td>
+                            {% endfor %}
+                        </tr>
                         {% endfor %}
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for c in descriptores %}
-                    <tr>
-                        <td class="criterio-col">{{ c.criterio }}</td>
-                        {% for d in c.descriptores %}
-                        <td class="nivel-col">{{ d }}</td>
-                        {% endfor %}
-                    </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
+                    </tbody>
+                </table>
+            </div>
         </div>
 
-
-        <div class="custom-margin mt-4">
-            <h3>Listado de alumnos</h3>
-            <table class="table table-bordered">
-                <thead>
+        <div class="table tables-spaces mt-3 px-3">
+            <h3 class="table-title">Listado de alumnos</h3>
+            <table class="table-alumnos table-bordered">
+                <thead class="table-dark">
                     <tr>
                         <th>Nombre</th>
                         <th>Apellido</th>
-                        <th class="email-col">Email</th>
+                        <th>Email</th>
                         <th>Pareja</th>
                     </tr>
                 </thead>
@@ -112,7 +116,7 @@
                     <tr>
                         <td>{{ alumno.nombre }}</td>
                         <td>{{ alumno.apellido }}</td>
-                        <td class="email-col">
+                        <td>
                             <a href="{% url 'correccion_personal' alumno.id_alumno %}">
                                 {{ alumno.email }}
                             </a>
