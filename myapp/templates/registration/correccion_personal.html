@@ -8,7 +8,7 @@
             margin-bottom: 10px;
         }
         table, th, td {
-            border: 1px solid black;
+            border: 1px solid black !important;
             border-collapse: collapse;
             padding: 10px;
         }
@@ -93,9 +93,9 @@
     <div class="tables-space mt-3 px-3">
         <div class="table-container">
             <h3 class="table-title">Rúbrica existente:</h3>
-        <table class="table-container">
+        <table class="table table-bordered">
             
-            <thead>
+            <thead class="table-dark">
                 <tr>
                     <th>Criterios\Niveles de Desemepeño</th>
                     
@@ -127,9 +127,9 @@
     {% if not correccion_guardada and not correccion_pareja%}
     <form method="POST">
         {% csrf_token %}
-        <table class="table-container mt-4 px-3">
+        <table class="table table-bordered ">
             <h3 class="table-title">Correción:</h3>
-            <thead class="mt-3 px-3">
+            <thead class="table-dark">
                 <tr>
                     <th>Criterios\Niveles de Desemepeño</th>
                     
@@ -169,9 +169,9 @@
         <div>
             <div>
                 
-                <table class="table-container">
+                <table class="table table-bordered">
                     <h3 class="table-title">Correción:</h3>
-                    <thead>
+                    <thead class="table-dark">
                         <tr>
                             <th>Criterio</th>
                             {% for nivel in niveles %}
@@ -212,7 +212,7 @@
         <!--<a  href="{% url 'correcion' task.id_task %}" >Volver a la tarea</a>-->
     
         <form action="{% url 'export_correction_pdf' alumno.id_alumno %}" method="get" style="display:inline;">
-            <button type="submit">Exportar a PDF</button>
+            <button type="submit" class="btn btn-primary">Exportar corrección a PDF</button>
         </form>
     </div>
 </body>
