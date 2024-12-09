@@ -275,3 +275,53 @@ scripts anteriores de cambio de modales
     </div>
 </div>-->
 
+"""elif 'update_group' in request.POST:
+            group_id = request.POST.get('edit_group_id')
+            print(f"Group ID recibido: {group_id}")  # Para depuración
+            if not group_id:
+                messages.error(request, "No se proporcionó un ID válido para el grupo.")
+                return redirect('home')
+
+            try:
+                new_group_number = request.POST.get('edit_group_name')
+                print(f"Nuevo número de grupo: {new_group_number}")  # Para depuración
+                grupo = get_object_or_404(Grupo, id_grupo=group_id)
+                grupo.numero_grupo = new_group_number
+                grupo.save()
+                messages.success(request, f'Grupo actualizado exitosamente.')
+            except Exception as e:
+                print(f"Error al actualizar el grupo: {e}")  # Para depuración
+                messages.error(request, "Hubo un problema al actualizar el grupo.")"""
+
+
+
+<button class="btn btn-success" data-toggle="modal" data-target="#editGroupModal{{ grupo.id_grupo }}">Editar Grupo</button>
+
+
+                            <div class="modal fade" id="editGroupModal{{ grupo.id_grupo }}" tabindex="-1" role="dialog" aria-labelledby="editGroupModalLabel{{ grupo.id_grupo }}" aria-hidden="true">
+                                <div class="modal-dialog" role="document">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h5 class="modal-title" id="editGroupModalLabel{{ grupo.id_grupo }}">Editar Grupo</h5>
+                                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                <span aria-hidden="true">&times;</span>
+                                            </button>
+                                        </div>
+                                        <form method="POST">
+                                            {% csrf_token %}
+                                            <input type="hidden" name="edit_group_id" value="{{ grupo.id_grupo }}">
+                                            <div class="modal-body">
+                                                <div class="form-group">
+                                                    <label for="edit_group_name_{{ grupo.id_grupo }}">Número del grupo:</label>
+                                                    <input type="number" name="edit_group_name" id="edit_group_name_{{ grupo.id_grupo }}" class="form-control" value="{{ grupo.numero_grupo }}" required>
+                                                </div>
+                                            </div>
+                                            <div class="modal-footer">
+                                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+                                                <button type="submit" name="update_group" class="btn btn-primary">Guardar Cambios</button>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                            
