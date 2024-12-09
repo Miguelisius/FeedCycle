@@ -116,6 +116,8 @@
                             {% if project.grupo_set.all %}
                                 <ul>{% for grupo in project.grupo_set.all %}
                                     <a href="{% url 'project_detail' project.id_project grupo.id_grupo %}">Grupo {{ grupo.numero_grupo }}</a>{% if not forloop.last %}, {% endif %}
+                                    
+
                                 {% endfor %} </ul>
                             {% else %}
                             {% endif %}
@@ -136,7 +138,7 @@
                             </form>
                             {% endfor %}
 
-                            <button class="btn btn-warning" data-toggle="modal" data-target="#editProjectModal{{ project.id_project }}">Editar</button>
+                            <button class="btn btn-warning" data-toggle="modal" data-target="#editProjectModal{{ project.id_project }}">Editar Asignatura</button>
 
 
                             <div class="modal fade" id="editProjectModal{{ project.id_project }}" tabindex="-1" role="dialog" aria-labelledby="editProjectModalLabel{{ project.id_project }}" aria-hidden="true">
@@ -169,7 +171,37 @@
                                     </div>
                                 </div>
                             </div>
+                            {% for grupo in project.grupo_set.all%}
+                                <button class="btn btn-success" data-toggle="modal" data-target="#editGroupModal{{ grupo.id_grupo }}">Editar Grupo</button>
 
+                                <div class="modal fade" id="editGroupModal{{ grupo.id_grupo }}" tabindex="-1" role="dialog" aria-labelledby="editGroupModalLabel{{ grupo.id_grupo }}" aria-hidden="true">
+                                    <div class="modal-dialog" role="document">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <h5 class="modal-title" id="editGroupModalLabel{{ grupo.id_grupo }}">Editar Grupo</h5>
+                                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                    <span aria-hidden="true">&times;</span>
+                                                </button>
+                                            </div>
+                                            <form method="POST" action="{% url 'home' %}">
+                                                {% csrf_token %}
+                                                <input type="hidden" name="edit_group_id" value="{{ grupo.id_grupo }}">
+                                                <div class="modal-body">
+                                                    <div class="form-group">
+                                                        <label for="edit_group_number_{{ grupo.id_grupo }}">Número de Grupo:</label>
+                                                        <input type="number" name="edit_group_number" id="edit_group_number_{{ grupo.id_grupo }}" class="form-control" value="{{ grupo.numero_grupo }}" required>
+                                                    </div>
+                                                </div>
+                                                <div class="modal-footer">
+                                                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+                                                    <button type="submit" name="update_group" class="btn btn-primary">Guardar Cambios</button>
+                                                </div>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+
+                            {% endfor %}
                             
                         </td>
                     </tr>

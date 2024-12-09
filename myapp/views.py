@@ -66,11 +66,17 @@ def home(request):
             group_number = grupo.numero_grupo
             grupo.delete()
             messages.success(request, f'Grupo {group_number} eliminado exitosamente.')
+        elif 'update_group' in request.POST:
+            group_id = request.POST.get('edit_group_id')
+            new_group_number = request.POST.get('edit_group_number')
+            grupo = Grupo.objects.get(id_grupo=group_id, profesor=tutor_mail)
+            grupo.numero_grupo = new_group_number
+            grupo.save()
+            messages.success(request, f"Grupo actualizado exitosamente a '{new_group_number}'.")
         elif 'update_project' in request.POST:
             project_id = request.POST.get('edit_project_id')
             new_project_title = request.POST.get('edit_project_name')
             new_project_description = request.POST.get('edit_description')
-            
             project = get_object_or_404(Project, id_project=project_id)
             project.title = new_project_title
             project.description = new_project_description
