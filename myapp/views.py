@@ -89,30 +89,6 @@ def home(request):
     grupos = Grupo.objects.filter(profesor=tutor_mail)
     return render(request, 'registration/home.html', {'projects': projects, 'grupos': grupos})
 
-"""@login_required
-def delete_project(request, project_id):
-    project = get_object_or_404(Project, id_project=project_id)
-    
-    if project.profesor != request.user.tutor:
-        messages.error(request, "No tienes permiso para eliminar esta asignatura.")
-        return redirect('home')
-    
-    project.delete()
-    messages.success(request, 'Asignatura eliminada exitosamente.')
-    return redirect('home')
-
-@login_required
-def delete_group(request, group_id):
-    grupo = get_object_or_404(Grupo, id_grupo=group_id)
-    
-    if grupo.profesor != request.user.tutor:
-        messages.error(request, "No tienes permiso para eliminar este grupo.")
-        return redirect('home')
-    
-    grupo.delete()
-    messages.success(request, 'Grupo eliminado exitosamente.')
-    return redirect('home')"""
-
 def register(request):
     if request.method == 'POST':
         email = request.POST.get('email')
@@ -141,8 +117,8 @@ def project_detail(request, project_id, group_id):
     grupo_asignado = get_object_or_404(Grupo,project=project,id_grupo=group_id)
     
     if request.method == 'POST':
-        if 'archivo' in request.FILES:
-            archivo_csv = request.FILES['archivo'].read().decode('utf-8').replace('\"', '')
+        if 'csv_file' in request.FILES:
+            archivo_csv = request.FILES['csv_file'].read().decode('utf-8').replace('\"', '')
             archivo_io = StringIO(archivo_csv)
             
             reader = csv.reader(archivo_io, delimiter=',' , quotechar='"')
