@@ -91,7 +91,7 @@
                 {% csrf_token %}
                 <h3>Rúbrica:</h3>
                 <table class="table table-bordered">
-                    <thead class="thead-dark">
+                    <thead class="table-dark">
                         <tr>
                             <th>Criterios\Niveles de Desemepeño</th>
                             
@@ -120,10 +120,14 @@
                         {% endfor %}
                     </tbody>
                 </table>
-                <button type="submit" class="btn btn-secondary" name="save_rubrica">Guardar Rúbrica</button>
-                <form action="{% url 'export_rubrica_pdf' rubrica.id_rubrica %}" method="get" style="display: inline;">
+                {% if criterio or nivel %}
+                    <a href="{% url 'rubric_detail' rubrica.id_rubrica %}" class="btn btn-primary">Ver Rúbrica Existente</a>
+                {% else %}
+                    <button type="submit" class="btn btn-secondary" name="save_rubrica">Guardar Rúbrica</button>
+                {% endif %}
+                <!--<form action="{% url 'export_rubrica_pdf' rubrica.id_rubrica %}" method="get" style="display: inline;">
                     <button type="submit" class="btn btn-primary">Exportar a PDF</button>
-                </form>
+                </form>-->
             </form>
         
         <!--<a href="{% url 'rubric_detail' rubrica.id_rubrica %}" class="btn btn-secondary">Ver rúbrica de la tarea</a>-->
