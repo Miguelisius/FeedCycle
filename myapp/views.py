@@ -115,7 +115,8 @@ def register(request):
 def project_detail(request, project_id, group_id):
     project = get_object_or_404(Project, id_project=project_id)
     grupo_asignado = get_object_or_404(Grupo,project=project,id_grupo=group_id)
-    
+    show_toast = False
+    toast_message = ""
     if request.method == 'POST':
         if 'csv_file' in request.FILES:
             archivo_csv = request.FILES['csv_file'].read().decode('utf-8').replace('\"', '')
@@ -145,7 +146,9 @@ def project_detail(request, project_id, group_id):
                     else:
                         pareja = None
                 Alumno.objects.create(nombre=nombre_alumno, apellido=apellido, email=correo ,pareja=pareja, grupo=grupo_asignado)
-            messages.success(request, 'Alumnos agregados desde el archivo CSV exitosamente.')
+            
+            show_toast = True
+            toast_message = "Archivo importado exitosamente."
             
         if 'delete_alumno' in request.POST:
             print("Entro en delete_alumno")
@@ -153,7 +156,9 @@ def project_detail(request, project_id, group_id):
             alumno = get_object_or_404(Alumno, id_alumno=alumno_id)
             alumno_name = alumno.nombre
             alumno.delete()
-            messages.success(request, f'Alumno "{alumno_name}" eliminado exitosamente.')
+            
+            show_toast = True
+            toast_message = f'Alumno "{alumno_name}" eliminado exitosamente.'
             return redirect('project_detail', project_id=project_id, group_id=group_id)
         
         if 'delete_task' in request.POST:
@@ -161,7 +166,8 @@ def project_detail(request, project_id, group_id):
             task = get_object_or_404(Task, id_task=task_id)
             task_name = task.title
             task.delete()
-            messages.success(request, f'Tarea "{task_name}" eliminada exitosamente.')
+            show_toast = True
+            toast_message = f'Tarea "{task_name}" eliminada exitosamente.'
             return redirect('project_detail', project_id=project_id, group_id=group_id)
         
         if 'create_alumno' in request.POST:
@@ -176,16 +182,18 @@ def project_detail(request, project_id, group_id):
             
             if nombre_alumno and pareja and not Alumno.objects.filter(email=correo, grupo=grupo_asignado.id_grupo).exists():
                 Alumno.objects.create(nombre=nombre_alumno, apellido = apellido, email = correo , pareja=pareja, grupo=grupo_asignado)
-                messages.success(request, f'Alumno: {nombre_alumno} agregado exitosamente a la pareja: {pareja}.')
+                show_toast = True
+                toast_message = f'Alumno {nombre_alumno} agregado exitosamente.'
             else:
                 messages.error(request, f'El Alumno {nombre_alumno} {apellido} con correo: {correo} ya está registrado.')
-                
+            
         if 'create_task' in request.POST:
             task_name = request.POST.get('title')
             task_description = request.POST.get('description')
             
             new_task = Task.objects.create(title=task_name, description=task_description, grupo=grupo_asignado, asignatura=project)
-            messages.success(request, 'Tarea creada exitosamente.')
+            show_toast = True
+            toast_message = "Tarea creada exitosamente."
             #return redirect('registration/task_detail.html', task_id=new_task.id_task)
         """
         if 'update_alumno' in request.POST:
@@ -212,6 +220,8 @@ def project_detail(request, project_id, group_id):
         'grupo': grupo_asignado,
         'alumnos': alumnos,
         'tareas': tareas,
+        'show_toast': show_toast,
+        'toast_message': toast_message,
     })
 
 @login_required
