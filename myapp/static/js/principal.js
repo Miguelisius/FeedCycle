@@ -1,0 +1,1 @@
+alert("Código incrcustado en el head de una hoja externa");
