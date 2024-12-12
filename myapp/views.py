@@ -1,3 +1,4 @@
+import json
 from django.http import HttpResponse, JsonResponse
 from .models import Project, Task, Tutor, Alumno, Grupo, Rubrica, Criterios, NivelDeDesempeno, Descriptores, Notas, Calificacion
 from django.shortcuts import get_object_or_404, render, redirect
@@ -87,8 +88,12 @@ def home(request):
         
     projects = Project.objects.filter(profesor=tutor_mail)
     grupos = Grupo.objects.filter(profesor=tutor_mail)
-    return render(request, 'registration/home.html', {'projects': projects, 'grupos': grupos})
+    
 
+    return render(request, 'registration/home.html', {
+        'projects': projects,
+        'grupos': grupos,
+    })
 def register(request):
     if request.method == 'POST':
         email = request.POST.get('email')
