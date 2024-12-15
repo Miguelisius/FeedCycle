@@ -3,6 +3,7 @@ alert("Código incrcustado en el head de una hoja externa");
 document.addEventListener('DOMContentLoaded', function() {
     function addTable(){
         var myTableDiv = document.getElementById("myDynamicTable");
+        const projectsData = JSON.parse(myTableDiv.getAttribute('data-projects'));
         var table = document.createElement('TABLE');
         table.border = '1';
         var tableBody = document.createElement('TBODY');
@@ -18,6 +19,22 @@ document.addEventListener('DOMContentLoaded', function() {
             tr.appendChild(th);
         }
         
+
+        projectsData.forEach(project=> {
+            const tr = document.createElement('TR');
+            const tdAsignatura = document.createElement('TD');
+
+
+            tdAsignatura.appendChild(document.createTextNode(project.title));
+            tr.appendChild(tdAsignatura);
+
+            const tdAcciones = document.createElement('TD');
+            tdAcciones.appendChild(document.createTextNode("Acciones"));
+            tr.appendChild(tdAcciones);
+
+            tableBody.appendChild(tr);
+        });
+
         myTableDiv.appendChild(table);
     }
     addTable();

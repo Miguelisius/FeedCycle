@@ -23,6 +23,12 @@ def hello(request, username):
 def about(request):
     return HttpResponse("<h1>About page</h1>")
 
+from django.shortcuts import render, get_object_or_404, redirect
+from django.contrib import messages
+from django.contrib.auth.decorators import login_required
+from django.db import transaction
+from .models import Tutor, Project, Grupo
+
 @login_required
 def home(request):
     try:
@@ -30,70 +36,70 @@ def home(request):
     except Tutor.DoesNotExist:
         messages.error(request, "No se encontró un tutor asociado a este usuario.")
         return redirect('register')
-    
+
     if request.method == 'POST':
-        if 'create_project' in request.POST:
-            project_name = request.POST.get('project_name')
-            description = request.POST.get('description')
+        try:
+            if 'create_project' in request.POST:
+                project_name = request.POST.get('project_name')
+                description = request.POST.get('description')
 
-            new_project = Project(title=project_name, description=description, profesor=tutor_mail)
-            new_project.save()
-            messages.success(request, 'Asignatura creada exitosamente')
+                Project.objects.create(title=project_name, description=description, profesor=tutor_mail)
+                messages.success(request, 'Asignatura creada exitosamente.')
 
-        elif 'create_group' in request.POST:
-            project_id = request.POST.get('project_id')
-            numero_grupo = request.POST.get('numero_grupo')
+            elif 'create_group' in request.POST:
+                project_id = request.POST.get('project_id')
+                numero_grupo = request.POST.get('numero_grupo')
 
-            if not project_id or not numero_grupo:
-                messages.error(request, 'Debe seleccionar una asignatura y proporcionar un número de grupo.')
-                return redirect('home')
-            project = get_object_or_404(Project, id_project=project_id, profesor=tutor_mail)
-            new_group = Grupo(numero_grupo=numero_grupo, profesor=tutor_mail, project=project)
-            new_group.save()
+                if not project_id or not numero_grupo:
+                    messages.error(request, 'Debe proporcionar un número de grupo y seleccionar una asignatura.')
+                else:
+                    project = get_object_or_404(Project, id_project=project_id, profesor=tutor_mail)
+                    Grupo.objects.create(numero_grupo=numero_grupo, profesor=tutor_mail, project=project)
+                    messages.success(request, 'Grupo creado exitosamente.')
 
-            messages.success(request, f'Grupo {numero_grupo} creado y asignado a la asignatura {project.title}')
-        elif 'delete_project' in request.POST:
-            project_id = request.POST.get('delete_project')
-            project = get_object_or_404(Project, id_project=project_id)
+            elif 'delete_project' in request.POST:
+                project_id = request.POST.get('delete_project')
+                with transaction.atomic():
+                    project = get_object_or_404(Project, id_project=project_id)
+                    project.delete()
+                    messages.success(request, 'Asignatura eliminada exitosamente.')
 
-            
-            project_name = project.title
-            project.delete()
-            messages.success(request, f'Asignatura "{project_name}" eliminada exitosamente.')
-        elif 'delete_group' in request.POST:
-            group_id = request.POST.get('delete_group')
-            grupo = get_object_or_404(Grupo, id_grupo=group_id)
+            elif 'delete_group' in request.POST:
+                group_id = request.POST.get('delete_group')
+                with transaction.atomic():
+                    grupo = get_object_or_404(Grupo, id_grupo=group_id)
+                    grupo.delete()
+                    messages.success(request, 'Grupo eliminado exitosamente.')
+            elif 'update_project' in request.POST:
+                project_id = request.POST.get('edit_project_id')
+                new_project_title = request.POST.get('edit_project_name')
+                new_project_description = request.POST.get('edit_description')
+                project = get_object_or_404(Project, id_project=project_id)
+                project.title = new_project_title
+                project.description = new_project_description
+                project.save()
+                messages.success(request, 'Asignatura actualizada exitosamente.')
 
-            group_number = grupo.numero_grupo
-            grupo.delete()
-            messages.success(request, f'Grupo {group_number} eliminado exitosamente.')
-        elif 'update_group' in request.POST:
-            group_id = request.POST.get('edit_group_id')
-            new_group_number = request.POST.get('edit_group_number')
-            grupo = Grupo.objects.get(id_grupo=group_id, profesor=tutor_mail)
-            grupo.numero_grupo = new_group_number
-            grupo.save()
-            messages.success(request, f"Grupo actualizado exitosamente a '{new_group_number}'.")
-        elif 'update_project' in request.POST:
-            project_id = request.POST.get('edit_project_id')
-            new_project_title = request.POST.get('edit_project_name')
-            new_project_description = request.POST.get('edit_description')
-            project = get_object_or_404(Project, id_project=project_id)
-            project.title = new_project_title
-            project.description = new_project_description
-            project.save()
-            messages.success(request, f'Asignatura actualizada exitosamente.')
-        
-            
-        
-    projects = Project.objects.filter(profesor=tutor_mail)
+            elif 'update_group' in request.POST:
+                group_id = request.POST.get('edit_group_id')
+                new_group_number = request.POST.get('edit_group_number')
+                grupo = Grupo.objects.get(id_grupo=group_id, profesor=tutor_mail)
+                grupo.numero_grupo = new_group_number
+                grupo.save()
+                messages.success(request, f"Grupo actualizado exitosamente a '{new_group_number}'.")
+
+        except Exception as e:
+            messages.error(request, f"Ocurrió un error: {str(e)}")
+        return redirect('home')
+
+    projects = Project.objects.filter(profesor=tutor_mail).prefetch_related('grupo_set')
     grupos = Grupo.objects.filter(profesor=tutor_mail)
-    
 
     return render(request, 'registration/home.html', {
         'projects': projects,
         'grupos': grupos,
     })
+
 def register(request):
     if request.method == 'POST':
         email = request.POST.get('email')
