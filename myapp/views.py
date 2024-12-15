@@ -14,7 +14,6 @@ from weasyprint import HTML
 from django.template.loader import render_to_string
 
 
-# Create your views here.
 
 def hello(request, username):
     print(username)
@@ -23,11 +22,6 @@ def hello(request, username):
 def about(request):
     return HttpResponse("<h1>About page</h1>")
 
-from django.shortcuts import render, get_object_or_404, redirect
-from django.contrib import messages
-from django.contrib.auth.decorators import login_required
-from django.db import transaction
-from .models import Tutor, Project, Grupo
 
 @login_required
 def home(request):
