@@ -203,24 +203,37 @@ def project_detail(request, project_id, group_id):
             show_toast = True
             toast_message = "Tarea creada exitosamente."
             #return redirect('registration/task_detail.html', task_id=new_task.id_task)
-        """
+        
         if 'update_alumno' in request.POST:
             alumno_id = request.POST.get('edit_alumno_id')
+            alumno = get_object_or_404(Alumno, id_alumno=alumno_id)
             new_name = request.POST.get('edit_nombre')
             new_apellido = request.POST.get('edit_apellido')
             new_email = request.POST.get('edit_email')
-            new_pareja = request.POST.get('edit_pareja')
-            alumno = get_object_or_404(Alumno, id_alumno=alumno_id)
-            alumno.nombre = new_name
-            alumno.apellido = new_apellido
-            alumno.email = new_email
-            alumno.pareja = new_pareja
-            alumno.save()
-            messages.success(request, f'Alumno actualizado exitosamente.')
+            new_pareja = request.POST.get('edit_pareja') or None
+
+            if Alumno.objects.filter(email=new_email, grupo=grupo_asignado).exclude(id_alumno=alumno_id).exists():
+                messages.warning(request, f"El correo {new_email} ya está registrado en este grupo.")
+                show_toast = True
+                toast_message = f"El correo {new_email} ya está registrado en este grupo."
+            else:
+                alumno.nombre = new_name
+                alumno.apellido = new_apellido
+                alumno.email = new_email
+                alumno.pareja = new_pareja
+                alumno.save()
+                messages.success(request, "Alumno actualizado exitosamente.")
         
-        
-        """
-    
+        if 'update_task' in request.POST:
+            task_id = request.POST.get('edit_task_id')
+            task = get_object_or_404(Task, id_task=task_id)
+            new_title = request.POST.get('edit_title')
+            new_description = request.POST.get('edit_description')
+            task.title = new_title
+            task.description = new_description
+            task.save()
+            show_toast = True
+            toast_message = "Tarea actualizada exitosamente."
     alumnos = Alumno.objects.filter(grupo=grupo_asignado)
     tareas = Task.objects.filter(grupo=grupo_asignado)
     return render(request, 'registration/project_detail.html', {

@@ -83,6 +83,13 @@
                                     <input type="hidden" name="id_alumno" value="{{ alumno.id_alumno }}">
                                     <button type="submit" name="delete_alumno" class="btn btn-danger"><i class="bi bi-trash"></i></button>
                                 </form>
+                            
+                            
+                                <form method="POST" action="{% url 'project_detail' project_id=project.id_project group_id=grupo.id_grupo %}">
+                                    {% csrf_token %}
+                                    <input type="hidden" name="id_alumno" value="{{ alumno.id_alumno }}">
+                                    <button type="button" name="update_alumno" data-bs-toggle="modal" data-bs-target="#updateAlumnoModal-{{ alumno.id_alumno }}" class="btn btn-warning"><i class="bi bi-pencil"></i></button>
+                                </form>
                             </td>
                         </tr>
                         {% endfor %}
@@ -112,6 +119,11 @@
                                     {% csrf_token %}
                                     <input type="hidden" name="id_task" value="{{ task.id_task }}">
                                     <button type="submit" name="delete_task" class="btn btn-danger"><i class="bi bi-trash"></i></button>
+                                </form>
+                                <form method="POST" action="{% url 'project_detail' project_id=project.id_project group_id=grupo.id_grupo %}">
+                                    {% csrf_token %}
+                                    <input type="hidden" name="id_task" value="{{ task.id_task }}">
+                                    <button type="button" name="update_task" data-bs-toggle="modal"  data-bs-target="#updateTaskModal-{{ task.id_task }}" class="btn btn-warning"><i class="bi bi-pencil"></i></button>
                                 </form>
                             </td>
                         </tr>
@@ -188,6 +200,38 @@
             </div>
         </div>
     </div>
+
+    {% for task in tareas %}
+    <div class="modal fade" id="updateTaskModal-{{ task.id_task }}" tabindex="-1" aria-labelledby="updateTaskModalLabel-{{ task.id_task }}" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="updateTaskModalLabel-{{ task.id_task }}">Editar Tarea</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <form method="POST" action="{% url 'project_detail' project_id=project.id_project group_id=grupo.id_grupo %}">
+                    {% csrf_token %}
+                    <input type="hidden" name="edit_task_id" value="{{ task.id_task }}">
+                    <div class="modal-body">
+                        <div class="form-group mb-2">
+                            <label for="edit_task_title-{{ task.id_task }}">Título:</label>
+                            <input type="text" name="edit_title" id="edit_task_title-{{ task.id_task }}" value="{{ task.title }}" class="form-control" required>
+                        </div>
+                        <div class="form-group mb-2">
+                            <label for="edit_task_description-{{ task.id_task }}">Descripción:</label>
+                            <textarea name="edit_description" id="edit_task_description-{{ task.id_task }}" class="form-control" required>{{ task.description }}</textarea>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                        <button type="submit" name="update_task" class="btn btn-primary">Actualizar</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+
     <div class="modal fade" id="uploadCSVModal" tabindex="-1" role="dialog" aria-labelledby="uploadCSVModalLabel" aria-hidden="true">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
@@ -211,6 +255,47 @@
             </div>
         </div>
     </div>
+
+
+
+    {% for alumno in alumnos %}
+    <div class="modal fade" id="updateAlumnoModal-{{ alumno.id_alumno }}" tabindex="-1" aria-labelledby="updateAlumnoModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Editar Alumno</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <form method="POST">
+                    {% csrf_token %}
+                    <input type="hidden" name="edit_alumno_id" value="{{ alumno.id_alumno }}">
+                    <div class="modal-body">
+                        <div class="form-group mb-2">
+                            <label for="edit_nombre">Nombre:</label>
+                            <input type="text" name="edit_nombre" value="{{ alumno.nombre }}" class="form-control" required>
+                        </div>
+                        <div class="form-group mb-2">
+                            <label for="edit_apellido">Apellido:</label>
+                            <input type="text" name="edit_apellido" value="{{ alumno.apellido }}" class="form-control" required>
+                        </div>
+                        <div class="form-group mb-2">
+                            <label for="edit_email">Email:</label>
+                            <input type="email" name="edit_email" value="{{ alumno.email }}" class="form-control" required>
+                        </div>
+                        <div class="form-group mb-2">
+                            <label for="edit_pareja">Pareja:</label>
+                            <input type="text" name="edit_pareja" value="{{ alumno.pareja }}" class="form-control">
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                        <button type="submit" name="update_alumno" class="btn btn-primary">Actualizar</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
 
     <div class="toast-container">
         {% if show_toast %}
