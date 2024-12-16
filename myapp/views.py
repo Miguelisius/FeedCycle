@@ -222,7 +222,9 @@ def project_detail(request, project_id, group_id):
                 alumno.email = new_email
                 alumno.pareja = new_pareja
                 alumno.save()
-                messages.success(request, "Alumno actualizado exitosamente.")
+                show_toast = True
+                toast_message = f"Alumno {alumno.nombre} actualizado exitosamente."
+                #messages.success(request, "Alumno actualizado exitosamente.")
         
         if 'update_task' in request.POST:
             task_id = request.POST.get('edit_task_id')
@@ -233,7 +235,7 @@ def project_detail(request, project_id, group_id):
             task.description = new_description
             task.save()
             show_toast = True
-            toast_message = "Tarea actualizada exitosamente."
+            toast_message = f"Tarea {task.title} actualizada exitosamente."
     alumnos = Alumno.objects.filter(grupo=grupo_asignado)
     tareas = Task.objects.filter(grupo=grupo_asignado)
     return render(request, 'registration/project_detail.html', {
