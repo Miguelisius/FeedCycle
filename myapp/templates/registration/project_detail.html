@@ -57,7 +57,7 @@
             <div class="tab-pane fade show active" id="alumnos" role="tabpanel" aria-labelledby="alumnos-tab">
                 <div class="d-flex justify-content-between mb-3">
                     <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addAlumnoModal">Añadir Alumno Manualmente</button>
-                    <button class="btn btn-secondary" data-bs-toggle="modal" data-bs-target="#uploadCSVModal">Seleccionar Archivo</button>
+                    <button class="btn btn-secondary" data-bs-toggle="modal" data-bs-target="#uploadCSVModal">Adjuntar Archivo</button>
                 </div>
                 <table class="table table-bordered">
                     <thead class="table-dark">
@@ -124,6 +124,41 @@
             </div>
         </div>
     </div>
+    <div class="modal fade" id="addAlumnoModal" tabindex="-1" role="dialog" aria-labelledby="addAlumnoModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="addAlumnoModalLabel">Añadir alumno</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <form method="POST">
+                    {% csrf_token %}
+                    <div class="modal-body">
+                        <div class="form-group">
+                            <label for="nombre">Nombre:</label>
+                            <input type="text" name="nombre" id="nombre" class="form-control" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="apellido">Apellidos:</label>
+                            <input type="text" name="apellido" id="apellido" class="form-control" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="email">Email:</label>
+                            <input type="email" name="email" id="email" class="form-control" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="pareja">Pareja:</label>
+                            <input type="text" name="pareja" id="pareja" class="form-control" required>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+                        <button type="submit" class="btn btn-primary" name="create_alumno">Guardar</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
 
     <div class="modal fade" id="createTaskModal" tabindex="-1" aria-labelledby="createTaskModalLabel" aria-hidden="true">
         <div class="modal-dialog">
@@ -152,7 +187,29 @@
             </div>
         </div>
     </div>
-
+    <div class="modal fade" id="uploadCSVModal" tabindex="-1" role="dialog" aria-labelledby="uploadCSVModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="uploadCSVModalLabel">Adjunta archivo CSV</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <form method="POST" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    <div class="modal-body">
+                        <div class="form-group">
+                            <label for="csv_file">Archivo CSV:</label>
+                            <input type="file" name="csv_file" id="csv_file" class="form-control-file" accept=".csv" required>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+                        <button type="submit" class="btn btn-primary" name="upload_csv">Aceptar</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
 
     <div class="toast-container">
         {% if show_toast %}
@@ -162,7 +219,7 @@
                 <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
             </div>
             <div class="toast-body">
-                Tarea creada con éxito.
+                {{ toast_message }}
             </div>
         </div>
         {% endif %}

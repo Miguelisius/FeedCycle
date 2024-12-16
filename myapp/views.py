@@ -143,7 +143,10 @@ def project_detail(request, project_id, group_id):
                 #print(nombre_alumno, apellido, correo)
                 if Alumno.objects.filter(email=correo).exists():
                     messages.error(request, f'El correo {correo} ya está registrado.')
+                    show_toast = True
+                    toast_message = f'El correo {correo} ya está registrado.'
                     continue
+
                 if len(row) == 4:
                     pareja_str = row[3].strip()
                     if pareja_str:
@@ -164,7 +167,6 @@ def project_detail(request, project_id, group_id):
             
             show_toast = True
             toast_message = f'Alumno "{alumno_name}" eliminado exitosamente.'
-            return redirect('project_detail', project_id=project_id, group_id=group_id)
         
         if 'delete_task' in request.POST:
             task_id = request.POST.get('id_task')
@@ -173,7 +175,7 @@ def project_detail(request, project_id, group_id):
             task.delete()
             show_toast = True
             toast_message = f'Tarea "{task_name}" eliminada exitosamente.'
-            return redirect('project_detail', project_id=project_id, group_id=group_id)
+            #return redirect('project_detail', project_id=project_id, group_id=group_id)
         
         if 'create_alumno' in request.POST:
             nombre_alumno = request.POST.get('nombre')
@@ -190,7 +192,8 @@ def project_detail(request, project_id, group_id):
                 show_toast = True
                 toast_message = f'Alumno {nombre_alumno} agregado exitosamente.'
             else:
-                messages.error(request, f'El Alumno {nombre_alumno} {apellido} con correo: {correo} ya está registrado.')
+                show_toast = True
+                toast_message = f'El Alumno {nombre_alumno} {apellido} con correo: {correo} ya está registrado.'
             
         if 'create_task' in request.POST:
             task_name = request.POST.get('title')
