@@ -323,9 +323,13 @@ def taskrubric_detail(request, task_id):
             for c in criterios:
                 for n in niveles:
                     descriptor_key = f'descriptor_{c.id_criterio}_{n.id_nivel_desempeno}'
-                    descriptor_value = request.POST.get(descriptor_key)
+                    descriptor_value = request.POST.get(descriptor_key, '').strip()
                     if descriptor_value:
-                        Descriptores.objects.create(criterio=c, nivel_de_desempeno=n, descripcion= descriptor_value)
+                        Descriptores.objects.update_or_create(
+                            criterio=c,
+                            nivel_de_desempeno=n,
+                            defaults={'descripcion': descriptor_value}
+                        )
             #print("Leggo aqui\n")
             #if 'save_rubrica' in request.POST:
             #rubrica.checked = calcular_media
@@ -407,19 +411,20 @@ def correccion_rubrica(request, task_id):
     for c in criterios:
         c_dec = []
         for n in niveles:
-            descr = Descriptores.objects.filter(criterio=c, nivel_de_desempeno=n).first()
-            c_dec.append(descr.descripcion if descr else '')
-        descriptores.append({'criterio': c.descripcion_criterio, 'descriptores': c_dec})
-    
-    
+            descriptor = Descriptores.objects.filter(criterio=c, nivel_de_desempeno=n).first()
+            c_dec.append(descriptor.descripcion if descriptor else '')  # Asegúrate de manejar None
+        descriptores.append({
+            'criterio': c.descripcion_criterio,
+            'descriptores': c_dec
+        })
+    print(descriptores)
     return render(request, 'registration/correccion.html', {
         'task': task,
         'rubrica': rubrica,
         'criterios': criterios,
         'niveles': niveles,
-        'descriptores': descriptores,
+        'descriptores_list': descriptores,
         'alumnos': alumnos,
-        
     })
     
 @login_required

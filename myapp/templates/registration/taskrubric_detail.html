@@ -93,43 +93,32 @@
                 <table class="table table-bordered">
                     <thead class="table-dark">
                         <tr>
-                            <th>Criterios\Niveles de Desemepeño</th>
-                            
+                            <th>Criterios\Niveles de Desempeño</th>
                             {% for n in nivel %}
-                                {%if n.nivel%}
+                                {% if n.nivel %}
                                     <th>{{ n.nivel }}</th>
-                                {%endif%}
-                                {%if n.descripcion_nivel%}
+                                {% endif %}
+                                {% if n.descripcion_nivel %}
                                     <th>{{ n.descripcion_nivel }}</th>
-                                {%endif%}
+                                {% endif %}
                             {% endfor %}
                         </tr>
                     </thead>
                     <tbody>
-                        
                         {% for c in criterio %}
-                        <tr>
-                            <td>{{ c.descripcion_criterio }}</td>
-                            
-                            {% for n in nivel %}
-                                <td>
-                                    <textarea type="textarea" name="descriptor_{{ c.id_criterio }}_{{ n.id_nivel_desempeno }}" placeholder="Añadir descriptor"></textarea>
-                                </td> 
-                            {% endfor %}
-                        </tr>
+                            <tr>
+                                <td>{{ c.descripcion_criterio }}</td>
+                                {% for n in nivel %}
+                                    <td>
+                                        <textarea name="descriptor_{{ c.id_criterio }}_{{ n.id_nivel_desempeno }}" placeholder="Añadir descriptor"></textarea>
+                                    </td>
+                                {% endfor %}
+                            </tr>
                         {% endfor %}
                     </tbody>
                 </table>
-                {% if criterio or nivel %}
-                    <a href="{% url 'rubric_detail' rubrica.id_rubrica %}" class="btn btn-primary">Ver Rúbrica Existente</a>
-                {% else %}
-                    <button type="submit" class="btn btn-secondary" name="save_rubrica">Guardar Rúbrica</button>
-                {% endif %}
-                <!--<form action="{% url 'export_rubrica_pdf' rubrica.id_rubrica %}" method="get" style="display: inline;">
-                    <button type="submit" class="btn btn-primary">Exportar a PDF</button>
-                </form>-->
+                <button type="submit" name="save_rubrica" class="btn btn-primary mt-3">Guardar rúbrica</button>
             </form>
-        
         <!--<a href="{% url 'rubric_detail' rubrica.id_rubrica %}" class="btn btn-secondary">Ver rúbrica de la tarea</a>-->
         
     
