@@ -117,7 +117,7 @@
                         <td>{{ alumno.nombre }}</td>
                         <td>{{ alumno.apellido }}</td>
                         <td>
-                            <a href="{% url 'correccion_personal' alumno.id_alumno %}">
+                            <a href="{% url 'correccion_personal' id_alumno=alumno.id_alumno id_task=task.id_task %}">
                                 {{ alumno.email }}
                             </a>
                         </td>

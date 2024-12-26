@@ -266,37 +266,25 @@ def taskrubric_detail(request, task_id):
     toast_message = ""
     modal = None
     tabla = False
-    #media =False
+
     if request.method == 'POST':
         criterio = request.POST.get('criterio')
-        nivel = request.POST.get('nivel','').strip()
-        descripcion_nivel = request.POST.get('descripcion_nivel',  '').strip()
+        nivel = request.POST.get('nivel', '').strip()
+        descripcion_nivel = request.POST.get('descripcion_nivel', '').strip()
         calcular_media = request.POST.get('calcular_media')
-        
-        #print("Valor de calcular_media:", calcular_media)
+
         if criterio:
             Criterios.objects.create(rubrica=rubrica, descripcion_criterio=criterio)
-            #messages.success(request, 'Criterio agregado exitosamente.')
             toast_message = "Criterio agregado exitosamente."
             modal = 'criterioModal'
             show_toast = True
-            
+
         elif calcular_media is not None:
-            #Obtener ek valor del checkedbox y almacenarlo en la BD (cambia models)
-            #media = request.POST.get('calcular_media')=='True'
-            #media.save()
             rubrica.checked = calcular_media == 'True'
             rubrica.save()
-            #print("Valor de media: ", calcular_media)
-            #rubrica.checked = media
-            #rubrica.save()
-            #messages.success(request, 'Rúbrica guardada exitosamente.')
             modal = 'nivelModal'
-        
+
         elif nivel or descripcion_nivel:
-            #NivelDeDesempeno.objects.create(rubrica=rubrica, nivel=nivel)
-            #messages.success(request, 'Nivel de desempeño agregado exitosamente.')
-            print("Valor de descripcion_nivel:", descripcion_nivel)
             try:
                 new_level = NivelDeDesempeno(
                     rubrica=rubrica,
@@ -305,19 +293,14 @@ def taskrubric_detail(request, task_id):
                 )
                 new_level.full_clean()
                 new_level.save()
-                #messages.success(request, 'Nivel de desempeño agregado exitosamente.')
                 toast_message = "Nivel de desempeño agregado exitosamente."
                 show_toast = True
                 modal = 'nivelModal'
             except ValidationError as e:
-                #messages.error(request, e)
                 toast_message = f"Error al agregar nivel: {e}"
                 show_toast = True
-            nivel_new = NivelDeDesempeno.objects.filter(rubrica=rubrica)
-        #elif 'fin_modal' in request.POST:
-        # tabla = True
-        elif 'save_rubrica' in request.POST:# or 'fin_modal' in request.POST:
-            #print("Leggo aqui 7777777777\n")
+
+        elif 'save_rubrica' in request.POST:
             criterios = Criterios.objects.filter(rubrica=rubrica)
             niveles = NivelDeDesempeno.objects.filter(rubrica=rubrica)
             tabla = True
@@ -331,46 +314,36 @@ def taskrubric_detail(request, task_id):
                             nivel_de_desempeno=n,
                             defaults={'descripcion': descriptor_value}
                         )
-            #print("Leggo aqui\n")
-            #if 'save_rubrica' in request.POST:
-            #rubrica.checked = calcular_media
-            #print("Valor de calcular_media:", calcular_media)
-            #rubrica.save()
-            #messages.success(request, 'Rúbrica guardada exitosamente.')
             toast_message = "Rúbrica guardada exitosamente."
             show_toast = True
             modal = None
-            return redirect('rubric_detail', rubric_id= rubrica.id_rubrica)
-            #else:
-                #tabla = True
-                #modal = None
+            return redirect('rubric_detail', rubric_id=rubrica.id_rubrica)
 
-    #rubricas = Rubrica.objects.filter(tarea=task)
     criterio_new = Criterios.objects.filter(rubrica=rubrica)
     nivel_new = NivelDeDesempeno.objects.filter(rubrica=rubrica)
-    #print(nivel_new)
-    descriptores = []
-    for c in criterio_new:
-        c_dec = []
-        for n in nivel_new:
-            descr =  Descriptores.objects.filter(criterio=c, nivel_de_desempeno=n).first()
-            c_dec.append(descr.descripcion if descr else '')
-        descriptores.append({'criterio': c.descripcion_criterio, 'descriptores':c_dec})
+    descriptores = [
+        {
+            'criterio': c.descripcion_criterio,
+            'descriptores': [
+                Descriptores.objects.filter(criterio=c, nivel_de_desempeno=n).first().descripcion if Descriptores.objects.filter(criterio=c, nivel_de_desempeno=n).exists() else ''
+                for n in nivel_new
+            ],
+        }
+        for c in criterio_new
+    ]
     
-    
-    return render(request,'registration/taskrubric_detail.html', {
+    return render(request, 'registration/taskrubric_detail.html', {
         'task': task,
         'rubricas': [rubrica],
-        'criterio' : criterio_new,
-        'nivel' : nivel_new,
+        'criterio': criterio_new,
+        'nivel': nivel_new,
         'rubrica': rubrica,
         'descriptores': descriptores,
         'modal': modal,
         'show_toast': show_toast,
         'toast_message': toast_message,
-        #'checked': rubrica.checked,
-        #'tabla': tabla,
     })
+
 @login_required
 def taskrubric_display(request, rubric_id):
     #task = get_object_or_404(Task, id_task=task_id)
@@ -429,18 +402,19 @@ def correccion_rubrica(request, task_id):
     })
     
 @login_required
-def correccion_personal(request, id_alumno):
+def correccion_personal(request, id_alumno, id_task):
     alumno = get_object_or_404(Alumno, id_alumno=id_alumno)
     pareja = Alumno.objects.filter(grupo=alumno.grupo, pareja=alumno.pareja).exclude(id_alumno=alumno.id_alumno).first()
     pareja_alumno = alumno.pareja
     
-    
-    task = Task.objects.filter(grupo=alumno.grupo).first()
+    task = get_object_or_404(Task, id_task=id_task, grupo=alumno.grupo)
+
     rubrica = Rubrica.objects.filter(tarea=task).first()
+    
     niveles = NivelDeDesempeno.objects.filter(rubrica=rubrica)
     criterios = Criterios.objects.filter(rubrica=rubrica)
-    calificacion = rubrica.checked
-    
+    calificacion = getattr(rubrica, 'checked', False)
+
     descriptores = [
         {
             'criterio': c.descripcion_criterio,
@@ -453,28 +427,16 @@ def correccion_personal(request, id_alumno):
         }
         for c in criterios
     ]
+    
     correccion_guardada = Notas.objects.filter(alumno=alumno, nivel_desempeno__rubrica=rubrica).exists()
     correccion_pareja = pareja and Notas.objects.filter(
         alumno=pareja,
         nivel_desempeno__rubrica=rubrica,
         descriptor__criterio__rubrica=rubrica
     ).exists()
-    
-    #print("Esto es correccion_guardada: "+str(correccion_guardada))
-    """
-    if pareja:
-        correccion_pareja = Notas.objects.filter(
-            alumno=pareja,
-            nivel_desempeno__rubrica=rubrica,
-            descriptor__criterio__rubrica=rubrica
-        ).exists()"""
-    
-    #print("Mi pareja tiene la correcion: "+str(correccion_pareja))
-    #print("Checked: "+str(calificacion))
+
     calificaciones = []
     if correccion_guardada or correccion_pareja:
-        #print(pareja_alumno)
-        #print("Me meto en el if")
         alumno_referencia = alumno if correccion_guardada else pareja
         for c in criterios:
             calif_desc = []
@@ -487,33 +449,17 @@ def correccion_personal(request, id_alumno):
                     'numerica': calificacion_num.calificacion if calificacion_num else ''
                 })
             calificaciones.append({'criterio': c.descripcion_criterio, 'calificaciones': calif_desc})
-        
-            print(calificaciones)
     
-    if request.method == 'POST' and ((correccion_guardada == False ) or (correccion_pareja == False)):
-        #print("Me meto en el POST")
-        #print(correccion_guardada)
-        #print(correccion_pareja)
-        if 'fin_corregir' in request.POST :
-            
-            crit = Criterios.objects.filter(rubrica=rubrica)
-            niv = NivelDeDesempeno.objects.filter(rubrica=rubrica)
-            
-            for c in crit:
-                for n in niv:
+    if request.method == 'POST' and not (correccion_guardada and correccion_pareja):
+        if 'fin_corregir' in request.POST:
+            for c in criterios:
+                for n in niveles:
                     descriptor_key = f'descriptor_descriptor_{n.descripcion_nivel}_{n.id_nivel_desempeno}'
                     calificacion_key = f'calificacion_{n.descripcion_nivel}_{n.id_nivel_desempeno}'
 
                     descriptor_value = request.POST.get(descriptor_key)
                     calificacion_value = request.POST.get(calificacion_key)
 
-                    #nota = request.POST.get(descriptor_nota)
-                    #print("Esto es descriptor_nota: "+descriptor_nota)
-                    #nota_descriptiva = request.POST.get(descriptor_nota)
-                    print("ENTROOOOOOOOOOOOOOOOOOOOOOOOOO")
-                    #print(nota_descriptiva)
-                    #descr, created = Descriptores.objects.get_or_create(criterio=c, nivel_de_desempeno=n)
-                    #print(descr)
                     if descriptor_value:
                         descriptor, _ = Descriptores.objects.get_or_create(criterio=c, nivel_de_desempeno=n)
                         Notas.objects.update_or_create(
@@ -528,11 +474,8 @@ def correccion_personal(request, id_alumno):
                                 alumno=alumno,
                                 defaults={'calificacion': int(calificacion_value)}
                             )
-            correccion_guardada = True
-            correccion_pareja = True
             return redirect('correccion_personal', id_alumno=id_alumno)
-            #return redirect('correccion_personal', id_alumno=id_alumno)
-        
+    
     return render(request, 'registration/correccion_personal.html', {
         'alumno': alumno,
         'pareja': pareja,
@@ -547,6 +490,7 @@ def correccion_personal(request, id_alumno):
         'task_id': task.id_task,
         'calificacion': calificacion,
     })
+
     """
     for c in criterios:
             calif_desc = []

@@ -113,6 +113,9 @@
                             <th>Criterio</th>
                             <th>Descriptor</th>
                             <th>Feedback</th>
+                            {% if calificacion %}
+                                <th>Nota</th>
+                            {% endif %}
                         </tr>
                     </thead>
                     <tbody>
@@ -130,6 +133,11 @@
                             <td>
                                 <textarea name="feedback_{{ c.criterio }}" class="form-control" placeholder="Escribe tu feedback aquí"></textarea>
                             </td>
+                            {% if calificacion %}
+                                <td>
+                                    <input type="number" name="nota_{{ c.criterio }}" class="form-control" placeholder="Nota" value="{{ calificacion }}">
+                                </td>
+                            {% endif %}
                         </tr>
                         {% endfor %}
                     </tbody>
@@ -138,45 +146,41 @@
             </form>
             {%endif%}
             {%if correccion_guardada or correccion_pareja%}
-                <div>
-                    <div>
-                        
-                        <table class="table table-bordered">
-                            <h3 class="table-title">Correción:</h3>
-                            <thead class="table-dark">
-                                <tr>
-                                    <th>Criterio</th>
-                                    {% for nivel in niveles %}
-                                        {%if nivel.nivel%}
-                                            <th>{{ nivel.nivel }}</th>
-                                        {%endif%}
-                                        {%if nivel.descripcion_nivel%}
-                                            <th>{{ nivel.descripcion_nivel }}</th>
-                                        {%endif%}
-                                    {% endfor %}
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {% for criterio in calificaciones %}
-                                    <tr>
-                                        <td>{{ criterio.criterio }}</td>
-                                        {% for calificacion in criterio.calificaciones %}
-                                            <td>
-                                                {{ calificacion.descriptiva }}
-                                                <div>
-                                                    {% if calificacion.numerica != '' %}
-                                                        Nota: {{ calificacion.numerica }}
-                                                    {% endif %}
-                                                </div>
-                                            </td>
-                                        {% endfor %}
-                                    </tr>
+            <div>
+                <table class="table table-bordered">
+                    <h3 class="table-title">Corrección:</h3>
+                    <thead class="table-dark">
+                        <tr>
+                            <th>Criterio</th>
+                            {% for nivel in niveles %}
+                                {% if nivel.nivel %}
+                                    <th>{{ nivel.nivel }}</th>
+                                {% endif %}
+                                {% if nivel.descripcion_nivel %}
+                                    <th>{{ nivel.descripcion_nivel }}</th>
+                                {% endif %}
+                            {% endfor %}
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for criterio in calificaciones %}
+                            <tr>
+                                <td>{{ criterio.criterio }}</td>
+                                {% for calificacion in criterio.calificaciones %}
+                                    <td>
+                                        {{ calificacion.descriptiva }}
+                                        <div>
+                                            {% if calificacion.numerica != '' %}
+                                                Nota: {{ calificacion.numerica }}
+                                            {% endif %}
+                                        </div>
+                                    </td>
                                 {% endfor %}
-                            </tbody>
-                            
-                        </table>
-                    </div>
-                </div>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
             
             {% endif %}
         
