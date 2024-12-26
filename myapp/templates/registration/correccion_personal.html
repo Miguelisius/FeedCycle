@@ -47,7 +47,7 @@
             overflow: auto;
         }
         .right-Panel{
-            flex:2.25;
+            flex:1;
             border: 1px solid black;
             background-color: #d4edda;
             padding: 10px;
@@ -106,42 +106,35 @@
             {% if not correccion_guardada and not correccion_pareja%}
             <form method="POST">
                 {% csrf_token %}
-                <table class="table table-bordered ">
-                    <h3 class="table-title">Correción:</h3>
+                <table class="table table-bordered">
+                    <h3 class="table-title">Corrección:</h3>
                     <thead class="table-dark">
                         <tr>
-                            <th>Criterios\Niveles de Desemepeño</th>
-                            
-                            {% for ni in niveles %}
-                                {%if ni.nivel%}
-                                    <th>{{ ni.nivel }}</th>
-                                {%endif%}
-                                {%if ni.descripcion_nivel%}
-                                    <th>{{ ni.descripcion_nivel }}</th>
-                                {%endif%}
-                            {% endfor %}
-                            
+                            <th>Criterio</th>
+                            <th>Descriptor</th>
+                            <th>Feedback</th>
                         </tr>
                     </thead>
                     <tbody>
                         {% for c in descriptores %}
                         <tr>
                             <td>{{ c.criterio }}</td>
-                            {% for n in niveles %}
                             <td>
-                                <textarea name="descriptor_descriptor_{{n.descripcion_nivel}}_{{n.id_nivel_desempeno}}" placeholder="Corrige"></textarea>
-                                <div>
-                                    {% if calificacion %}
-                                    <textarea name="calificacion_{{ n.descripcion_nivel }}_{{ n.id_nivel_desempeno }}" placeholder="Calificación"></textarea>
-                                    {% endif %}
-                                </div>
+                                <select name="descriptor_{{ c.criterio }}" class="form-select">
+                                    <option value="" disabled selected>Selecciona un descriptor</option>
+                                    {% for d in c.descriptores %}
+                                        <option value="{{ d }}">{{ d }}</option>
+                                    {% endfor %}
+                                </select>
                             </td>
-                            {% endfor %}
+                            <td>
+                                <textarea name="feedback_{{ c.criterio }}" class="form-control" placeholder="Escribe tu feedback aquí"></textarea>
+                            </td>
                         </tr>
                         {% endfor %}
                     </tbody>
                 </table>
-                
+
             </form>
             {%endif%}
             {%if correccion_guardada or correccion_pareja%}

@@ -424,7 +424,7 @@ def correccion_rubrica(request, task_id):
         'rubrica': rubrica,
         'criterios': criterios,
         'niveles': niveles,
-        'descriptores_list': descriptores,
+        'descriptores': descriptores,
         'alumnos': alumnos,
     })
     
