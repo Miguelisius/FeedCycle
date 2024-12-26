@@ -238,14 +238,15 @@ def project_detail(request, project_id, group_id):
             toast_message = f"Tarea {task.title} actualizada exitosamente."
     alumnos = Alumno.objects.filter(grupo=grupo_asignado)
     tareas = Task.objects.filter(grupo=grupo_asignado)
-    return render(request, 'registration/project_detail.html', {
+    context = {
         'project': project,
         'grupo': grupo_asignado,
         'alumnos': alumnos,
-        'tareas': tareas,
         'show_toast': show_toast,
         'toast_message': toast_message,
-    })
+        'tareas': tareas,
+    }
+    return render(request, 'registration/project_detail.html', context)
 
 @login_required
 def task_detail(request, task_id):
