@@ -110,9 +110,17 @@ class Notas(models.Model):
 class Calificacion(models.Model):
     id_calificacion = models.AutoField(primary_key=True)
     descriptor = models.ForeignKey(Descriptores, on_delete=models.CASCADE)
-    calificacion = models.IntegerField()
+    calificacion = models.IntegerField(null=True, blank=True)
     feedback = models.TextField()
     alumno = models.ForeignKey(Alumno, on_delete=models.CASCADE)
 
     def __str__(self):
         return f"Calificación: {self.calificacion} para {self.alumno.nombre}"
+class FeedbackHistory(models.Model):
+    id_feedback = models.AutoField(primary_key=True)
+    grupo = models.ForeignKey(Grupo, on_delete=models.CASCADE)
+    texto = models.TextField()
+    fecha = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"Feedback del grupo {self.grupo.numero_grupo} en {self.fecha.strftime('%Y-%m-%d %H:%M:%S')}"

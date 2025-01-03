@@ -102,20 +102,16 @@
     <div class="main-container px-3">
         <!--Panel izquiero para correcion y futuro feedback, habrá que ajustar los botones y eso-->
     
-        <div class="left-Panel">
+        <div class="left-Panel" style="overflow: auto; max-height: 400px; max-width: 100%;">
             {% if not correccion_guardada and not correccion_pareja%}
-            <form method="POST">
+            <form method="POST" action="">
                 {% csrf_token %}
                 <table class="table table-bordered">
-                    <h3 class="table-title">Corrección:</h3>
                     <thead class="table-dark">
                         <tr>
                             <th>Criterio</th>
                             <th>Descriptor</th>
                             <th>Feedback</th>
-                            {% if calificacion %}
-                                <th>Nota</th>
-                            {% endif %}
                         </tr>
                     </thead>
                     <tbody>
@@ -126,23 +122,20 @@
                                 <select name="descriptor_{{ c.criterio }}" class="form-select">
                                     <option value="" disabled selected>Selecciona un descriptor</option>
                                     {% for d in c.descriptores %}
-                                        <option value="{{ d }}">{{ d }}</option>
+                                        {% if d %}
+                                            <option value="{{ d.id_descriptor }}">{{ d.descripcion }}</option>
+                                        {% endif %}
                                     {% endfor %}
                                 </select>
                             </td>
                             <td>
-                                <textarea name="feedback_{{ c.criterio }}" class="form-control" placeholder="Escribe tu feedback aquí"></textarea>
+                                <textarea name="feedback_{{ c.criterio }}" class="form-control"></textarea>
                             </td>
-                            {% if calificacion %}
-                                <td>
-                                    <input type="number" name="nota_{{ c.criterio }}" class="form-control" placeholder="Nota" value="{{ calificacion }}">
-                                </td>
-                            {% endif %}
                         </tr>
                         {% endfor %}
                     </tbody>
                 </table>
-
+                <button type="submit" name="fin_corregir" class="btn btn-secondary">Guardar corrección</button>
             </form>
             {%endif%}
             {%if correccion_guardada or correccion_pareja%}
@@ -188,12 +181,26 @@
             <!--Aqui irá la parte del feedback -->
             
             <h3>Feedback:</h3>
+            <ul>
+                {% for fb in feedbacks %}
+                    <li>
+                        <strong>{{ fb.criterio }}:</strong> {{ fb.feedback }}
+                        <div>
+                            <em>Explicación:</em> {{ fb.explicacion }}
+                        </div>
+                        <input type="text" name="explicacion_{{ fb.criterio }}" class="form-control mt-2" placeholder="Explicación adicional">
+                    </li>
+                {% endfor %}
+            </ul>
+            
+        
         
         </div>
 
 
+
         <!--Panel derecho para mostrar la tabla de la rubrica-->
-        <div class="right-Panel">
+        <div class="right-Panel" style="overflow: auto; max-height: 400px; max-width: 100%;">
             <div class="tables-space mt-3 px-3">
                 <div class="table-container">
                     <h3 class="table-title">Rúbrica existente:</h3>
@@ -245,5 +252,8 @@
         </form>
         <button type="submit" name="fin_corregir" class="btn btn-secondary">Guardar corrección</button>
     </div>
+
+
+    
 </body>
 </html>

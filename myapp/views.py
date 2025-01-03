@@ -1,6 +1,6 @@
 import json
 from django.http import HttpResponse, JsonResponse
-from .models import Project, Task, Tutor, Alumno, Grupo, Rubrica, Criterios, NivelDeDesempeno, Descriptores, Notas, Calificacion
+from .models import Project, Task, Tutor, Alumno, Grupo, Rubrica, Criterios, NivelDeDesempeno, Descriptores, Notas, Calificacion, FeedbackHistory
 from django.shortcuts import get_object_or_404, render, redirect
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import authenticate, login
@@ -403,79 +403,71 @@ def correccion_rubrica(request, task_id):
     
 @login_required
 def correccion_personal(request, id_alumno, id_task):
+    
     alumno = get_object_or_404(Alumno, id_alumno=id_alumno)
-    pareja = Alumno.objects.filter(grupo=alumno.grupo, pareja=alumno.pareja).exclude(id_alumno=alumno.id_alumno).first()
-    pareja_alumno = alumno.pareja
-    
-    task = get_object_or_404(Task, id_task=id_task, grupo=alumno.grupo)
+    pareja = Alumno.objects.filter(
+        grupo=alumno.grupo, pareja=alumno.pareja
+    ).exclude(id_alumno=alumno.id_alumno).first()
 
+    feedbacks = []
+    task = get_object_or_404(Task, id_task=id_task, grupo=alumno.grupo)
     rubrica = Rubrica.objects.filter(tarea=task).first()
-    
+    if not rubrica:
+        return render(request, 'registration/correccion_personal.html', {
+            'error': "No se encontró una rúbrica asociada a esta tarea."
+        })
+
     niveles = NivelDeDesempeno.objects.filter(rubrica=rubrica)
     criterios = Criterios.objects.filter(rubrica=rubrica)
-    calificacion = getattr(rubrica, 'checked', False)
-
+    
     descriptores = [
         {
             'criterio': c.descripcion_criterio,
             'descriptores': [
-                Descriptores.objects.filter(criterio=c, nivel_de_desempeno=n).first().descripcion
-                if Descriptores.objects.filter(criterio=c, nivel_de_desempeno=n).exists()
-                else ''
+                Descriptores.objects.filter(criterio=c, nivel_de_desempeno=n).first()
                 for n in niveles
-            ],
+            ]
         }
         for c in criterios
     ]
-    
+
     correccion_guardada = Notas.objects.filter(alumno=alumno, nivel_desempeno__rubrica=rubrica).exists()
     correccion_pareja = pareja and Notas.objects.filter(
-        alumno=pareja,
-        nivel_desempeno__rubrica=rubrica,
-        descriptor__criterio__rubrica=rubrica
+        alumno=pareja, nivel_desempeno__rubrica=rubrica
     ).exists()
 
-    calificaciones = []
-    if correccion_guardada or correccion_pareja:
-        alumno_referencia = alumno if correccion_guardada else pareja
-        for c in criterios:
-            calif_desc = []
-            for n in niveles:
-                descriptor = Descriptores.objects.filter(criterio=c, nivel_de_desempeno=n).first()
-                nota = Notas.objects.filter(nivel_desempeno=n, descriptor=descriptor, alumno=alumno_referencia).first()
-                calificacion_num = Calificacion.objects.filter(descriptor=descriptor, alumno=alumno_referencia).first()
-                calif_desc.append({
-                    'descriptiva': nota.calificacion_descriptivo if nota else '',
-                    'numerica': calificacion_num.calificacion if calificacion_num else ''
-                })
-            calificaciones.append({'criterio': c.descripcion_criterio, 'calificaciones': calif_desc})
-    
-    if request.method == 'POST' and not (correccion_guardada and correccion_pareja):
+    feedback_history = FeedbackHistory.objects.filter(grupo=alumno.grupo)
+
+    if request.method == 'POST' and not (correccion_guardada or correccion_pareja):
+        print('Dentro de POST para feedbacks que guarda bien en la base de datos')
         if 'fin_corregir' in request.POST:
+            feedbacks = [] 
             for c in criterios:
-                for n in niveles:
-                    descriptor_key = f'descriptor_descriptor_{n.descripcion_nivel}_{n.id_nivel_desempeno}'
-                    calificacion_key = f'calificacion_{n.descripcion_nivel}_{n.id_nivel_desempeno}'
+                feedback_text = request.POST.get(f'feedback_{c.descripcion_criterio}')
+                if feedback_text:
+                    feedback = FeedbackHistory.objects.create(grupo=alumno.grupo, texto=feedback_text)
+                    feedbacks.append({'criterio': c.descripcion_criterio, 'feedback': feedback_text})
+            print("Esto es la lista de feedckas")
+            print(feedbacks)
+            
+            feedback_history = FeedbackHistory.objects.filter(grupo=alumno.grupo)
+            print("Este es el historial de feedbacks")
+            print(feedback_history)
+        return render(request, 'registration/correccion_personal.html', {
+            'alumno': alumno,
+            'pareja': pareja,
+            'task': task,
+            'rubrica': rubrica,
+            'niveles': niveles,
+            'descriptores': descriptores,
+            'criterios': criterios,
+            'feedback_history': feedback_history,
+            'correccion_guardada': correccion_guardada,
+            'correccion_pareja': correccion_pareja,
+            'feedbacks': feedbacks,
+        })
 
-                    descriptor_value = request.POST.get(descriptor_key)
-                    calificacion_value = request.POST.get(calificacion_key)
 
-                    if descriptor_value:
-                        descriptor, _ = Descriptores.objects.get_or_create(criterio=c, nivel_de_desempeno=n)
-                        Notas.objects.update_or_create(
-                            nivel_desempeno=n,
-                            descriptor=descriptor,
-                            alumno=alumno,
-                            defaults={'calificacion_descriptivo': descriptor_value}
-                        )
-                        if calificacion and calificacion_value:
-                            Calificacion.objects.update_or_create(
-                                descriptor=descriptor,
-                                alumno=alumno,
-                                defaults={'calificacion': int(calificacion_value)}
-                            )
-            return redirect('correccion_personal', id_alumno=id_alumno)
-    
     return render(request, 'registration/correccion_personal.html', {
         'alumno': alumno,
         'pareja': pareja,
@@ -484,11 +476,10 @@ def correccion_personal(request, id_alumno, id_task):
         'niveles': niveles,
         'descriptores': descriptores,
         'criterios': criterios,
-        'calificaciones': calificaciones,
+        'feedback_history': feedback_history,
         'correccion_guardada': correccion_guardada,
         'correccion_pareja': correccion_pareja,
-        'task_id': task.id_task,
-        'calificacion': calificacion,
+        'feedbacks': feedbacks,
     })
 
     """
