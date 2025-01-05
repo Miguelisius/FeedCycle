@@ -6,7 +6,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth import authenticate, login
 from django.contrib import messages
 from django.contrib.auth.models import User
-from django.http import HttpResponse
+from django.db import transaction
 import csv
 from django.urls import reverse
 from io import StringIO
@@ -401,72 +401,93 @@ def correccion_rubrica(request, task_id):
         'alumnos': alumnos,
     })
     
+
+
 @login_required
 def correccion_personal(request, id_alumno, id_task):
-    
     alumno = get_object_or_404(Alumno, id_alumno=id_alumno)
-    pareja = Alumno.objects.filter(
-        grupo=alumno.grupo, pareja=alumno.pareja
-    ).exclude(id_alumno=alumno.id_alumno).first()
-
-    feedbacks = []
+    pareja = Alumno.objects.filter(grupo=alumno.grupo, pareja=alumno.pareja).exclude(id_alumno=alumno.id_alumno).first()
     task = get_object_or_404(Task, id_task=id_task, grupo=alumno.grupo)
     rubrica = Rubrica.objects.filter(tarea=task).first()
-    if not rubrica:
-        return render(request, 'registration/correccion_personal.html', {
-            'error': "No se encontró una rúbrica asociada a esta tarea."
-        })
-
     niveles = NivelDeDesempeno.objects.filter(rubrica=rubrica)
     criterios = Criterios.objects.filter(rubrica=rubrica)
-    
+    calificacion = getattr(rubrica, 'checked', False)
     descriptores = [
         {
             'criterio': c.descripcion_criterio,
+            'id_criterio': c.id_criterio,
             'descriptores': [
-                Descriptores.objects.filter(criterio=c, nivel_de_desempeno=n).first()
-                for n in niveles
+                Descriptores.objects.filter(criterio=c, nivel_de_desempeno=n).first() for n in niveles
             ]
-        }
-        for c in criterios
+        } for c in criterios
     ]
 
-    correccion_guardada = Notas.objects.filter(alumno=alumno, nivel_desempeno__rubrica=rubrica).exists()
-    correccion_pareja = pareja and Notas.objects.filter(
-        alumno=pareja, nivel_desempeno__rubrica=rubrica
+    correccion_guardada = Notas.objects.filter(
+        alumno=alumno,
+        nivel_desempeno__rubrica=rubrica,
+        corregida=True
     ).exists()
 
-    feedback_history = FeedbackHistory.objects.filter(grupo=alumno.grupo)
+    correccion_pareja = pareja and Notas.objects.filter(
+        alumno=pareja, nivel_desempeno__rubrica=rubrica, descriptor__criterio__rubrica=rubrica, corregida=True
+    ).exists()
 
-    if request.method == 'POST' and not (correccion_guardada or correccion_pareja):
-        print('Dentro de POST para feedbacks que guarda bien en la base de datos')
+    # Obtener solo los criterios y niveles seleccionados
+    calificaciones = Notas.objects.filter(alumno=alumno, nivel_desempeno__rubrica=rubrica, corregida=True).select_related('criterio', 'nivel_desempeno', 'descriptor')
+
+    feedbacks = []
+    if correccion_guardada or correccion_pareja:
+        alumno_referencia = alumno if correccion_guardada else pareja
+        feedbacks = [
+            {
+                'criterio': c.descripcion_criterio,
+                'feedback': feedback.texto
+            }
+            for c in criterios for feedback in FeedbackHistory.objects.filter(grupo=alumno.grupo, criterio=c)
+        ]
+
+    if request.method == 'POST':
         if 'fin_corregir' in request.POST:
-            feedbacks = [] 
+            feedbacks = []
             for c in criterios:
                 feedback_text = request.POST.get(f'feedback_{c.descripcion_criterio}')
                 if feedback_text:
-                    feedback = FeedbackHistory.objects.create(grupo=alumno.grupo, texto=feedback_text)
+                    feedback = FeedbackHistory.objects.create(grupo=alumno.grupo, texto=feedback_text, criterio=c)
                     feedbacks.append({'criterio': c.descripcion_criterio, 'feedback': feedback_text})
-            print("Esto es la lista de feedckas")
-            print(feedbacks)
-            
-            feedback_history = FeedbackHistory.objects.filter(grupo=alumno.grupo)
-            print("Este es el historial de feedbacks")
-            print(feedback_history)
-        return render(request, 'registration/correccion_personal.html', {
-            'alumno': alumno,
-            'pareja': pareja,
-            'task': task,
-            'rubrica': rubrica,
-            'niveles': niveles,
-            'descriptores': descriptores,
-            'criterios': criterios,
-            'feedback_history': feedback_history,
-            'correccion_guardada': correccion_guardada,
-            'correccion_pareja': correccion_pareja,
-            'feedbacks': feedbacks,
-        })
 
+            for c in criterios:
+                for n in niveles:
+                    descriptor_key = f'descriptor_{c.descripcion_criterio}_{n.descripcion_nivel}_{n.id_nivel_desempeno}'
+                    calificacion_key = f'calificacion_{c.descripcion_criterio}_{n.descripcion_nivel}_{n.id_nivel_desempeno}'
+                    
+                    descriptor_value = request.POST.get(descriptor_key)
+                    calificacion_value = request.POST.get(calificacion_key)
+                    
+                    descriptor = Descriptores.objects.filter(criterio=c, nivel_de_desempeno=n).first()
+                    
+                    if descriptor:
+                        nota, created = Notas.objects.update_or_create(
+                            criterio=c,
+                            nivel_desempeno=n,
+                            descriptor=descriptor,
+                            alumno=alumno,
+                            defaults={
+                                'calificacion_descriptivo': descriptor_value if descriptor_value else '',
+                                'corregida': True
+                            }
+                        )
+                        print(f'Nota guardada: {nota} - Corregida: {nota.corregida}')
+                    
+                        if calificacion and calificacion_value:
+                            Calificacion.objects.update_or_create(
+                                descriptor=descriptor,
+                                alumno=alumno,
+                                defaults={'calificacion': int(calificacion_value)}
+                            )
+                            print(f'Calificación actualizada para descriptor: {descriptor}')
+
+            print('Corrección guardada ahora es True en la base de datos.')
+            return redirect('correccion_personal', id_alumno=id_alumno, id_task=id_task)
 
     return render(request, 'registration/correccion_personal.html', {
         'alumno': alumno,
@@ -476,11 +497,16 @@ def correccion_personal(request, id_alumno, id_task):
         'niveles': niveles,
         'descriptores': descriptores,
         'criterios': criterios,
-        'feedback_history': feedback_history,
+        'feedback_history': FeedbackHistory.objects.filter(grupo=alumno.grupo),
+        'feedbacks': feedbacks,
         'correccion_guardada': correccion_guardada,
         'correccion_pareja': correccion_pareja,
-        'feedbacks': feedbacks,
+        'calificaciones': calificaciones,
+        'calificacion': calificacion,
+        'task_id': task.id_task,
     })
+
+
 
     """
     for c in criterios:
