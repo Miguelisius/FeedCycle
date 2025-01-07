@@ -432,7 +432,7 @@ def correccion_personal(request, id_alumno, id_task):
         alumno=pareja, nivel_desempeno__rubrica=rubrica, descriptor__criterio__rubrica=rubrica, corregida=True
     ).exists()
 
-    # Obtener solo los criterios y niveles seleccionados
+
     calificaciones = Notas.objects.filter(alumno=alumno, nivel_desempeno__rubrica=rubrica, corregida=True).select_related('criterio', 'nivel_desempeno', 'descriptor')
 
     feedbacks = []
@@ -504,6 +504,7 @@ def correccion_personal(request, id_alumno, id_task):
         'calificaciones': calificaciones,
         'calificacion': calificacion,
         'task_id': task.id_task,
+        'calificaciones_feedback': zip(calificaciones, feedbacks),
     })
 
 

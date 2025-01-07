@@ -140,17 +140,32 @@
                         <tr>
                             <td>{{ c.criterio }}</td>
                             <td>
-                                <select name="descriptor_{{ c.criterio }}" class="form-select">
-                                    <option value="" disabled selected>Selecciona un descriptor</option>
-                                    {% for d in c.descriptores %}
-                                        {% if d %}
-                                            <option value="{{ d.id_descriptor }}" title="{{ d.descripcion }}">
-                                                {{ d.descripcion }}
-                                            </option>
-                                        {% endif %}
-                                    {% endfor %}
-                                </select>
+                                <div class="dropdown">
+                                    <button 
+                                        class="btn btn-secondary dropdown-toggle w-100 text-wrap text-start" 
+                                        type="button" 
+                                        data-bs-toggle="dropdown" 
+                                        aria-expanded="false" 
+                                        id="dropdownBtn_{{ c.criterio }}" 
+                                        style="white-space: normal; overflow: visible; word-wrap: break-word;">
+                                        Selecciona un descriptor
+                                    </button>
+                                    <ul class="dropdown-menu w-100 overflow-auto" style="max-height: 200px;">
+                                        {% for d in c.descriptores %}
+                                            {% if d %}
+                                                <li>
+                                                    <a class="dropdown-item text-wrap" href="#" 
+                                                    onclick="selectDescriptor('{{ c.criterio }}', '{{ d.id_descriptor }}', '{{ d.descripcion }}')">
+                                                        {{ d.descripcion }}
+                                                    </a>
+                                                </li>
+                                            {% endif %}
+                                        {% endfor %}
+                                    </ul>
+                                    <input type="hidden" name="descriptor_{{ c.criterio }}" id="descriptor_{{ c.criterio }}">
+                                </div>
                             </td>
+                            
                             <td>
                                 <textarea name="feedback_{{ c.criterio }}" class="form-control"></textarea>
                             </td>
@@ -173,27 +188,26 @@
                 <thead class="table-dark">
                     <tr>
                         <th>Criterio</th>
-                        <th>Nivel</th>
                         <th>Descripción del Nivel</th>
                         <th>Feedback</th>
                         {% if calificacion %}<th>Nota</th>{% endif %}
                     </tr>
                 </thead>
                 <tbody>
-                    {% for c in calificaciones %}
+                    {% for c, f in calificaciones_feedback %}
                     <tr>
                         <td>{{ c.criterio.descripcion_criterio }}</td>
-                        <td>{{ c.nivel_desempeno.descripcion_nivel }}</td>
                         <td>{{ c.descriptor.descripcion }}</td>
                         <td>
-                            <textarea class="form-control" readonly>{{ c.feedback }}</textarea>
+                            <textarea class="form-control" readonly>{{ f.feedback }}</textarea>
                         </td>
                         {% if calificacion %}
                         <td>{{ c.nota }}</td>
                         {% endif %}
                     </tr>
                     {% endfor %}
-                </tbody>
+                    </tbody>
+
             </table>
             {% endif %}
 
@@ -274,7 +288,12 @@
         <button type="submit" name="fin_corregir" class="btn btn-secondary">Guardar corrección</button>
     </div>
 
-
+    <script>
+        function selectDescriptor(criterio, idDescriptor, descripcion) {
+            document.getElementById(`dropdownBtn_${criterio}`).innerText = descripcion;
+            document.getElementById(`descriptor_${criterio}`).value = idDescriptor;
+        }
+    </script>
     
 </body>
 </html>
