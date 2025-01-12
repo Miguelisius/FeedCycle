@@ -17,6 +17,7 @@ urlpatterns = [
     path('correccion/<int:id_alumno>/<int:id_task>/', views.correccion_personal, name='correccion_personal'),
     path('correccion/<int:id_alumno>/exportar-pdf/', views.export_correccion_pdf, name='export_correction_pdf'),
     path('rubrica/<int:rubric_id>/exportar-pdf/', views.export_rubrica_pdf, name='export_rubrica_pdf'),
+    path('export_feedback/<int:id_alumno>/<int:id_task>/', views.export_feedback_txt, name='export_feedback'),
     #path('delete_project/<int:project_id>/', delete_project, name='delete_project'),
     #path('delete_group/<int:group_id>/', delete_group, name='delete_group'),
     #path('delete-alumno/<int:alumno_id>/', views.delete_alumno, name='delete_alumno'),

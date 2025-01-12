@@ -2,7 +2,9 @@
 <head>
     <title>Corrección de la pareja {{alumno.pareja}}</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    
     <style>
         .input-group {
             margin-bottom: 10px;
@@ -130,15 +132,15 @@
                     <thead class="table-dark">
                         <tr>
                             <th>Criterio</th>
-                            <th>Descriptor</th>
+                            <th>Nivel de Desempeño</th>
                             <th>Feedback</th>
                             {% if calificacion %}<th>Nota</th>{% endif %}
                         </tr>
                     </thead>
                     <tbody>
-                        {% for c in descriptores %}
+                        {% for c in criterios %}
                         <tr>
-                            <td>{{ c.criterio }}</td>
+                            <td>{{ c.descripcion_criterio }}</td>
                             <td>
                                 <div class="dropdown">
                                     <button 
@@ -146,32 +148,36 @@
                                         type="button" 
                                         data-bs-toggle="dropdown" 
                                         aria-expanded="false" 
-                                        id="dropdownBtn_{{ c.criterio }}" 
+                                        id="dropdownBtn_{{ c.id_criterio }}" 
                                         style="white-space: normal; overflow: visible; word-wrap: break-word;">
-                                        Selecciona un descriptor
+                                        Selecciona un nivel
                                     </button>
                                     <ul class="dropdown-menu w-100 overflow-auto" style="max-height: 200px;">
-                                        {% for d in c.descriptores %}
-                                            {% if d %}
-                                                <li>
-                                                    <a class="dropdown-item text-wrap" href="#" 
-                                                    onclick="selectDescriptor('{{ c.criterio }}', '{{ d.id_descriptor }}', '{{ d.descripcion }}')">
-                                                        {{ d.descripcion }}
-                                                    </a>
-                                                </li>
-                                            {% endif %}
+                                        {% for n in niveles %}
+                                            <li>
+                                                <a class="dropdown-item text-wrap" href="#" 
+                                                onclick="selectNivel('{{ c.id_criterio }}', '{{ n.id_nivel_desempeno }}', '{{ n.descripcion_nivel }}')">
+                                                    {{ n.descripcion_nivel }}
+                                                </a>
+                                            </li>
                                         {% endfor %}
                                     </ul>
-                                    <input type="hidden" name="descriptor_{{ c.criterio }}" id="descriptor_{{ c.criterio }}">
+                                    <input type="hidden" name="nivel_{{ c.id_criterio }}" id="nivel_{{ c.id_criterio }}">
                                 </div>
                             </td>
-                            
                             <td>
-                                <textarea name="feedback_{{ c.criterio }}" class="form-control"></textarea>
+                                <div class="input-group">
+                                    <textarea name="feedback_{{ c.id_criterio }}" class="form-control"></textarea>
+                                    <button type="button" class="btn btn-secondary" 
+                                    onclick="openFeedbackModal('{{ c.id_criterio }}', $('#nivel_{{ c.id_criterio }}').val())">
+                                    &#x1F50D;
+                                </button>
+                            
+                                </div>
                             </td>
                             {% if calificacion %}
                             <td>
-                                <input type="number" name="nota_{{ c.criterio }}" class="form-control" placeholder="Nota">
+                                <input type="number" name="nota_{{ c.id_criterio }}" class="form-control" placeholder="Nota">
                             </td>
                             {% endif %}
                         </tr>
@@ -181,6 +187,7 @@
                 <button type="submit" name="fin_corregir" class="btn btn-secondary">Guardar corrección</button>
             </form>
             {% endif %}
+            
 
             {% if correccion_guardada or correccion_pareja %}
             <h3>Corrección Guardada:</h3>
@@ -188,7 +195,7 @@
                 <thead class="table-dark">
                     <tr>
                         <th>Criterio</th>
-                        <th>Descripción del Nivel</th>
+                        <th>Nivel</th>
                         <th>Feedback</th>
                         {% if calificacion %}<th>Nota</th>{% endif %}
                     </tr>
@@ -197,7 +204,7 @@
                     {% for c, f in calificaciones_feedback %}
                     <tr>
                         <td>{{ c.criterio.descripcion_criterio }}</td>
-                        <td>{{ c.descriptor.descripcion }}</td>
+                        <td>{{ c.nivel_desempeno.descripcion_nivel }}</td>
                         <td>
                             <textarea class="form-control" readonly>{{ f.feedback }}</textarea>
                         </td>
@@ -206,17 +213,17 @@
                         {% endif %}
                     </tr>
                     {% endfor %}
-                    </tbody>
-
+                </tbody>
             </table>
             {% endif %}
+            
 
         
             
         
 
             <!--Aqui irá la parte del feedback -->
-            <h3>Feedback:</h3>
+            <!--<h3>Feedback:</h3>
             <ul>
                 {% for fb in feedbacks %}
                     <li>
@@ -227,7 +234,7 @@
                         <input type="textarea" name="explicacion_{{ fb.criterio }}" class="form-control mt-2" placeholder="Explicación adicional">
                     </li>
                 {% endfor %}
-            </ul>
+            </ul>-->
             
             
         
@@ -285,15 +292,84 @@
         <form action="{% url 'export_correction_pdf' alumno.id_alumno %}" method="get" style="display:inline;">
             <button type="submit" class="btn btn-primary">Exportar corrección a PDF</button>
         </form>
-        <button type="submit" name="fin_corregir" class="btn btn-secondary">Guardar corrección</button>
+        <form action="{% url 'export_feedback' alumno.id_alumno task.id_task %}" method="get">
+            <button type="submit" class="btn btn-primary">Exportar feedback</button>
+        </form>
+        
     </div>
 
+    <div class="modal fade" id="feedbackModal" tabindex="-1" aria-labelledby="feedbackModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="feedbackModalLabel">Seleccionar Feedback</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <ul id="feedbackList" class="list-group">
+                        <!-- Feedbacks se añadirán dinámicamente aquí -->
+                    </ul>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
     <script>
-        function selectDescriptor(criterio, idDescriptor, descripcion) {
-            document.getElementById(`dropdownBtn_${criterio}`).innerText = descripcion;
-            document.getElementById(`descriptor_${criterio}`).value = idDescriptor;
+        function selectNivel(criterioId, nivelId, descripcionNivel) {
+            const dropdownBtn = document.getElementById(`dropdownBtn_${criterioId}`);
+            dropdownBtn.textContent = descripcionNivel;
+            const inputHidden = document.getElementById(`nivel_${criterioId}`);
+            inputHidden.value = nivelId;
+            console.log(nivelId);
+            console.log(inputHidden.value);
         }
+
+        let feedbacksGlobal = {};
+
+        function openFeedbackModal(criterioId, nivelId) {
+            if (!nivelId || nivelId === '') {
+                alert("Por favor selecciona un nivel de desempeño primero.");
+                return;
+            }
+        
+            const feedbackList = $("#feedbackList");
+            feedbackList.empty(); 
+            const feedbacks = feedbacksGlobal[criterioId]?.[nivelId] || [];
+        
+            console.log(feedbacks);
+            console.log(criterioId);
+            console.log(nivelId);
+        
+            if (feedbacks.length === 0) {
+                feedbackList.append('<li class="list-group-item">No hay feedbacks disponibles.</li>');
+            } else {
+                feedbacks.forEach(feedback => {
+                    feedbackList.append(
+                        `<li class="list-group-item">
+                            <button type="button" class="btn btn-link" onclick="selectFeedback('${criterioId}', '${feedback}')">
+                                ${feedback}
+                            </button>
+                        </li>`
+                    );
+                });
+            }
+            $('#feedbackModal').modal('show');
+        }
+        
+        
+        function selectFeedback(criterioId, feedback) {
+
+            $(`textarea[name='feedback_${criterioId}']`).val(feedback);
+            $("#feedbackModal").modal("hide");
+        }
+
+        
     </script>
+        
     
 </body>
 </html>
