@@ -148,18 +148,17 @@
                                         type="button" 
                                         data-bs-toggle="dropdown" 
                                         aria-expanded="false" 
-                                        id="dropdownBtn_{{ c.id_criterio }}" 
-                                        style="white-space: normal; overflow: visible; word-wrap: break-word;">
+                                        id="dropdownBtn_{{ c.id_criterio }}">
                                         Selecciona un nivel
                                     </button>
-                                    <ul class="dropdown-menu w-100 overflow-auto" style="max-height: 200px;">
+                                    <ul class="dropdown-menu w-100 overflow-auto">
                                         {% for n in niveles %}
-                                            <li>
-                                                <a class="dropdown-item text-wrap" href="#" 
-                                                onclick="selectNivel('{{ c.id_criterio }}', '{{ n.id_nivel_desempeno }}', '{{ n.descripcion_nivel }}')">
-                                                    {{ n.descripcion_nivel }}
-                                                </a>
-                                            </li>
+                                        <li>
+                                            <a class="dropdown-item" href="#" 
+                                            onclick="selectNivel('{{ c.id_criterio }}', '{{ n.id_nivel_desempeno }}', '{{ n.descripcion_nivel }}')">
+                                                {{ n.descripcion_nivel }}
+                                            </a>
+                                        </li>
                                         {% endfor %}
                                     </ul>
                                     <input type="hidden" name="nivel_{{ c.id_criterio }}" id="nivel_{{ c.id_criterio }}">
@@ -167,12 +166,11 @@
                             </td>
                             <td>
                                 <div class="input-group">
-                                    <textarea name="feedback_{{ c.id_criterio }}" class="form-control"></textarea>
+                                    <textarea name="feedback_{{ c.id_criterio }}" class="form-control" id="feedback_text_{{ c.id_criterio }}"></textarea>
                                     <button type="button" class="btn btn-secondary" 
                                     onclick="openFeedbackModal('{{ c.id_criterio }}', $('#nivel_{{ c.id_criterio }}').val())">
-                                    &#x1F50D;
-                                </button>
-                            
+                                    🔍
+                                    </button>
                                 </div>
                             </td>
                             {% if calificacion %}
@@ -307,7 +305,7 @@
                 </div>
                 <div class="modal-body">
                     <ul id="feedbackList" class="list-group">
-                        <!-- Feedbacks se añadirán dinámicamente aquí -->
+                        <!-- Feedbacks-->
                     </ul>
                 </div>
                 <div class="modal-footer">
@@ -322,52 +320,48 @@
         function selectNivel(criterioId, nivelId, descripcionNivel) {
             const dropdownBtn = document.getElementById(`dropdownBtn_${criterioId}`);
             dropdownBtn.textContent = descripcionNivel;
-            const inputHidden = document.getElementById(`nivel_${criterioId}`);
-            inputHidden.value = nivelId;
-            console.log(nivelId);
-            console.log(inputHidden.value);
+            document.getElementById(`nivel_${criterioId}`).value = nivelId;
+            console.log(`Nivel seleccionado: ${nivelId}`);
+            console.log(`Descripcion: ${descripcionNivel}`);
         }
 
-        let feedbacksGlobal = {};
-
         function openFeedbackModal(criterioId, nivelId) {
-            if (!nivelId || nivelId === '') {
+            if (!nivelId) {
                 alert("Por favor selecciona un nivel de desempeño primero.");
                 return;
             }
-        
+
             const feedbackList = $("#feedbackList");
-            feedbackList.empty(); 
-            const feedbacks = feedbacksGlobal[criterioId]?.[nivelId] || [];
-        
-            console.log(feedbacks);
-            console.log(criterioId);
-            console.log(nivelId);
-        
-            if (feedbacks.length === 0) {
-                feedbackList.append('<li class="list-group-item">No hay feedbacks disponibles.</li>');
-            } else {
-                feedbacks.forEach(feedback => {
-                    feedbackList.append(
-                        `<li class="list-group-item">
-                            <button type="button" class="btn btn-link" onclick="selectFeedback('${criterioId}', '${feedback}')">
-                                ${feedback}
-                            </button>
-                        </li>`
-                    );
-                });
-            }
-            $('#feedbackModal').modal('show');
+            feedbackList.empty();
+
+            const grupoId = {{ alumno.grupo.id_grupo }};
+            console.log(grupoId);
+            $.ajax({
+                url: `/obtener-feedbacks/${grupoId}/${criterioId}/${nivelId}/`,
+                method: 'GET',
+                success: function(data) {
+                    if (data.length === 0) {
+                        feedbackList.append('<li class="list-group-item">No hay feedbacks disponibles.</li>');
+                    } else {
+                        data.forEach(feedback => {
+                            console.log(feedback);
+                            feedbackList.append(`<li class="list-group-item" onclick="selectFeedback('${criterioId}', '${feedback}')">${feedback}</li>`);
+                        });
+                    }
+                    $('#feedbackModal').modal('show');
+                },
+                error: function() {
+                    feedbackList.append('<li class="list-group-item">Error al cargar feedbacks.</li>');
+                }
+            });
         }
-        
-        
         function selectFeedback(criterioId, feedback) {
-
-            $(`textarea[name='feedback_${criterioId}']`).val(feedback);
-            $("#feedbackModal").modal("hide");
+            const feedbackTextarea = document.getElementById(`feedback_text_${criterioId}`);
+            if (feedbackTextarea) {
+                feedbackTextarea.value = feedback;
+            }
+            $('#feedbackModal').modal('hide');
         }
-
-        
     </script>
         
     

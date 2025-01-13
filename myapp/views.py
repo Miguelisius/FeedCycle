@@ -472,7 +472,6 @@ def correccion_personal(request, id_alumno, id_task):
                         )
                         feedbacks.append({'criterio': c.descripcion_criterio, 'feedback': feedback_text})
                     
-                        
                         if 'feedback_memory' not in context:
                             context['feedback_memory'] = {}
                         if c.id_criterio not in context['feedback_memory']:
@@ -481,10 +480,7 @@ def correccion_personal(request, id_alumno, id_task):
                             context['feedback_memory'][c.id_criterio][nivel_id] = []
                         context['feedback_memory'][c.id_criterio][nivel_id].append(feedback_text)
 
-                    
-                    nivel_id = request.POST.get(f'nivel_{c.id_criterio}')
                     calificacion_value = request.POST.get(f'nota_{c.id_criterio}')
-                    
                     if nivel_id:
                         nivel = NivelDeDesempeno.objects.get(id_nivel_desempeno=nivel_id)
                         descriptor = Descriptores.objects.filter(criterio=c, nivel_de_desempeno=nivel).first()
@@ -511,7 +507,6 @@ def correccion_personal(request, id_alumno, id_task):
                                 print(f'Calificación actualizada para descriptor: {descriptor}')
             return redirect('correccion_personal', id_alumno=id_alumno, id_task=id_task)
 
-
     return render(request, 'registration/correccion_personal.html', {
         'alumno': alumno,
         'pareja': pareja,
@@ -529,6 +524,16 @@ def correccion_personal(request, id_alumno, id_task):
         'task_id': task.id_task,
         'calificaciones_feedback': zip(calificaciones, feedbacks),
     })
+
+@login_required
+def obtener_feedbacks(request, id_grupo, id_criterio, id_nivel):
+    grupo = get_object_or_404(Grupo, id_grupo=id_grupo)
+    criterio = get_object_or_404(Criterios, id_criterio=id_criterio)
+    nivel = get_object_or_404(NivelDeDesempeno, id_nivel_desempeno=id_nivel)
+
+    feedbacks = FeedbackHistory.objects.filter(grupo=grupo, criterio=criterio, nivel_de_desempeno=nivel).values_list('texto', flat=True)
+
+    return JsonResponse(list(feedbacks), safe=False)
 
 @login_required
 def export_feedback_txt(request, id_alumno, id_task):
