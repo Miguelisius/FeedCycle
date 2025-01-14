@@ -12,7 +12,7 @@ from django.urls import reverse
 from io import StringIO
 from weasyprint import HTML
 from django.template.loader import render_to_string
-from django.core.cache import cache
+from django.db.models import Avg
 
 
 
@@ -413,7 +413,7 @@ def correccion_personal(request, id_alumno, id_task):
     niveles = NivelDeDesempeno.objects.filter(rubrica=rubrica)
     criterios = Criterios.objects.filter(rubrica=rubrica)
     calificacion = getattr(rubrica, 'checked', False)
-    context = {}
+
     descriptores = [
         {
             'criterio': c.descripcion_criterio,
@@ -451,62 +451,60 @@ def correccion_personal(request, id_alumno, id_task):
                 'criterio': c.descripcion_criterio,
                 'feedback': feedback.texto
             }
-            for c in criterios 
-            for feedback in FeedbackHistory.objects.filter(grupo=alumno.grupo, criterio=c)
+            for c in criterios
+            for feedback in FeedbackHistory.objects.filter(grupo=alumno.grupo, criterio=c,alumno=alumno)
         ]
-
+        
     if request.method == 'POST':
         if 'fin_corregir' in request.POST:
-            feedbacks = []
+            total_notas = 0
+            total_criterios = 0
+
             for c in criterios:
                 feedback_text = request.POST.get(f'feedback_{c.id_criterio}')
-                if feedback_text:
-                    nivel_id = request.POST.get(f'nivel_{c.id_criterio}')
-                    if nivel_id:
-                        nivel = NivelDeDesempeno.objects.get(id_nivel_desempeno=nivel_id)
-                        feedback = FeedbackHistory.objects.create(
-                            grupo=alumno.grupo, 
-                            texto=feedback_text, 
-                            criterio=c,
-                            nivel_de_desempeno=nivel
-                        )
-                        feedbacks.append({'criterio': c.descripcion_criterio, 'feedback': feedback_text})
-                    
-                        if 'feedback_memory' not in context:
-                            context['feedback_memory'] = {}
-                        if c.id_criterio not in context['feedback_memory']:
-                            context['feedback_memory'][c.id_criterio] = {}
-                        if nivel_id not in context['feedback_memory'][c.id_criterio]:
-                            context['feedback_memory'][c.id_criterio][nivel_id] = []
-                        context['feedback_memory'][c.id_criterio][nivel_id].append(feedback_text)
+                nivel_id = request.POST.get(f'nivel_{c.id_criterio}')
+                calificacion_value = request.POST.get(f'nota_{c.id_criterio}')
 
-                    calificacion_value = request.POST.get(f'nota_{c.id_criterio}')
-                    if nivel_id:
-                        nivel = NivelDeDesempeno.objects.get(id_nivel_desempeno=nivel_id)
-                        descriptor = Descriptores.objects.filter(criterio=c, nivel_de_desempeno=nivel).first()
-                        
-                        if descriptor:
-                            nota, created = Notas.objects.update_or_create(
-                                criterio=c,
-                                nivel_desempeno=nivel,
-                                descriptor=descriptor,
-                                alumno=alumno,
-                                defaults={
-                                    'calificacion_descriptivo': descriptor.descripcion if descriptor else '',
-                                    'corregida': True
-                                }
-                            )
-                            print(f'Nota guardada: {nota} - Corregida: {nota.corregida}')
-                        
-                            if calificacion and calificacion_value:
-                                Calificacion.objects.update_or_create(
-                                    descriptor=descriptor,
-                                    alumno=alumno,
-                                    defaults={'calificacion': int(calificacion_value)}
-                                )
-                                print(f'Calificación actualizada para descriptor: {descriptor}')
+                if feedback_text and nivel_id:
+                    nivel = NivelDeDesempeno.objects.get(id_nivel_desempeno=nivel_id)
+                    FeedbackHistory.objects.create(
+                        grupo=alumno.grupo,
+                        texto=feedback_text,
+                        criterio=c,
+                        nivel_de_desempeno=nivel,
+                        alumno=alumno
+                    )
+
+                if nivel_id:
+                    nivel = NivelDeDesempeno.objects.get(id_nivel_desempeno=nivel_id)
+                    descriptor = Descriptores.objects.filter(criterio=c, nivel_de_desempeno=nivel).first()
+                    Notas.objects.update_or_create(
+                        criterio=c,
+                        nivel_desempeno=nivel,
+                        descriptor=descriptor,
+                        alumno=alumno,
+                        defaults={
+                            'nota': int(calificacion_value) if calificacion_value else None,
+                            'calificacion_descriptivo': descriptor.descripcion if descriptor else '',
+                            'corregida': True
+                        }
+                    )
+                    if calificacion and calificacion_value:
+                        Calificacion.objects.update_or_create(
+                            descriptor=descriptor,
+                            alumno=alumno,
+                            defaults={'calificacion': int(calificacion_value)}
+                        )
+                        total_notas += int(calificacion_value)
+                        total_criterios += 1
+
+            nota_media = total_notas / total_criterios if total_criterios > 0 else None
             return redirect('correccion_personal', id_alumno=id_alumno, id_task=id_task)
 
+    nota_media = calificaciones.aggregate(Avg('nota'))['nota__avg']
+    if nota_media is not None:
+        nota_media = round(nota_media, 2)
+        
     return render(request, 'registration/correccion_personal.html', {
         'alumno': alumno,
         'pareja': pareja,
@@ -521,9 +519,11 @@ def correccion_personal(request, id_alumno, id_task):
         'correccion_pareja': correccion_pareja,
         'calificaciones': calificaciones,
         'calificacion': calificacion,
+        'nota_media': nota_media,
         'task_id': task.id_task,
         'calificaciones_feedback': zip(calificaciones, feedbacks),
     })
+
 
 @login_required
 def obtener_feedbacks(request, id_grupo, id_criterio, id_nivel):
@@ -542,9 +542,18 @@ def export_feedback_txt(request, id_alumno, id_task):
         grupo=alumno.grupo,
         pareja=alumno.pareja
     ).exclude(id_alumno=alumno.id_alumno).first()
+    
     task = get_object_or_404(Task, id_task=id_task)
-
-    feedbacks = FeedbackHistory.objects.filter(grupo=alumno.grupo)
+    notas_alumno = Notas.objects.filter(alumno=alumno, nivel_desempeno__rubrica__tarea=task)
+    feedbacks = FeedbackHistory.objects.filter(
+        grupo=alumno.grupo,
+        criterio__in=[nota.criterio for nota in notas_alumno],
+        nivel_de_desempeno__in=[nota.nivel_desempeno for nota in notas_alumno],
+        alumno=alumno
+    )
+    feedbacks_alumno = []
+    for feedback in feedbacks:
+        feedbacks_alumno.append(feedback.texto)
 
     encabezado = f"Feedback de pareja {alumno.pareja}:\n"
     encabezado += f"- {alumno.nombre} {alumno.apellido}\n"
@@ -553,16 +562,16 @@ def export_feedback_txt(request, id_alumno, id_task):
     else:
         encabezado += "- Sin pareja asignada\n"
 
-    if feedbacks.exists():
+    if feedbacks_alumno:
         correccion = "Corrección:\n"
-        correccion += "\n".join([f"- {fb.texto}" for fb in feedbacks])
+        correccion += "\n".join([f"- {fb}" for fb in feedbacks_alumno])
     else:
         correccion = "Corrección:\n- No se proporcionó feedback para este alumno o tarea."
-
     file_content = f"{encabezado}\n\n{correccion}"
     response = HttpResponse(file_content, content_type='text/plain')
     response['Content-Disposition'] = f'attachment; filename=feedback_alumno_{alumno.id_alumno}.txt'
     return response
+
 
 
     """
@@ -637,27 +646,20 @@ def export_rubrica_pdf(request, rubric_id):
 
 
 @login_required
-def export_correccion_pdf(request, id_alumno):
+def export_correccion_pdf(request, id_alumno, id_task):
     alumno = get_object_or_404(Alumno, id_alumno=id_alumno)
     pareja = Alumno.objects.filter(grupo=alumno.grupo, pareja=alumno.pareja).exclude(id_alumno=alumno.id_alumno).first()
-    task = Task.objects.filter(grupo=alumno.grupo).first()
+    task = get_object_or_404(Task, id_task=id_task)
     rubrica = Rubrica.objects.filter(tarea=task).first()
     criterios = Criterios.objects.filter(rubrica=rubrica)
     niveles = NivelDeDesempeno.objects.filter(rubrica=rubrica)
-    
-    calificaciones = []
-    for criterio in criterios:
-        calif_desc = []
-        for nivel in niveles:
-            descriptor = Descriptores.objects.filter(criterio=criterio, nivel_de_desempeno=nivel).first()
-            nota = Notas.objects.filter(nivel_desempeno=nivel, descriptor=descriptor, alumno=alumno).first()
-            calificacion_num = Calificacion.objects.filter(descriptor=descriptor, alumno=alumno).first()
-
-            calif_desc.append({
-                'descriptiva': nota.calificacion_descriptivo if nota else 'Sin descripción',
-                'numerica': calificacion_num.calificacion if calificacion_num else ''
-            })
-        calificaciones.append({'criterio': criterio.descripcion_criterio, 'calificaciones': calif_desc})
+    notas_alumno = Notas.objects.filter(alumno=alumno, nivel_desempeno__rubrica__tarea=task)
+    feedbacks = FeedbackHistory.objects.filter(
+        grupo=alumno.grupo,
+        criterio__in=[nota.criterio for nota in notas_alumno],
+        nivel_de_desempeno__in=[nota.nivel_desempeno for nota in notas_alumno],
+        alumno=alumno
+    )
     
     context = {
         'alumno': alumno,
@@ -666,7 +668,8 @@ def export_correccion_pdf(request, id_alumno):
         'rubrica': rubrica,
         'criterios': criterios,
         'niveles': niveles,
-        'calificaciones': calificaciones,
+        'notas': notas_alumno,
+        'feedbacks': feedbacks,
     }
     
     html_string = render_to_string('registration/correccion_personalpdf.html', context)

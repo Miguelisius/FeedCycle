@@ -125,5 +125,6 @@ class FeedbackHistory(models.Model):
     fecha = models.DateTimeField(auto_now_add=True)
     criterio = models.ForeignKey(Criterios, on_delete=models.CASCADE)
     nivel_de_desempeno = models.ForeignKey(NivelDeDesempeno, on_delete=models.CASCADE)
+    alumno = models.ForeignKey(Alumno, on_delete=models.CASCADE)
     def __str__(self):
         return f"Feedback del grupo {self.grupo.numero_grupo} en {self.fecha.strftime('%Y-%m-%d %H:%M:%S')}"

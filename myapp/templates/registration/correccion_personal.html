@@ -213,7 +213,11 @@
                     {% endfor %}
                 </tbody>
             </table>
+            {% if calificacion %}
+            <p><strong>Nota Media:</strong> {{ nota_media }}</p>
             {% endif %}
+            {% endif %}
+            
             
 
         
@@ -287,7 +291,7 @@
     <div  class="fixez-bottom mt-3 px-3">
         <!--<a  href="{% url 'correcion' task.id_task %}" >Volver a la tarea</a>-->
     
-        <form action="{% url 'export_correction_pdf' alumno.id_alumno %}" method="get" style="display:inline;">
+        <form action="{% url 'export_correction_pdf' alumno.id_alumno task.id_task%}" method="get" style="display:inline;">
             <button type="submit" class="btn btn-primary">Exportar corrección a PDF</button>
         </form>
         <form action="{% url 'export_feedback' alumno.id_alumno task.id_task %}" method="get">
