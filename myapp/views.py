@@ -393,6 +393,7 @@ def correccion_rubrica(request, task_id):
             'descriptores': c_dec
         })
     print(descriptores)
+    grupo = task.grupo
     return render(request, 'registration/correccion.html', {
         'task': task,
         'rubrica': rubrica,
@@ -400,6 +401,7 @@ def correccion_rubrica(request, task_id):
         'niveles': niveles,
         'descriptores': descriptores,
         'alumnos': alumnos,
+        'grupo': grupo,
     })
     
 
@@ -443,17 +445,34 @@ def correccion_personal(request, id_alumno, id_task):
         nivel_desempeno__rubrica=rubrica,
         corregida=True
     ).select_related('criterio', 'nivel_desempeno', 'descriptor')
-
+    print(correccion_guardada)
+    print(correccion_pareja)
+    
     feedbacks = []
     if correccion_guardada or correccion_pareja:
+        print("Entro en el if")
+        alumno_referencia = alumno if correccion_guardada else pareja
+        calificaciones = Notas.objects.filter(
+            alumno=alumno_referencia,
+            nivel_desempeno__rubrica=rubrica,
+            corregida=True
+        ).select_related('criterio', 'nivel_desempeno', 'descriptor')
+        
         feedbacks = [
             {
                 'criterio': c.descripcion_criterio,
                 'feedback': feedback.texto
             }
             for c in criterios
-            for feedback in FeedbackHistory.objects.filter(grupo=alumno.grupo, criterio=c,alumno=alumno)
+            for feedback in FeedbackHistory.objects.filter(
+                grupo=alumno.grupo,
+                criterio=c,
+                alumno=alumno_referencia
+            )
         ]
+    else:
+        calificaciones = []
+        feedbacks = [{'criterio': c.descripcion_criterio, 'feedback': 'Sin corrección disponible'} for c in criterios]
         
     if request.method == 'POST':
         if 'fin_corregir' in request.POST:
@@ -536,41 +555,73 @@ def obtener_feedbacks(request, id_grupo, id_criterio, id_nivel):
     return JsonResponse(list(feedbacks), safe=False)
 
 @login_required
-def export_feedback_txt(request, id_alumno, id_task):
-    alumno = get_object_or_404(Alumno, id_alumno=id_alumno)
-    pareja = Alumno.objects.filter(
-        grupo=alumno.grupo,
-        pareja=alumno.pareja
-    ).exclude(id_alumno=alumno.id_alumno).first()
-    
+def export_feedback_txt(request, id_grupo, id_task):
+    grupo = get_object_or_404(Grupo, id_grupo=id_grupo)
     task = get_object_or_404(Task, id_task=id_task)
-    notas_alumno = Notas.objects.filter(alumno=alumno, nivel_desempeno__rubrica__tarea=task)
-    feedbacks = FeedbackHistory.objects.filter(
-        grupo=alumno.grupo,
-        criterio__in=[nota.criterio for nota in notas_alumno],
-        nivel_de_desempeno__in=[nota.nivel_desempeno for nota in notas_alumno],
-        alumno=alumno
-    )
-    feedbacks_alumno = []
-    for feedback in feedbacks:
-        feedbacks_alumno.append(feedback.texto)
+    alumnos = Alumno.objects.filter(grupo=grupo)
 
-    encabezado = f"Feedback de pareja {alumno.pareja}:\n"
-    encabezado += f"- {alumno.nombre} {alumno.apellido}\n"
-    if pareja:
-        encabezado += f"- {pareja.nombre} {pareja.apellido}\n"
-    else:
-        encabezado += "- Sin pareja asignada\n"
+    file_content = f"Feedback del grupo {grupo.numero_grupo} para la tarea {task.title}:\n\n"
 
-    if feedbacks_alumno:
-        correccion = "Corrección:\n"
-        correccion += "\n".join([f"- {fb}" for fb in feedbacks_alumno])
-    else:
-        correccion = "Corrección:\n- No se proporcionó feedback para este alumno o tarea."
-    file_content = f"{encabezado}\n\n{correccion}"
+    parejas_procesadas = set()
+
+    for alumno in alumnos:
+        pareja = Alumno.objects.filter(
+            grupo=alumno.grupo,
+            pareja=alumno.pareja
+        ).exclude(id_alumno=alumno.id_alumno).first()
+
+
+        if alumno.pareja and alumno.pareja in parejas_procesadas:
+            continue
+
+        parejas_procesadas.add(alumno.pareja)
+
+
+        file_content += f"*Pareja {alumno.pareja}*\n"
+        file_content += f"- {alumno.nombre} {alumno.apellido}\n"
+        if pareja:
+            file_content += f"- {pareja.nombre} {pareja.apellido}\n"
+        else:
+            file_content += "- Sin pareja asignada\n"
+
+        notas_pareja = Notas.objects.filter(
+            alumno__in=[alumno, pareja] if pareja else [alumno],
+            nivel_desempeno__rubrica__tarea=task
+        )
+        feedbacks = FeedbackHistory.objects.filter(
+            grupo=alumno.grupo,
+            criterio__in=[nota.criterio for nota in notas_pareja],
+            nivel_de_desempeno__in=[nota.nivel_desempeno for nota in notas_pareja],
+            alumno__in=[alumno, pareja] if pareja else [alumno]
+        )
+
+
+        feedbacks_por_criterio = {}
+        for fb in feedbacks:
+            if fb.criterio not in feedbacks_por_criterio:
+                feedbacks_por_criterio[fb.criterio] = []
+            feedbacks_por_criterio[fb.criterio].append(fb.texto)
+
+        criterios = {}
+        for nota in notas_pareja:
+            criterios[nota.criterio] = nota.nivel_desempeno
+
+        for criterio, nivel in criterios.items():
+            file_content += f"Criterio: {criterio.descripcion_criterio}\n"
+
+            if criterio in feedbacks_por_criterio:
+                file_content += "Comentarios:"
+                file_content += "".join([f" {texto}" for texto in feedbacks_por_criterio[criterio]])
+                file_content += "\n"
+            else:
+                file_content += "Comentarios:\n  - No se proporcionó feedback.\n"
+
+            file_content += "\n"
+
     response = HttpResponse(file_content, content_type='text/plain')
-    response['Content-Disposition'] = f'attachment; filename=feedback_alumno_{alumno.id_alumno}.txt'
+    response['Content-Disposition'] = f'attachment; filename=feedback_grupo_{grupo.id_grupo}.txt'
     return response
+
 
 
 

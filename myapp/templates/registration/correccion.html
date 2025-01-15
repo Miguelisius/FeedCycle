@@ -127,5 +127,8 @@
                 </tbody>
             </table>
         </div>
+        <form action="{% url 'export_feedback' grupo.id_grupo task.id_task %}" method="get">
+            <button type="submit" class="btn btn-primary">Exportar feedback</button>
+        </form>
     </body>
 </html>
