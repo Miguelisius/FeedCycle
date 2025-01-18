@@ -55,3 +55,33 @@
 #project-page .titulos{
     text-align: top;
 }
+
+/*task_deeatil*/
+.task-detail-page {
+    background-color: #ffffff;
+    color: #000000;
+    height: 100vh;
+    display: flex !important;
+    flex-direction: column !important;
+}
+
+.task-detail-page .btn-custom {
+    margin-top: 10px;
+}
+
+.task-detail-page h1, 
+.task-detail-page h2, 
+.task-detail-page p {
+    margin-bottom: 20px !important;
+}
+
+.task-detail-page .acciones {
+    margin-top: 50px;
+    display: flex !important;
+    justify-content: center !important;
+    align-items: center !important;
+}
+
+.task-detail-page .acciones h3 {
+    margin-bottom: 30px !important;
+}
