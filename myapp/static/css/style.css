@@ -85,3 +85,37 @@
 .task-detail-page .acciones h3 {
     margin-bottom: 30px !important;
 }
+/*taskrubric_detail*/
+#taskrubric_page .input-group {
+    margin-bottom: 10px;
+}
+
+#taskrubric_page .tablex {
+    margin-top: 30px;
+    margin-left: 20px;
+    margin-right: 70%;
+}
+
+#taskrubric_page table {
+    border: 1px solid black !important;
+    border-collapse: collapse;
+}
+
+#taskrubric_page th, 
+#taskrubric_page td {
+    border: 1px solid black;
+    border-collapse: collapse;
+    padding: 10px !important;
+    margin-top: 30px;
+    margin-left: 5%;
+    margin-right: 5%;
+}
+
+#taskrubric_page input[type="text"] {
+    width: 100px !important;
+}
+
+#taskrubric_page .container {
+    margin-left: 10px !important;
+}
+
