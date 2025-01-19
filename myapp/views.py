@@ -471,7 +471,7 @@ def correccion_personal(request, id_alumno, id_task):
             )
         ]
     else:
-        calificaciones = []
+        calificaciones = Notas.objects.none()
         feedbacks = [{'criterio': c.descripcion_criterio, 'feedback': 'Sin corrección disponible'} for c in criterios]
         
     if request.method == 'POST':
