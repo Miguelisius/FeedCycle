@@ -387,7 +387,7 @@ def correccion_rubrica(request, task_id):
         c_dec = []
         for n in niveles:
             descriptor = Descriptores.objects.filter(criterio=c, nivel_de_desempeno=n).first()
-            c_dec.append(descriptor.descripcion if descriptor else '')  # Asegúrate de manejar None
+            c_dec.append(descriptor.descripcion if descriptor else '')
         descriptores.append({
             'criterio': c.descripcion_criterio,
             'descriptores': c_dec

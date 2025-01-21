@@ -168,13 +168,23 @@
                             </td>
                             <td>
                                 <div class="input-group">
-                                    <textarea name="feedback_{{ c.id_criterio }}" class="form-control" id="feedback_text_{{ c.id_criterio }}"></textarea>
-                                    <button type="button" class="btn btn-secondary" 
-                                    onclick="openFeedbackModal('{{ c.id_criterio }}', $('#nivel_{{ c.id_criterio }}').val())">
-                                    🔍
+                                    <textarea 
+                                        name="feedback_{{ c.id_criterio }}" 
+                                        class="form-control" 
+                                        id="feedback_text_{{ c.id_criterio }}" 
+                                        disabled>
+                                    </textarea>
+                                    <button 
+                                        type="button" 
+                                        class="btn btn-secondary" 
+                                        id="feedback_btn_{{ c.id_criterio }}" 
+                                        onclick="openFeedbackModal('{{ c.id_criterio }}', $('#nivel_{{ c.id_criterio }}').val())" 
+                                        disabled>
+                                        🔍
                                     </button>
                                 </div>
                             </td>
+                            
                             {% if calificacion %}
                             <td>
                                 <input type="number" name="nota_{{ c.id_criterio }}" class="form-control" placeholder="Nota">
@@ -326,7 +336,18 @@
         function selectNivel(criterioId, nivelId, descripcionNivel) {
             const dropdownBtn = document.getElementById(`dropdownBtn_${criterioId}`);
             dropdownBtn.textContent = descripcionNivel;
-            document.getElementById(`nivel_${criterioId}`).value = nivelId;
+            const nivelInput = document.getElementById(`nivel_${criterioId}`);
+            nivelInput.value = nivelId;
+
+            const feedbackTextarea = document.getElementById(`feedback_text_${criterioId}`);
+            const feedbackBtn = document.getElementById(`feedback_btn_${criterioId}`);
+            if (nivelId) {
+                feedbackTextarea.disabled = false;
+                feedbackBtn.disabled = false;
+            } else {
+                feedbackTextarea.disabled = true;
+                feedbackBtn.disabled = true;
+            }
             console.log(`Nivel seleccionado: ${nivelId}`);
             console.log(`Descripcion: ${descripcionNivel}`);
         }
