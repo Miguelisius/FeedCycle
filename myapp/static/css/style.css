@@ -189,16 +189,16 @@
 
 #correccionpersonal .left-Panel {
     flex: 1;
-    border: 1px solid black;
-    background-color: #f8d7da;
+    /*border: 1px solid black;
+    background-color: #f8d7da;*/
     padding: 10px;
     overflow: auto;
 }
 
 #correccionpersonal .right-Panel {
     flex: 1;
-    border: 1px solid black;
-    background-color: #d4edda;
+    /*border: 1px solid black;
+    background-color: #d4edda;*/
     padding: 10px;
     overflow: auto;
 }
