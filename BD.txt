@@ -466,4 +466,19 @@ estilo taskrubric_detail:
         .container {
             margin-left: 10px;
         }
-    </style>-->        
+    </style>-->
+
+estilo rubrica final:
+<!--<style>
+        table, th, td {
+            border: 1px solid black !important;
+            border-collapse: collapse;
+            padding: 10px;
+        }
+        .fixez-bottom{
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+            padding: 10px 20px;
+        }
+    </style>-->     
