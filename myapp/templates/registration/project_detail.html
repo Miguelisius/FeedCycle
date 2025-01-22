@@ -24,7 +24,7 @@
             <nav aria-label="breadcrumb">
                 <ol class="breadcrumb mb-0">
                     <li class="breadcrumb-item"><a href="{% url 'home' %}">Inicio</a></li>
-                    <li class="breadcrumb-item"><a href="{% url 'projects' %}">Proyectos</a></li>
+                    <li class="breadcrumb-item"><a href="{% url 'project_detail' project_id=project.id_project group_id=grupo.id_grupo %}">Proyectos</a>
                     <li class="breadcrumb-item active" aria-current="page">{{ project.title }} - Grupo {{ grupo.numero_grupo }}</li>
                 </ol>
             </nav>
