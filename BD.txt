@@ -324,4 +324,78 @@ scripts anteriores de cambio de modales
                                     </div>
                                 </div>
                             </div>
+
+
+correccion personal html style:
+<!--<style>
+        .input-group {
+            margin-bottom: 10px;
+        }
+        table, th, td {
+            border: 1px solid black !important;
+            border-collapse: collapse;
+            padding: 10px;
+            word-wrap: break-word;
+            white-space: normal; 
+        }
+        td {
+            max-width: 200px;
+            overflow-wrap: break-word;
+        }
+        input[type="text"] {
+            width: 100px;
+        }
+        .table-container{
+            margin-top: 20px;
+        }
+        .table-title{
+            margin-top: 20px;
+            
+            
+        }
+        
+        .breadcrumb-container {
+            margin-bottom: 10px;
+        }
+
+        .fixez-bottom{
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+            padding: 10px 20px;
+        }
+        .main-container {
+            display: flex;
+            height: 80vh;
+            gap: 10px;
+        }
+        .left-Panel{
+            flex:1;
+            border: 1px solid black;
+            background-color: #f8d7da;
+            padding: 10px;
+            overflow: auto;
+        }
+        .right-Panel {
+            flex: 1;
+            border: 1px solid black;
+            background-color: #d4edda;
+            padding: 10px;
+            overflow: auto;
+        }
+        select {
+            max-width: 100%;
+            white-space: normal;
+            overflow-wrap: break-word;
+        }
+    
+        select.form-select {
+            min-width: 250px;
+        }
+    
+        select option {
+            white-space: normal;
+        }
+        
+    </style>-->
                             
