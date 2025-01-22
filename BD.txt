@@ -398,4 +398,42 @@ correccion personal html style:
         }
         
     </style>-->
-                            
+
+estilo correcion.html:
+        <!--<style>
+            .input-group {
+                margin-bottom: 10px;
+            }
+            table, th, td {
+                border: 1px solid black !important;
+                border-collapse: collapse;
+                padding: 10px;
+            }
+            .table-alumnos{
+                border: 1px solid black !important;
+                border-collapse: collapse;
+                padding: 50px;
+            }
+            input[type="text"] {
+                width: 100px;
+            }
+            .custom-margin {
+                margin-left: 20px;
+                margin-right: 20px;
+            }
+
+            .table-title{
+                margin-bottom:10px;
+                text-align: center;
+                display: flex;
+                align-items: flex-start;
+                
+            }
+            .tables-space{
+                display: flex;
+                gap: 20px;
+                align-items: flex-start;
+                
+            }
+        </style>-->
+           
