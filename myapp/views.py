@@ -15,15 +15,6 @@ from django.template.loader import render_to_string
 from django.db.models import Avg
 
 
-
-def hello(request, username):
-    print(username)
-    return HttpResponse("<h1>Hello %s. You're at the polls index.</h1>" %username)
-
-def about(request):
-    return HttpResponse("<h1>About page</h1>")
-
-
 @login_required
 def home(request):
     try:
@@ -130,18 +121,15 @@ def project_detail(request, project_id, group_id):
             
             reader = csv.reader(archivo_io, delimiter=',' , quotechar='"')
             next(reader)
-            print("Leggo aquiantes de row in reader\n")
+            
             for row in reader:
                 row = [cell.strip() for cell in row]
-                print(len(row))
-                #print(row[1])
-                #if len(row)<4:
-                print("Dentrop del if\n")
+                
                 nombre_alumno = row[0].strip()
                 apellido = row[1].strip()
                 correo=  row[2].strip()
                 pareja = None
-                #print(nombre_alumno, apellido, correo)
+                
                 if Alumno.objects.filter(email=correo).exists():
                     messages.error(request, f'El correo {correo} ya está registrado.')
                     show_toast = True
@@ -160,7 +148,7 @@ def project_detail(request, project_id, group_id):
             toast_message = "Archivo importado exitosamente."
             
         if 'delete_alumno' in request.POST:
-            print("Entro en delete_alumno")
+            
             alumno_id = request.POST.get('id_alumno')
             alumno = get_object_or_404(Alumno, id_alumno=alumno_id)
             alumno_name = alumno.nombre
@@ -184,9 +172,7 @@ def project_detail(request, project_id, group_id):
             correo = request.POST.get('email')
             pareja = request.POST.get('pareja')
             grupo = Alumno.objects.filter(grupo_id=grupo_asignado.id_grupo)
-            #print("Contiene Correo de grupo: ", grupo.contains(correo))
             #if grupo.contains(correo): 
-            print("Grupo: "+ str(grupo_asignado.id_grupo))
             
             if nombre_alumno and pareja and not Alumno.objects.filter(email=correo, grupo=grupo_asignado.id_grupo).exists():
                 Alumno.objects.create(nombre=nombre_alumno, apellido = apellido, email = correo , pareja=pareja, grupo=grupo_asignado)
@@ -392,7 +378,6 @@ def correccion_rubrica(request, task_id):
             'criterio': c.descripcion_criterio,
             'descriptores': c_dec
         })
-    print(descriptores)
     grupo = task.grupo
     return render(request, 'registration/correccion.html', {
         'task': task,
@@ -445,12 +430,9 @@ def correccion_personal(request, id_alumno, id_task):
         nivel_desempeno__rubrica=rubrica,
         corregida=True
     ).select_related('criterio', 'nivel_desempeno', 'descriptor')
-    print(correccion_guardada)
-    print(correccion_pareja)
     
     feedbacks = []
     if correccion_guardada or correccion_pareja:
-        print("Entro en el if")
         alumno_referencia = alumno if correccion_guardada else pareja
         calificaciones = Notas.objects.filter(
             alumno=alumno_referencia,
@@ -623,43 +605,6 @@ def export_feedback_txt(request, id_grupo, id_task):
     return response
 
 
-
-
-    """
-    for c in criterios:
-            calif_desc = []
-            for n in niveles:
-                nota_descr = Notas.objects.filter(nivel_desempeno=n, descriptor=Descriptores.objects.get(criterio=c, nivel_de_desempeno=n),alumno=alumno).first()
-                calif_desc.append(nota_descr.calificacion_descriptivo if nota_descr else '')
-            calif.append({'criterio': c.descripcion_criterio, 'calificaciones': calif_desc})
-    return render(request, 'registration/correccion_personal.html', {
-        'alumno': alumno,
-        'pareja': pareja,
-        'task': task,
-        'rubrica': rubrica,
-        'niveles': niveles,
-        'descriptores': descriptores,
-        'criterios': criterios,
-        'calificaciones': calif,
-    })
-    return render(request, 'registration/correccion_personal.html', {
-        'alumno': alumno,
-        'pareja': pareja,
-        'task': task,
-        'rubrica': rubrica,
-        'niveles': niveles,
-        'descriptores': descriptores,
-        'criterios': criterios,
-        'feedback_history': FeedbackHistory.objects.filter(grupo=alumno.grupo),
-        'feedbacks': feedbacks,
-        'correccion_guardada': correccion_guardada,
-        'correccion_pareja': correccion_pareja,
-        'calificaciones': calificaciones,
-        'calificacion': calificacion,
-        'task_id': task.id_task,
-        'calificaciones_feedback': zip(calificaciones, feedbacks),
-    })"""
-
 @login_required
 def export_rubrica_pdf(request, rubric_id):
     rubrica = get_object_or_404(Rubrica, id_rubrica=rubric_id)
@@ -730,14 +675,3 @@ def export_correccion_pdf(request, id_alumno, id_task):
     response['Content-Disposition'] = f'attachment; filename="Correccion_{alumno.nombre}_{alumno.apellido}.pdf"'
     
     return response
-
-def index(request):
-    return render(request,'index.html')
-
-def projects(request):
-    project = list(Project.objects.values())
-    return JsonResponse(projects, safe=False)
-
-def tasks(request,id):
-    task = get_object_or_404(Task, id=id)
-    return HttpResponse('task: %s' %task.name)
