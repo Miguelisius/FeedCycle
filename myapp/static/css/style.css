@@ -1,5 +1,5 @@
 #login-page .container-form {
-    margin: auto;
+    margin: auto !important;
     max-width: 330px;
     width: 100%;
     padding: 15px;
@@ -9,24 +9,24 @@
 
 #login-page .txt_gris_medio {
     color: #6c757d;
-    text-align: center;
+    text-align: center !important;
     font-weight: 400;
 }
 
 #login-page .txt_verde {
-    text-align: center;
+    text-align: center !important;
 }
 
 #login-page .txt_center {
-    text-align: center;
+    text-align: center !important;
 }
 
 #login-page .mt15 {
-    margin-top: 15px;
+    margin-top: 15px !important;
 }
 
 #login-page .mb20 {
-    margin-bottom: 20px;
+    margin-bottom: 20px !important;
 }
 
 /*project detail*/

@@ -102,7 +102,7 @@ def register(request):
         user = User.objects.create_user(username=email, password=password)
         tutor = Tutor(user=user,email=email, password=password)
         tutor.save()
-        return redirect('login')
+        return redirect('home')
     return render(request, 'registration/register.html')
 
 
