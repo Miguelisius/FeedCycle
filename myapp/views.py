@@ -94,11 +94,11 @@ def register(request):
         
         if password != confirm_password:
             messages.error(request, 'Las contraseñas no coinciden')
-            return redirect('registration/register.html')
+            return redirect('register.html')
         
         if Tutor.objects.filter(email=email).exists():
             messages.error(request, 'El email ya está registrado')
-            return redirect('registration/register.html')
+            return redirect('register.html')
         user = User.objects.create_user(username=email, password=password)
         tutor = Tutor(user=user,email=email, password=password)
         tutor.save()
