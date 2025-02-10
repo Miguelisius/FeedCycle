@@ -130,7 +130,7 @@ def project_detail(request, project_id, group_id):
                 correo=  row[2].strip()
                 pareja = None
                 
-                if Alumno.objects.filter(email=correo).exists():
+                if Alumno.objects.filter(email=correo, grupo=grupo_asignado).exists():
                     messages.error(request, f'El correo {correo} ya está registrado.')
                     show_toast = True
                     toast_message = f'El correo {correo} ya está registrado.'
