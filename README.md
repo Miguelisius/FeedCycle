@@ -21,3 +21,6 @@ docker-compose up --build
 docker stop FeedCycle
 docker rm FeedCycle
 ```
+
+## Enlace para instalar docker-desktop
+https://docs.docker.com/desktop/
