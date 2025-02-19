@@ -4,7 +4,7 @@
 * Tener cuenta en github
 
 ## Instalación FeedCycle
-Estas instalaciones funcionan tanto para Windows como para Linux
+Estas instalaciones funcionan para cualquier sistema operativo
 ### Instalación desde clone
 ```bash
 git clone https://github.com/Miguelisius/FeedCycle.git && cd FeedCycle
@@ -23,4 +23,5 @@ docker rm FeedCycle
 ```
 
 ## Enlace para instalar docker-desktop
+Dentro del enlace que de adjunta viene cómo instalar docker-desktop para cualquier sistema operativo
 https://docs.docker.com/desktop/
