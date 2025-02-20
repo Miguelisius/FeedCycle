@@ -22,6 +22,13 @@ docker stop FeedCycle
 docker rm FeedCycle
 ```
 
+## Base de datos
+Cuando se ejecuta por primera vez el sistema crea una base de datos.
+En caso de que se quiera borrar una base de datos ya existente perteneciente a este proyecto hay que ejecutar el siguiente comando:
+```bash
+rm db.sqlite3
+```
+
 ## Enlace para instalar docker-desktop
 Dentro del enlace que de adjunta viene cómo instalar docker-desktop para cualquier sistema operativo
 https://docs.docker.com/desktop/
