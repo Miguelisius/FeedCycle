@@ -127,7 +127,7 @@ pykerberos==1.1.14
 pyOpenSSL==24.0.0
 pyparsing==2.4.7
 pyphen==0.15.0
-PySimpleGUI==5.0.99.99
+PySimpleGUI==5.0.8.2
 #python-apt
 python-dateutil==2.8.2
 python-json-logger==2.0.7
