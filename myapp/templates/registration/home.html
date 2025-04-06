@@ -123,7 +123,7 @@
                                     <input type="hidden" name="project_id" value="{{ project.id_project }}">
                                     <div class="form-group">
                                         <label for="numero_grupo">Número del Grupo:</label>
-                                        <input type="number" name="numero_grupo" id="numero_grupo" class="form-control" required><br><br>
+                                        <input type="number" min="1" name="numero_grupo" id="numero_grupo" class="form-control" required><br><br>
                                     </div>
                                     <div class="modal-footer">
                                         <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
@@ -164,7 +164,7 @@
                                             <div class="modal-body">
                                                 <div class="form-group">
                                                     <label for="edit_group_number_{{ grupo.id_grupo }}">Número de Grupo:</label>
-                                                    <input type="number" name="edit_group_number" id="edit_group_number_{{ grupo.id_grupo }}" class="form-control" value="{{ grupo.numero_grupo }}" required>
+                                                    <input type="number" name="edit_group_number" id="edit_group_number_{{ grupo.id_grupo }}" class="form-control" value="{{ grupo.numero_grupo }}" min="1" required>
                                                 </div>
                                             </div>
                                             <div class="modal-footer">

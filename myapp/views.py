@@ -291,20 +291,37 @@ def taskrubric_detail(request, task_id):
             criterios = Criterios.objects.filter(rubrica=rubrica)
             niveles = NivelDeDesempeno.objects.filter(rubrica=rubrica)
             tabla = True
+
+            missing_descriptor = False
             for c in criterios:
                 for n in niveles:
                     descriptor_key = f'descriptor_{c.id_criterio}_{n.id_nivel_desempeno}'
                     descriptor_value = request.POST.get(descriptor_key, '').strip()
-                    if descriptor_value:
-                        Descriptores.objects.update_or_create(
-                            criterio=c,
-                            nivel_de_desempeno=n,
-                            defaults={'descripcion': descriptor_value}
-                        )
-            toast_message = "Rúbrica guardada exitosamente."
-            show_toast = True
-            modal = None
-            return redirect('rubric_detail', rubric_id=rubrica.id_rubrica)
+                    if not descriptor_value:
+                        missing_descriptor = True
+                        break
+                if missing_descriptor:
+                    break
+
+            if missing_descriptor:
+                toast_message = "No se puede guardar: debes completar todos los descriptores."
+                show_toast = True
+                modal = None
+            else:
+                for c in criterios:
+                    for n in niveles:
+                        descriptor_key = f'descriptor_{c.id_criterio}_{n.id_nivel_desempeno}'
+                        descriptor_value = request.POST.get(descriptor_key, '').strip()
+                        if descriptor_value:
+                            Descriptores.objects.update_or_create(
+                                criterio=c,
+                                nivel_de_desempeno=n,
+                                defaults={'descripcion': descriptor_value}
+                            )
+                toast_message = "Rúbrica guardada exitosamente."
+                show_toast = True
+                modal = None
+                return redirect('rubric_detail', rubric_id=rubrica.id_rubrica)
 
     criterio_new = Criterios.objects.filter(rubrica=rubrica)
     nivel_new = NivelDeDesempeno.objects.filter(rubrica=rubrica)
